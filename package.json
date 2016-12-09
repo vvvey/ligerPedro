@@ -1,0 +1,33 @@
+{
+  "name": "node-js-getting-started",
+  "version": "0.2.5",
+  "description": "A sample Node.js app using Express 4",
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cool-ascii-faces": "1.3.3",
+    "ejs": "2.3.3",
+    "express": "4.13.3",
+    "pg": "4.5.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VuthyVey/ligerpedro.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "Liger Learning Center",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "https://github.com/VuthyVey/ligerpedro#readme",
+  "author": "Liger Students"
+}

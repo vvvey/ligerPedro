@@ -1,0 +1,8 @@
+{
+  "name": "Liger Pedro",
+  "description": "A currency at Liger",
+  "repository": "https://github.com/VuthyVey/ligerpedro",
+  "logo": "http://node-js-sample.herokuapp.com/node.svg",
+  "keywords": ["node", "express", "static"],
+  "image": "heroku/nodejs"
+}
