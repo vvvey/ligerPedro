@@ -21,6 +21,10 @@ app.get('/login', function(req,res){
   res.render('login');
 });
 
+app.get('/exchanging_system', function(req,res){
+  res.render('exchanging_system');
+});
+
 app.get('/db', function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query('SELECT * FROM test_table', function(err, result) {
