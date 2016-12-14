@@ -33,6 +33,10 @@ app.get('/db', function (request, response) {
   });
 });
 
+app.get('/exchanging_system', function(req,res){
+  res.render('exchanging_system');
+});
+
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
