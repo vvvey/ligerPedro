@@ -12,6 +12,11 @@ app.get('/', function (req, res) {
     res.render('home');
 });
 
+
+app.get('/welcome', function(req,res){
+	res.render('welcome');
+});
+
 app.get('/db', function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query('SELECT * FROM test_table', function(err, result) {
@@ -27,3 +32,5 @@ app.get('/db', function (request, response) {
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
+
+app.use(express.static('public/'));
