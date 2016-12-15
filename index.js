@@ -23,7 +23,7 @@ app.get('/login', function(req,res){
 
 app.get('/db', function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-    client.query('SELECT * FROM test_table', function(err, result) {
+    client.query('SELECT * FROM account', function(err, result) {
       done();
       if (err)
        { console.error(err); response.send("Error " + err); }
