@@ -37,6 +37,18 @@ app.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
 });
 
+app.get('/profile', function(request, response){
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
+      done();
+      if(err)
+        {console.error(err); response.send("Error " + err);}
+      else
+        {response.render('nav', {results: result.rows});}
+    });
+  });
+});
+
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
