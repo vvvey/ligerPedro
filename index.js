@@ -36,17 +36,32 @@ app.get('/db', function (request, response) {
 app.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
 });
+/*var user_values = {
+  status: 'transfer',
+  amount: 50,
+  person: 'VisalSao',
+  email: 'visal.s@ligercambodia.org'
+}*/
 
-app.get('/profile', function(request, response){
+
+app.get('/history', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
       done();
       if(err)
         {console.error(err); response.send("Error " + err);}
       else
-        {response.render('nav', {results: result.rows});}
+        {response.render('history', {results: result.rows});}
     });
   });
+});
+
+app.get('/transfer', function(req, res){
+  res.render('transfer');
+});
+
+app.get('/exchange', function(req, res){
+  res.render('exchange');
 });
 
 app.listen(app.get('port'), function() {
