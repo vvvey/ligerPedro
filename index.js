@@ -8,7 +8,20 @@ app.set('view engine', 'handlebars');
 
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function (req, res) {
+app.get('/', function(request, response){
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    //client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
+    client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
+      done();
+      if(err)
+        {console.error(err); response.send("Error " + err);}
+      else
+        {response.render('nav', {results: result.rows});}
+    });
+  });
+});
+
+app.get('/home', function (req, res) {
     res.render('home');
 });
 
@@ -28,7 +41,7 @@ app.get('/db', function (request, response) {
       if (err)
        { console.error(err); response.send("Error " + err); }
       else
-       { response.render('db', {results: result.rows} ); }
+       { response.render('db', {columns: result.fields, results: result.rows}); }
     });
   });
 });
@@ -39,6 +52,7 @@ app.get('/exchanging_system', function(req,res){
 
 app.get('/profile', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    //client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
     client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
       done();
       if(err)
@@ -47,6 +61,11 @@ app.get('/profile', function(request, response){
         {response.render('nav', {results: result.rows});}
     });
   });
+});
+
+app.get('/exchange', function(req,res){
+  res.render('exchange');
+
 });
 
 app.listen(app.get('port'), function() {
