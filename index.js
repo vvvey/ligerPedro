@@ -8,7 +8,19 @@ app.set('view engine', 'handlebars');
 
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function (req, res) {
+app.get('/', function(request, response){
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
+      done();
+      if(err)
+        {console.error(err); response.send("Error " + err);}
+      else
+        {response.render('home', {results: result.rows});}
+    });
+  });
+});
+
+app.get('/home', function (req, res) {
     res.render('home');
 });
 
@@ -28,7 +40,7 @@ app.get('/db', function (request, response) {
       if (err)
        { console.error(err); response.send("Error " + err); }
       else
-       { response.render('db', {results: result.rows} ); }
+       { response.render('db', {columns: result.fields, results: result.rows}); }
     });
   });
 });
@@ -36,12 +48,7 @@ app.get('/db', function (request, response) {
 app.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
 });
-/*var user_values = {
-  status: 'transfer',
-  amount: 50,
-  person: 'VisalSao',
-  email: 'visal.s@ligercambodia.org'
-}*/
+
 
 
 app.get('/history', function(request, response){
