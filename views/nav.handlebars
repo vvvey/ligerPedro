@@ -6,6 +6,9 @@
             <div class="animbrand">
               <a class="navbar-brand animate" href="#">LIGER DIGITAL CURRENCY</a>
             </div>
+            
+              <p class="navbar-brand animate">Welcome! {{user.displayName}}</p>
+              <p class="navbar-brand animate">Your email {{user._json.email}}</p>
           </div>
 
           <div class="bsa-apiads hidden-sm hidden-xs"></div>
@@ -26,7 +29,7 @@
 
               <li>
                 <a href="#">
-                  <span class="glyphicon glyphicon-king" style="transform:scale(1.5,1.5);"></span>
+                  <img src="{{user.picture}}" width="30px"/>
                 </a>
               </li>
             </ul>
