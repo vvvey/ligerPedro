@@ -12,6 +12,10 @@
 </thead>
 
 <tbody>
+{{#each columns}}
+	<p> {{this.name}} </p>
+{{/each}}
+
 {{#each results}}
 <tr>
 <td>{{this.date}}</td>
