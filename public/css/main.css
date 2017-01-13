@@ -1,0 +1,48 @@
+  .reason{
+    background-color:#c6e2ff; 
+    border-radius: 5px;
+  }
+
+  #center-body {
+    background-color: whitesmoke;
+    padding: 7% 0% 7% 0%;   
+  }
+
+
+  .none {
+      text-decoration: none;
+      color: white;
+  }
+
+  a:hover {
+      text-decoration: none;
+  }
+
+  #win-history {
+    height: 400px;
+    overflow-y: auto;
+  }
+
+  #win-history::-webkit-scrollbar {
+      width: 1em;
+  }
+
+  #win-history::-webkit-scrollbar-thumb {
+    background-color: #4d4d4d;
+    outline: solid;
+    border-radius: 2px;
+  }
+
+  #win-history::-webkit-scrollbar-track {
+    background-color:  #b3d9ff;
+    border-radius: 4px; 
+  }
+  body::-webkit-scrollbar{
+      width: 1em;
+  }
+
+  body::-webkit-scrollbar-thumb {
+      background-color: black;
+      outline: solid;
+      border-radius: 2px;
+  }

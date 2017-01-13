@@ -16,9 +16,9 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                  <li><a href="#" id="nav-transfer">Transfer</a></li>
-                  <li><a href="#" id="nav-exchange">Exchange</a></li>
-                  <li><a href="#" id="nav-history">History</a></li>
+                  <li><a href="/transfer">Transfer</a></li>
+                  <li><a href="/exchange">Exchange</a></li>
+                  <li><a href="/history">History</a></li>
                   <li><a href="#" id="nav-setting">Setting</a></li>
                   <li><a href="#" id="nav-sign-out">Log Out</a></li>
                 </ul>
@@ -49,31 +49,7 @@
 
     <!--Body-->
     <div id="center-body">
-
-        <div class="container text-center" id="win-transfer">
-          <h1 class="h1">Transferring Money</h1>
-          </br>
-          <button button="button" class="btn btn-primary">Your budget <span class="badge">P250</span></button>
-            </br>
-            </br>
-            <form class="form-inline">
-              <div class="form-group">
-                   <div class="input-group">
-                      <div class="input-group-addon">P</div>
-                      <input type="number" class="form-control" id="exampleInputAmount" placeholder="Amount">
-                   </div>
-
-                   <div class="input-group">
-                      <div class="input-group-addon">@</div>
-                      <input type="text" class="form-control" id="exampleInputAmount" placeholder="Account">
-                   </div>                             
-              </div>
-            </form>
-            </br>
-            <button type="button" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Send <span class="glyphicon glyphicon-send"></span></button>
-        </div>
-
-        <div class="container text-center" id="win-exchange" hidden="true">
+        <div class="container text-center" id="win-exchange">
           <h1 class="h1">Exchanging Money</h1>
           <ul class="nav nav-pills nav-justified btn-lg">
             <li  class="active"><a data-toggle="pill" href="#ex_p_d"><span class="btn-lg">$</span> Pedro-Dollar</a></li>
@@ -124,36 +100,6 @@
             </div>
           </div>
         </div>
-
-        <div class="container" id="win-history" hidden="true">
-            <h1 class="h1 text-center">History</h1>
-
-            <div class="table-responsive">
-              <table class="table">
-                <thead class="thead-inverse">
-                  <tr>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Amount (P)</th>
-                    <th>Person</th>
-                    <th>Email</th>
-                  </tr>
-                </thead>
-                
-                  <tbody>
-                {{#each results}}
-                  <tr>
-                    <td>{{this.date}}</td>
-                    <td>{{this.status}}</td>
-                    <td>{{this.amount}}</td>
-                    <td>{{this.person}}</td>
-                    <td>{{this.email}}</td>
-                  </tr>
-                {{/each}}
-                 </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     <!--Tail-->
@@ -185,65 +131,4 @@
             </div>  
         </div>
     </aside>
-    <script type="text/javascript">
-        $("#nav-transfer").on("click", function (event){
-            $("#win-transfer").show();
-            $("#win-exchange").hide();
-            $("#win-history").hide();
-        });
-        $("#nav-exchange").on("click", function (event){
-            $("#win-exchange").show();
-            $("#win-history").hide();
-            $("#win-transfer").hide();
-        });
-        $("#nav-history").on("click", function (event){
-            $("#win-history").show();
-            $("#win-transfer").hide();
-            $("#win-exchange").hide();
-        });
-    </script>
-    <style type="text/css">
-        #center-body {
-          background-color: whitesmoke;
-          padding: 7% 0% 7% 0%;
-        }
-
-        .none {
-            text-decoration: none;
-            color: white;
-        }
-
-        a:hover {
-            text-decoration: none;
-        }
-
-        #win-history {
-          height: 400px;
-          overflow-y: auto;
-        }
-
-        #win-history::-webkit-scrollbar {
-            width: 1em;
-        }
-
-        #win-history::-webkit-scrollbar-thumb {
-          background-color: #4d4d4d;
-          outline: solid;
-          border-radius: 2px;
-        }
-
-        #win-history::-webkit-scrollbar-track {
-          background-color:  #b3d9ff;
-          border-radius: 4px; 
-        }
-        body::-webkit-scrollbar{
-            width: 1em;
-        }
-
-        body::-webkit-scrollbar-thumb {
-            background-color: black;
-            outline: solid;
-            border-radius: 2px;
-        }
-    </style>
 </body>
