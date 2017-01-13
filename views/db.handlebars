@@ -1,3 +1,28 @@
+<body>
+
+<table class="table">
+<thead class="thead-inverse">
+<tr> 
+<th>Date</th>
+<th>Sender</th>
+<th>Recipient (P)</th>
+<th>Amount</th>
+<th>Resulting Budget</th>
+</tr>
+</thead>
+
+<tbody>
 {{#each results}}
-	<p> {{this.username}} , {{this.budget}} </p>
+<tr>
+<td>{{this.date}}</td>
+<td>{{this.sender}}</td>
+<td>{{this.recipient}}</td>
+<td>{{this.amount}}</td>
+<td>{{this.resulting_budget}}</td>
+</tr>
 {{/each}}
+</tbody>
+</table>
+
+</body>
+
