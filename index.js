@@ -34,6 +34,20 @@ app.get('/login', function(req,res){
   res.render('login');
 });
 
+
+app.get('/transfer_success', function(req,res){
+  res.render('transfer_success');
+});
+
+
+app.get('/transfer_confirmation', function(req,res){
+  res.render('transfer_confirmation');
+});
+
+app.get('/exchange_confirmation', function(req,res){
+  res.render('exchange_confirmation');
+});
+
 app.get('/db', function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query('SELECT * FROM account', function(err, result) {
