@@ -1,104 +1,55 @@
 var express = require('express');
 var exphbs  = require('express-handlebars');
 var app = express();
-var pg = require('pg');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var passport = require('passport');
+var Auth0Strategy = require('passport-auth0');
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
-
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function(request, response){
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
-      done();
-      if(err)
-        {console.error(err); response.send("Error " + err);}
-      else
-        {response.render('home', {results: result.rows});}
-    });
+// Configure Passport to use Auth0
+var strategy = new Auth0Strategy({
+    domain:       process.env.AUTH0_DOMAIN,
+    clientID:     process.env.AUTH0_CLIENT_ID,
+    clientSecret: process.env.AUTH0_CLIENT_SECRET,
+    callbackURL:  process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
+  }, function(accessToken, refreshToken, extraParams, profile, done) {
+    // accessToken is the token to call Auth0 API (not needed in the most cases)
+    // extraParams.id_token has the JSON Web Token
+    // profile has all the information from the user
+    return done(null, profile);
   });
+
+
+passport.use(strategy);
+
+var routes = require('./routes/index');
+var user = require('./routes/user');
+
+// This can be used to keep a smaller payload
+passport.serializeUser(function(user, done) {
+  done(null, user);
 });
 
-app.get('/home', function (req, res) {
-    res.render('home');
+passport.deserializeUser(function(user, done) {
+  done(null, user);
 });
 
-
-app.get('/about_us', function(req,res){
-	res.render('about_us');
-});
-
-app.get('/login', function(req,res){
-  res.render('login');
-});
-
-app.get('/transfer', function(req, res) {
-  res.render('transfer');
-});
-
-app.get('/transfer_success', function(req,res){
-  res.render('transfer_success');
-});
-
-
-app.get('/transfer_confirmation', function(req,res){
-  res.render('transfer_confirmation');
-});
-
-app.get('/exchange_confirmation', function(req,res){
-  res.render('exchange_confirmation');
-});
-
-app.get('/db', function (request, response) {
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-    client.query('SELECT * FROM account', function(err, result) {
-      done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render('db', {columns: result.fields, results: result.rows}); }
-    });
-  });
-});
-
-app.get('/user_histories', function (request, response) {
-  pg.connect(process.env.PEDRO_db_URL, function(err,client,done) {
-    client.query('SELECT * FROM exchange_logs', function(err, result) {
-      done();
-      if (err)
-        { console.error(err); response.send("Error " + err); }
-      else
-        { 
-          client.query('SELECT * FROM transfer_logs', function(err2, result2) {
-            done();
-              if (err2)
-              { console.error(err2); response.send("Error " + err2); }
-              else
-              { response.render('user_history', {columns: result.fields, results:result.rows, columns2: result2.fields, results2: result2.rows}); }
-          });
-        }
-    });
-  });
-});
-
-
-
-app.get('/exchanging_system', function(req,res){
-  res.render('exchanging_system');
-});
-
-app.get('/exchange', function(req,res){
-  res.render('exchange');
-});
-
-app.get('/transfer', function(req, res){
-  res.render('transfer');
-});
-
-app.get('/exchange', function(req, res){
-  res.render('exchange');
-});
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({
+  secret: 'shhhhhhhhh',
+  resave: true,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/', routes);
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
