@@ -23,9 +23,9 @@ var strategy = new Auth0Strategy({
     // profile has all the information from the user
     return done(null, profile);
   });
+
+
 passport.use(strategy);
-
-
 
 var routes = require('./routes/index');
 var user = require('./routes/user');
@@ -50,8 +50,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/', routes);
-
-
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

@@ -1,0 +1,113 @@
+<body id="page-top">
+
+  <!--Head-->
+    <nav class="navbar" id="mainNav" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <div class="animbrand">
+              <a class="navbar-brand animate" href="#">LIGER DIGITAL CURRENCY</a>
+            </div>
+          </div>
+
+          <div class="bsa-apiads hidden-sm hidden-xs"></div>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown active">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
+                </a>
+
+                <ul class="dropdown-menu">
+                  <li><a href="/transfer">Transfer</a></li>
+                  <li><a href="/exchange">Exchange</a></li>
+                  <li><a href="/user_histories">History</a></li>
+                  <li><a href="#" id="nav-setting">Setting</a></li>
+                  <li><a href="#" id="nav-sign-out">Log Out</a></li>
+                </ul>
+              </li>
+
+              <li>
+                <a href="#">
+                  <span class="glyphicon glyphicon-king" style="transform:scale(1.5,1.5);"></span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="bootsnipp-search">
+            <div class="container">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Search for...">
+                  <span class="input-group-btn">
+                    <button class="btn btn-danger" type="reset">
+                      <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                  </span>
+                </div>
+            </div>
+          </div>
+        </div>
+    </nav>
+
+  <!--Body-->
+  <div class="center-body">
+    <div class="container" id="win-history">
+      <h1 class="h1 text-center">History</h1>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Amount (P)</th>
+              <th>Person</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          
+            <tbody>
+          {{#each results}}
+            <tr>
+              <td>{{this.date}}</td>
+              <td>{{this.status}}</td>
+              <td>{{this.amount}}</td>
+              <td>{{this.person}}</td>
+              <td>{{this.email}}</td>
+            </tr>
+          {{/each}}
+           </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+  <!--Tail-->
+  <aside class="bg-dark">
+      <div class="container-fluid text-center">
+          <h3 class="h3"><a href="/" class="none">LIGER DIGITAL CURRENCY</a></h4>
+          </br>  
+          <div class="row">
+              <div class="col-lg-4 col-sm-4 col-xs-4">
+                  <a href="#" class="none">
+                      <span class="fa fa-4x fa-newspaper-o"></span>
+                      <h5>TUTORIAL</h4>
+                  </a>
+              </div>
+
+              <div class="col-lg-4 col-sm-4 col-xs-4">
+                  <a href="/about_us" class="none">
+                      <span class="fa fa-users fa-4x "></span>
+                      <h5>ABOUT US</h4>
+                  </a>
+              </div>
+
+              <div class="col-lg-4 col-sm-4 col-xs-4">
+                  <a href="#" class="none">
+                      <span class="fa fa-comments fa-4x"></span>
+                      <h5>CONTACT US</h4>
+                  </a>
+              </div>
+          </div>  
+      </div>
+  </aside>
+</body>

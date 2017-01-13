@@ -10,33 +10,34 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
-router.get('/', ensureLoggedIn, function(request, response){
+router.get('/', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    //client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
     client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
       done();
       if(err)
         {console.error(err); response.send("Error " + err);}
       else
-      	console.log(request.user)
-        {response.render('nav', {results: result.rows, user: request.user});}
+        {response.render('home', {results: result.rows, user: request.user, env: env});}
     });
   });
 });
 
-router.get('/home', function (req, res) {
-    res.render('home');
+router.get('/transfer', ensureLoggedIn, function(req, res) {
+  res.render('transfer');
+});
+
+router.get('/transfer_success', ensureLoggedIn, function(req,res){
+  res.render('transfer_success');
 });
 
 
-router.get('/about_us', function(req,res){
-	res.render('about_us');
+router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
+  res.render('transfer_confirmation');
 });
 
-router.get('/login',
-  function(req, res){
-    res.render('login', {env: env});
-  });
+router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
+  res.render('exchange_confirmation');
+});
 
 router.get('/db', ensureLoggedIn, function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
@@ -50,27 +51,48 @@ router.get('/db', ensureLoggedIn, function (request, response) {
   });
 });
 
-router.get('/exchanging_system', function(req,res){
-  res.render('exchanging_system');
-});
-
-router.get('/profile', function(request, response){
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    //client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
-    client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
+router.get('/user_histories', ensureLoggedIn , function (request, response) {
+  pg.connect(process.env.PEDRO_db_URL, function(err,client,done) {
+    client.query('SELECT * FROM exchange_logs', function(err, result) {
       done();
-      if(err)
-        {console.error(err); response.send("Error " + err);}
+      if (err)
+        { console.error(err); response.send("Error " + err); }
       else
-        {response.render('nav', {results: result.rows});}
+        { 
+          client.query('SELECT * FROM transfer_logs', function(err2, result2) {
+            done();
+              if (err2)
+              { console.error(err2); response.send("Error " + err2); }
+              else
+              { response.render('user_history', {columns: result.fields, results:result.rows, columns2: result2.fields, results2: result2.rows}); }
+          });
+        }
     });
   });
 });
 
-router.get('/exchange', function(req,res){
-  res.render('exchange');
 
+
+router.get('/exchanging_system', function(req,res){
+  res.render('exchanging_system');
 });
+
+router.get('/exchange', function(req,res){
+  res.render('exchange', {user: req.user});
+});
+
+router.get('/transfer', function(req, res){
+  res.render('transfer', {user: req.user});
+});
+
+router.get('/exchange', function(req, res){
+  res.render('exchange', {user: req.user});
+});
+
+router.get('/login',
+  function(req, res){
+    res.render('login', {env: env});
+  });
 
 router.get('/logout', function(req, res){
   req.logout();
