@@ -7,11 +7,6 @@ var session = require('express-session');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 
-//var handlebars = require('handlebars');
-
-//handlebars.registerPartial('myPartial', $("#the_forms").html());
-
-
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.set('port', (process.env.PORT || 5000));
@@ -63,3 +58,4 @@ app.listen(app.get('port'), function() {
 });
 
 app.use(express.static('public/'));
+
