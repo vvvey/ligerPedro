@@ -21,8 +21,8 @@ router.get('/', function(request, response){
     });
   });
 });
-
-router.get('/transfer', ensureLoggedIn, function(req, res) {
+//need to add the "ensureLoggedIn back"
+router.get('/transfer', function(req, res) {
   res.render('transfer');
 });
 
@@ -106,5 +106,16 @@ router.get('/callback',
   function(req, res) {
     res.redirect('/');
   });
+
+router.post('/transfer_confirmation', function(req, res) {
+   
+    res.render('transfer_confirmation', {recipient: req.body.recipient, amount: req.body.amount});
+});
+
+router.post('/transfer_success', function(req, res) {
+
+  res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+});
+
 
 module.exports = router;
