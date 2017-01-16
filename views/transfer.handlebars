@@ -11,24 +11,26 @@
             </br>
             </br>
             <form class="form-inline" method=post action="/transfer_confirmation">
-            <!-- method=post action="/transfer_confirmation" -->
-              <div class="form-group">
-                   <div class="input-group">
-                      <div class="input-group-addon">P</div>
-                      <input type="number" class="form-control" name="amount" placeholder="Amount" >
-                   </div>
+              <!-- method=post action="/transfer_confirmation" -->
+                <div class="form-group">
+                     <div class="input-group">
+                        <div class="input-group-addon">P</div>
+                        <input type="number" class="form-control" name="amount" placeholder="Amount" >
+                     </div>
 
-                   <div class="input-group">
-                      <div class="input-group-addon">@</div>
-                      <input type="text" class="form-control" name="recipient" placeholder="Account">
-                   </div>                             
-              </div>
-            
-            </br>
-            <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
-            </input>
-        </form>
+                     <div class="input-group">
+                        <div class="input-group-addon">@</div>
+                        <input type="text" class="form-control" name="recipient" placeholder="Account">
+                     </div>                             
+                </div>
+              </br>
+              </br>
+              <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+              </input>
+            </form>
+        </div>
     </div>
+    
     <!--Tail-->
     {{> footer}}
 </body>
