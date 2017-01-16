@@ -91,7 +91,12 @@ router.get('/exchange', function(req, res){
 
 router.get('/login',
   function(req, res){
-    res.render('login', {env: env});
+  	if(req.user){
+		res.render('notFound');
+  	} else {
+  		res.render('login', {env: env});
+  	}
+ 
   });
 
 router.get('/logout', function(req, res){
@@ -106,5 +111,6 @@ router.get('/callback',
   function(req, res) {
     res.redirect('/');
   });
+
 
 module.exports = router;
