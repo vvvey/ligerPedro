@@ -120,5 +120,15 @@ router.get('/callback',
     res.redirect('/');
   });
 
+router.post('/transfer_confirmation', function(req, res) {
+   
+    res.render('transfer_confirmation', {recipient: req.body.recipient, amount: req.body.amount});
+});
+
+router.post('/transfer_success', function(req, res) {
+
+  res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+});
+
 
 module.exports = router;

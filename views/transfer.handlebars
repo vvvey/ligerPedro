@@ -5,27 +5,29 @@
     <!--Body-->
     <div id="center-body">
         <div class="container text-center" id="win-transfer">
-          <h1 class="h1">Transfering Money</h1>
+          <h1 class="h1">Transferring Money</h1>
           </br>
           <button button="button" class="btn btn-primary">Your budget <span class="badge">P250</span></button>
             </br>
             </br>
-            <form class="form-inline">
+            <form class="form-inline" method=post action="/transfer_confirmation">
+            <!-- method=post action="/transfer_confirmation" -->
               <div class="form-group">
                    <div class="input-group">
                       <div class="input-group-addon">P</div>
-                      <input type="number" class="form-control" id="exampleInputAmount" placeholder="Amount">
+                      <input type="number" class="form-control" name="amount" placeholder="Amount" >
                    </div>
 
                    <div class="input-group">
                       <div class="input-group-addon">@</div>
-                      <input type="text" class="form-control" id="exampleInputAmount" placeholder="Account">
+                      <input type="text" class="form-control" name="recipient" placeholder="Account">
                    </div>                             
               </div>
-            </form>
+            
             </br>
-            <button type="button" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Send <span class="glyphicon glyphicon-send"></span></button>
-        </div>
+            <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+            </input>
+        </form>
     </div>
     <!--Tail-->
     {{> footer}}
