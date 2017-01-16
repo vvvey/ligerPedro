@@ -10,6 +10,8 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
+//Handlebars.registerPartial('myPartial', 'users');
+
 router.get('/', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM user_history WHERE email = 'visal.s@ligercambodia.org'", function(err, result){
@@ -17,18 +19,24 @@ router.get('/', function(request, response){
       if(err)
         {console.error(err); response.send("Error " + err);}
       else
-        {response.render('home', {results: result.rows, user: request.user, env: env});}
+        {
+          console.log(request.user);
+          response.render('home', {results: result.rows, user: request.user, env: env});}
     });
   });
 });
-//need to add the "ensureLoggedIn back"
-router.get('/transfer', function(req, res) {
-  res.render('transfer');
+
+router.get('/transfer', ensureLoggedIn, function(req, res) {
+  res.render('transfer', {user: req.user});
+});
+
+router.get('/test', function(req, res) {
+  res.render('module');
 });
 
 router.get('/transfer_success', ensureLoggedIn, function(req,res){
   res.render('transfer_success');
-});
+}); 
 
 
 router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
