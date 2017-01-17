@@ -105,7 +105,6 @@ router.get('/exchanging_system', function(req,res){
 });
 
 router.get('/exchange', function(req,res){
-<<<<<<< HEAD
   res.render('exchange', {user: req.user});
 });
 
@@ -118,10 +117,7 @@ router.get('/setting', ensureLoggedIn, function(req, res){
 });
 
 router.get('/exchange', function(req, res){
-  res.render('exchange', {user: req.user});
-=======
   res.render('exchange', {user: req.user, title: 'Exchange'});
->>>>>>> f11cdf78cd61afe59fdb6ba5854480ab901676ed
 });
 
 router.get('/login',

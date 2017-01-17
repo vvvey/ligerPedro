@@ -15,7 +15,7 @@
                 <div class="form-group">
                      <div class="input-group">
                         <div class="input-group-addon">P</div>
-                        <input type="number" class="form-control" name="amount" placeholder="Amount" >
+                        <input data-validation="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required">
                      </div>
 
                      <div class="input-group">
@@ -33,4 +33,12 @@
     
     <!--Tail-->
     {{> footer}}
+
 </body>
+<script src="js/jquery.min.js"></script>
+<script src="js/form-validator/jquery.form-validator.min.js"></script>
+<script>
+    $.validate({
+        modules : 'date, security'
+    });
+</script>   
