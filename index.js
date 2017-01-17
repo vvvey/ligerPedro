@@ -57,5 +57,10 @@ app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
+
 app.use(express.static('public/'));
 
+app.use(function (req, res) {
+  res.status(400);
+  res.render('notFound', {user: req.user})
+})
