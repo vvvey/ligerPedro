@@ -27,7 +27,7 @@ router.get('/', function(request, response){
 });
 
 router.get('/transfer', ensureLoggedIn, function(req, res) {
-  res.render('transfer', {user: req.user});
+  res.render('transfer', {user: req.user, title: 'Transfer'});
 });
 
 router.get('/test', function(req, res) {
@@ -72,7 +72,7 @@ router.get('/history', ensureLoggedIn , function (request, response) {
               if (err2)
               { console.error(err2); response.send("Error " + err2); }
               else
-              { response.render('user_history', {columns: result.fields, results:result.rows, columns2: result2.fields, results2: result2.rows}); }
+              { response.render('user_history', {columns: result.fields, results:result.rows, columns2: result2.fields, results2: result2.rows, title: 'History'}); }
           });
         }
     });
@@ -86,15 +86,7 @@ router.get('/exchanging_system', function(req,res){
 });
 
 router.get('/exchange', function(req,res){
-  res.render('exchange', {user: req.user});
-});
-
-router.get('/transfer', function(req, res){
-  res.render('transfer', {user: req.user});
-});
-
-router.get('/exchange', function(req, res){
-  res.render('exchange', {user: req.user});
+  res.render('exchange', {user: req.user, title: 'Exchange'});
 });
 
 router.get('/login',
@@ -102,7 +94,7 @@ router.get('/login',
   	if(req.user){
 		res.render('notFound');
   	} else {
-  		res.render('login', {env: env});
+  		res.render('login', {env: env, title: 'Login'});
   	}
  
   });
