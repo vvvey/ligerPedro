@@ -3,6 +3,9 @@ var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
+
+var alert_message;
+
 //PREPARE 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -10,7 +13,24 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
-//Handlebars.registerPartial('myPartial', 'users');
+router.get('/login',
+  function(req, res){
+    if(req.user){
+    res.render('notFound');
+    } else {
+      if(req.session.returnTo) {
+        alert_message = 'You need to login before you can access!'
+      }
+      res.render('login', {env: env, title: 'Login', message: alert_message, user:req.user});
+    }
+ 
+  });
+
+router.get('*', function (req, res, next) {
+  alert_message = null;
+  req.session.returnTo = null;
+  next();
+})
 
 router.get('/', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -40,7 +60,6 @@ router.get('/test', function(req, res) {
 router.get('/transfer_success', ensureLoggedIn, function(req,res){
   res.render('transfer_success');
 }); 
-
 
 router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
   res.render('transfer_confirmation');
@@ -100,6 +119,7 @@ router.get('/history', ensureLoggedIn,function(request, response){
   });
 });
 
+
 router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
 });
@@ -139,18 +159,15 @@ router.get('/callback',
     failureRedirect: '/logout'
   }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect(req.session.returnTo || '/');
   });
 
-router.post('/transfer_confirmation', function(req, res) {
-   
+router.post('/transfer_confirmation', function(req, res) { 
     res.render('transfer_confirmation', {recipient: req.body.recipient, amount: req.body.amount});
 });
 
 router.post('/transfer_success', function(req, res) {
-
   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
 });
-
 
 module.exports = router;
