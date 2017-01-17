@@ -3,7 +3,7 @@ var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
-
+//PREPARE 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
@@ -31,7 +31,10 @@ router.get('/transfer', ensureLoggedIn, function(req, res) {
 });
 
 router.get('/test', function(req, res) {
-  res.render('module');
+  res.render('module', {
+    recipient : 'Visal Sao',
+    amount : 30
+  });
 });
 
 router.get('/transfer_success', ensureLoggedIn, function(req,res){
@@ -61,7 +64,7 @@ router.get('/db', ensureLoggedIn, function (request, response) {
 
 router.get('/user_histories', ensureLoggedIn , function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err,client,done) {
-    client.query('SELECT * FROM exchange_logs', function(err, result) {
+    client.query('SELECT * FROM exchange_logs where ', function(err, result) {
       done();
       if (err)
         { console.error(err); response.send("Error " + err); }
@@ -78,8 +81,24 @@ router.get('/user_histories', ensureLoggedIn , function (request, response) {
     });
   });
 });
+var lala = []
 
-
+router.get('/history', ensureLoggedIn,function(request, response){
+  lala = [request.user.emails[0].value];
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("PREPARE history_query (text) AS \
+      SELECT * FROM user_history WHERE email = $1;\
+      EXECUTE history_query ('" + lala + "')", function(err, result) {
+      done();
+      if(err){
+        console.error(err); 
+        response.send("Error " + err);
+      }else{
+        response.render('history', {columns: result.fields, data: result.rows});
+      }
+    });
+  });
+});
 
 router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
@@ -93,6 +112,10 @@ router.get('/transfer', function(req, res){
   res.render('transfer', {user: req.user});
 });
 
+router.get('/setting', ensureLoggedIn, function(req, res){
+  res.render('setting', {user: req.user});
+});
+
 router.get('/exchange', function(req, res){
   res.render('exchange', {user: req.user});
 });
@@ -100,11 +123,10 @@ router.get('/exchange', function(req, res){
 router.get('/login',
   function(req, res){
   	if(req.user){
-		res.render('notFound');
+		  res.render('notFound');
   	} else {
   		res.render('login', {env: env});
   	}
- 
   });
 
 router.get('/logout', function(req, res){
