@@ -59,7 +59,7 @@ router.get('/db', ensureLoggedIn, function (request, response) {
   });
 });
 
-router.get('/user_histories', ensureLoggedIn , function (request, response) {
+router.get('/history', ensureLoggedIn , function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err,client,done) {
     client.query('SELECT * FROM exchange_logs', function(err, result) {
       done();
