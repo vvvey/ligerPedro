@@ -21,7 +21,7 @@ router.get('/login',
       if(req.session.returnTo) {
         alert_message = 'You need to login before you can access!'
       }
-      res.render('login', {env: env, title: 'Login', message: alert_message});
+      res.render('login', {env: env, title: 'Login', message: alert_message, user:req.user});
     }
  
   });
