@@ -53,9 +53,9 @@
           </button>
           <br>
           <br>
-          <h2>You have exchanged <span class="badge">100P</span> from your account.</h2>
+          <h2>You have exchanged <input type="text" value={{amount}} name="amount" readonly size={{amount.length}}></span> from your account.</h2>
           <br>
-          <form class="form-inline">
+          <form class="form-inline" form class="form-inline" method=post action="/exchange_success">
                 <div class="input-group">
                     <div class="input-group-addon"><input type="checkbox">
                     <h3> Please be aware that your exchange will be checked by the Book-Keeper!</h3>
