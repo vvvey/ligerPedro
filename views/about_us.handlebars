@@ -8,22 +8,28 @@
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
                 <a class="navbar-brand page-scroll" href="#page-top">Liger Digital Currency</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
+            </div>            
+               
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
+                    
+                        
                     <li>
-                        <a class="page-scroll" href="#about">About Us</a>
+                        <a href="#about">About Us</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#services">Exchanging System</a>
+                        <a href="#services">Exchanging System</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#portfolio">Tutorial</a>
+                        <a href="#portfolio">Tutorial</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact">Login</a>
+                    {{#if user}}
+                        <a href="/logout">Logout</a>
+                    {{else}}
+                        <a href="#" onclick="signinGoogle()">Login via Google</a>
+                    {{/if}}
+                        
                     </li>
                 </ul>
             </div>
@@ -33,22 +39,19 @@
     </nav>
 
     <header>
-        <div class="header-content" style="background: transparent;">
+        <div class="header-content">
             <div class="header-content-inner">
-                <h1 id="homeHeading">LIGER DIGITAL CURRENCY</h1>
-                <hr>
-                <p>Liger Learning Center</p>
-        </div>
-      </div>
+                <h1 class="text-left">About Us</h1>
+                <br>
+                <div style="width:80%;height:60%;border:2px solid #FFF;"><span>We are a group made up of 10 students and a facilitator from the Liger Digital Currency Exploration whose intention is to construct a digital system of exchanging our own Liger currency called Pedros (LCU). We spent 14 weeks developing our digital system. Every part of the system, including the currency itself, will be online. In spite of calling it Liger Digital Currency, this system is only circulating in the Senior Cohort at first, not everywhere in Liger. The Senior students will have their personal account and an account for each apartment. They will be utilizing this system for exchanging and transferring money online, which are also the two main features of the system. Students can transfer their money from an account to another account online. The transferring system is for the students to acquire food and pay for their maintenance, electricity, water, and more. In order to make the system function, we need to have a system for exchanging the money from dollars/riels to Pedros and transfer it into their accounts.</span></div>
             </div>
         </div>
     </header>
-      
     <aside class="bg-dark">
         <div class="container text-center">
             <div class="call-to-action">
                 <h2>LIGER DIGITAL CURRENCY</h2>
-                <a href="http://www.ligerlearning.org/">@Copyrights Liger Learning Center!</a>
+                <a href="http://www.ligerlearning.org/" class="btn btn-default btn-xl sr-button">@Copyrights Liger Learning Center!</a>
             </div>
         </div>
     </aside>
@@ -65,8 +68,19 @@
 
     <!-- Theme JavaScript -->
     <script src="/js/creative.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+    <script>
+            var auth0 = new Auth0({
+                domain: '{{env.AUTH0_DOMAIN}}',
+                clientID: '{{env.AUTH0_CLIENT_ID}}',
+                callbackURL: '{{env.AUTH0_CALLBACK_URL}}'
+            });
+
+            function signinGoogle(){
+                console.log("hello")
+                auth0.signin({
+                    connection: 'google-oauth2',
+                });
+            }
         </script>
 
 
