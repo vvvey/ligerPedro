@@ -8,15 +8,7 @@
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
                 <a class="navbar-brand page-scroll" href="#page-top">Liger Digital Currency</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="navbar-header">
-                {{#if user}}
-                    <p class="navbar-brand page-scroll">Welcome! {{user.displayName}}</p>
-                {{/if}}
-            </div>
-            
+            </div>            
                
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
@@ -52,7 +44,10 @@
                 <h1 id="homeHeading">LIGER DIGITAL CURRENCY</h1>
                 <hr>
                 <p>Liger Learning Center</p>
-                <a href="#about" class="btn btn-primary btn-xl page-scroll">About Us</a>
+                <hr>
+                {{#if user}}
+                    <h2 class="header-content-inner">Welcome! {{user.displayName}}</h2>
+                {{/if}}
             </div>
         </div>
     </header>
