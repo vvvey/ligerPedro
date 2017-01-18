@@ -1,7 +1,7 @@
 <body id="page-top">
 
   <!--Head-->
-  {{> footer}}
+  {{> navigation}}
 
   <!--Body-->
   <div class="center-body">
@@ -12,22 +12,20 @@
         <table class="table">
           <thead class="thead-inverse">
             <tr>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Amount (P)</th>
-              <th>Person</th>
-              <th>Email</th>
+            {{#each columns}}
+              <th>{{this.name}}</th>
+            {{/each}}
             </tr>
           </thead>
           
             <tbody>
-          {{#each results}}
+          {{#each data}}
             <tr>
-              <td>{{this.date}}</td>
               <td>{{this.status}}</td>
               <td>{{this.amount}}</td>
               <td>{{this.person}}</td>
               <td>{{this.email}}</td>
+              <td>{{this.date}}</td>
             </tr>
           {{/each}}
            </tbody>
@@ -35,7 +33,5 @@
       </div>
     </div>
   </div>
-
-  <!--Tail-->
-  {{> footer}}
+{{> footer}}
 </body>

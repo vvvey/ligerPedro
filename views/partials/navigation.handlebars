@@ -6,8 +6,9 @@
           <a class="navbar-brand animate" href="#">LIGER DIGITAL CURRENCY</a>
         </div>
       </div>
+  <div class="bsa-apiads hidden-sm hidden-xs"></div>
+      {{#if user}}
 
-      <div class="bsa-apiads hidden-sm hidden-xs"></div>
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -18,24 +19,27 @@
               <li><a href="/transfer">Transfer</a></li>
               <li><a href="/exchange">Exchange</a></li>
               <li><a href="/history">History</a></li>
-              <li><a href="#" id="nav-setting">Setting</a></li>
-              <li><a href="#" id="nav-sign-out">Log Out</a></li>
+              <li><a href="/setting" id="nav-setting">Setting</a></li>
+              <li><a href="/logout" id="nav-sign-out">Log Out</a></li>
             </ul>
           </li>
 
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="glyphicon glyphicon-leaf" style="transform:scale(1.5,1.5);"></span>
+              <img src="{{user.picture}}" class="img-circle" style="transform:scale(1.5,1.5);" width="25px"/>
+              
             </a>
 
-            <ul class="dropdown-menu">
-              <li class="text-center"><a href="#">{{user.displayName}}</a></li>
+            <ul class="dropdown-menu btn-success">
+              <img src="lang-logo.png" class="img-text-center img-circle">
+              <li class="text-center"><a href="/transfer">{{user.displayName}}</a></li>
             </ul>
           </li>
 
         </ul>
-      </div>
-
+      
+      {{/if}}
+</div>
       <div class="bootsnipp-search">
         <div class="container">
             <div class="input-group">

@@ -8,7 +8,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <script src="https://cdn.auth0.com/w2/auth0-7.6.1.min.js"></script>
-    <title>Liger Digital Currency</title>
+    {{#if title}}
+        <title>LCU - {{title}}</title>
+    {{else}}
+        <title>Liger Digital Currency</title>
+    {{/if}}
 
     <!-- Bootstrap Core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type=text/css>
@@ -23,8 +27,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.auth0.com/w2/auth0-7.6.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
     
     
     <!-- Plugin CSS -->
@@ -35,8 +38,6 @@
 
     <!--CSS code at /public/css/main.css-->
     <link rel="stylesheet" href="/css/main.css">
-
-
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
