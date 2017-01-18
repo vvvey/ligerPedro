@@ -12,20 +12,20 @@
           </ul>
           <div class="tab-content">
             <div id="ex_p_d" class="tab-pane fade in active">
-              <form class="form-inline">
+              <form class="form-inline" method=post action="/exchange_confirmation">
                 <div class="input-group">
                     <div class="input-group-addon">P</div>
-                    <input type="number" class="form-control" id="exampleInputAmount" placeholder="Amount">
+                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount">
                 </div>
                 <div class="input-group">
                     <div class="input-group-addon">$</div>
-                    <input type="number" class="form-control" id="exampleInputAmount" placeholder="Result">
+                    <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
                 </div>
                 <br>
                 <br>
                 <div class="input-group">
                   <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-                  <textarea rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></textarea>
+                  <input type="textarea" name="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></input>
                 </div>
                 </br>        
                 </br>
@@ -60,3 +60,28 @@
     <!--Tail-->
     {{> footer}}
 </body>
+
+<script>
+/*
+$("#amount").change(function(){
+    $("#result").val($("#amount").val());
+});
+*/
+
+$('#amount').each(function() {
+   var elem = $(this);
+
+   // Save current value of element
+   elem.data('oldVal', elem.val());
+
+   // Look for changes in the value
+   elem.bind("propertychange change click keyup input paste", function(event){
+      // If value has changed...
+      if (elem.data('oldVal') != elem.val()) {
+       // Updated stored value
+        elem.data('oldVal', elem.val());
+        $("#result").val($("#amount").val());
+     }
+   });
+ });
+</script>
