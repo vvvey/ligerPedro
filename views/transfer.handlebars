@@ -20,8 +20,10 @@
 
                      <div class="input-group">
                         <div class="input-group-addon">@</div>
-                        <input type="text" class="form-control" name="recipient" placeholder="Account">
-                     </div>                             
+                        <input type="text" class="form-control" name="recipient" id="userInput" placeholder="Account">
+                     </div>
+                 
+                               
                 </div>
               </br>
               </br>
@@ -41,4 +43,22 @@
     $.validate({
         modules : 'date, security'
     });
+
+function myFunction() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("userInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("allUser");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
 </script>   
