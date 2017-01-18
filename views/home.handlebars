@@ -7,26 +7,37 @@
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand page-scroll" href="#page-top">LIGER DIGITAL CURRENCY</a>
-            </div>         
+                <a class="navbar-brand page-scroll" href="#page-top">Liger Digital Currency</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="navbar-header">
+                {{#if user}}
+                    <p class="navbar-brand page-scroll">Welcome! {{user.displayName}}</p>
+                {{/if}}
+            </div>
+            
                
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">        
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        
                     <li>
-                        <a class="page-scroll" href="#About_Us">About Us</a>
+                        <a href="#about">About Us</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#Exchanging_System">Exchanging System</a>
+                        <a href="#services">Exchanging System</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#Tutorial">Tutorial</a>
+                        <a href="#portfolio">Tutorial</a>
                     </li>
                     <li>
                     {{#if user}}
-                        <a class="page-scroll" href="/logout">Logout</a>
+                        <a href="/logout">Logout</a>
                     {{else}}
                         <a href="#" onclick="signinGoogle()">Login via Google</a>
-                    {{/if}}    
+                    {{/if}}
+                        
                     </li>
                 </ul>
             </div>
@@ -41,12 +52,7 @@
                 <h1 id="homeHeading">LIGER DIGITAL CURRENCY</h1>
                 <hr>
                 <p>Liger Learning Center</p>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="header-content-inner">
-                {{#if user}}
-                    <p class="header-content-inner"><h2>Welcome! {{user.displayName}}</h2></p>
-                {{/if}}
-                </div>
+                <a href="#about" class="btn btn-primary btn-xl page-scroll">About Us</a>
             </div>
         </div>
     </header>
