@@ -71,7 +71,9 @@ router.get('/user_histories', ensureLoggedIn , function (request, response) {
   });
 });
 
-
+router.get('/about_us', ensureLoggedIn, function(req, res) {
+  res.render('about_us');
+});
 
 router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
@@ -104,7 +106,7 @@ router.get('/callback',
     failureRedirect: '/logout'
   }),
   function(req, res) {
-    res.redirect('/');
+    res.redirect('/transfer');
   });
 
 module.exports = router;
