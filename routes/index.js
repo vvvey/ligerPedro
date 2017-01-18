@@ -113,6 +113,10 @@ router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
 });
 
+router.get('/about_us', function(req,res){
+  res.render('about_us');
+});
+
 router.get('/exchange', function(req,res){
   res.render('exchange', {user: req.user});
 });
@@ -160,8 +164,6 @@ router.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
-
-
 
 router.post('/transfer_confirmation', function(req, res) { 
     res.render('transfer_confirmation', {recipient: req.body.recipient, amount: req.body.amount});
