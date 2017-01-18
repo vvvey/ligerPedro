@@ -52,13 +52,6 @@ router.get('/', function(request, response){
   });
 });
 
-
-router.get('/transfer', function(req, res) {
-  console.log(req.user)
-  res.render('transfer', {user: req.user, title: 'Transfer'});
-});
-
-
 router.get('/test', function(req, res) {
   res.render('module', {
     recipient : 'Visal Sao',
