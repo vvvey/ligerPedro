@@ -47,16 +47,18 @@ router.get('/', function(request, response){
         {console.error(err); response.send("Error " + err);}
       else
         {
-          console.log(request.user);
+          //console.log(request.user);
           response.render('home', {results: result.rows, user: request.user, env: env});}
     });
   });
 });
 
+
 router.get('/transfer', function(req, res) {
   console.log(req.user)
   res.render('transfer', {user: req.user, title: 'Transfer'});
 });
+
 
 router.get('/test', function(req, res) {
   res.render('module', {
@@ -76,6 +78,7 @@ router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
 router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
   res.render('exchange_confirmation');
 });
+
 
 router.get('/db', ensureLoggedIn, function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
@@ -108,6 +111,22 @@ router.get('/history', ensureLoggedIn,function(request, response){
   });
 });
 
+router.get('/transfer', ensureLoggedIn, function (request, response) {
+  pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {
+    client.query("SELECT budget FROM account where email = '" + request.user.emails[0].value + "'", function(err,result) { 
+      done();
+      if (err)
+        { 
+          console.error(err); response.send("Error" + err); 
+        }
+      else 
+      { 
+        response.render('transfer', {budget: result.rows}); 
+      }
+    })
+  })
+});
+
 
 router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
@@ -120,6 +139,7 @@ router.get('/about_us', function(req,res){
 router.get('/exchange', function(req,res){
   res.render('exchange', {user: req.user});
 });
+
 
 router.get('/exchange_list', function(req,res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -139,8 +159,7 @@ router.get('/exchange_list', function(req,res){
         
       }
     });
-  
-})
+  })
 });
 
 router.get('/setting', ensureLoggedIn, function(req, res){
@@ -165,12 +184,35 @@ router.get('/logout', function(req, res){
   res.redirect('/');
 });
 
+<<<<<<< HEAD
 router.post('/transfer_confirmation', function(req, res) { 
     res.render('transfer_confirmation', {recipient: req.body.recipient, amount: req.body.amount});
+=======
+
+router.post('/transfer_confirmation', function(req, res) {
+    pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {
+    client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+      done();
+      if (err)
+        { 
+          console.error(err); res.send("Error" + err); 
+        }
+      else 
+      { 
+        res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount}); 
+      }
+    })
+  }) 
+>>>>>>> 86577e22f7cd86f53906a9940ce4bd76b2660ef8
 });
 
 router.post('/transfer_success', function(req, res) {
   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
 });
+
+router.post('/exchange_confirmation', function(req, res) {
+  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
+});
+
 
 module.exports = router;
