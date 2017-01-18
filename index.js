@@ -25,11 +25,13 @@ var strategy = new Auth0Strategy({
   });
 
 
-passport.use(strategy);
 
+passport.use(strategy);
+var fake_account = require('./fake')
 var routes = require('./routes/index');
 var user = require('./routes/user');
 
+app.use(fake_account);
 // This can be used to keep a smaller payload
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -56,7 +58,6 @@ app.use('/', routes);
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
-
 
 app.use(express.static('public/'));
 
