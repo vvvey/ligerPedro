@@ -4,13 +4,12 @@ var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 //PREPARE 
+var lala = [];
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
-
-//Handlebars.registerPartial('myPartial', 'users');
 
 router.get('/', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -26,8 +25,21 @@ router.get('/', function(request, response){
   });
 });
 
-router.get('/transfer', ensureLoggedIn, function(req, res) {
-  res.render('transfer', {user: req.user, title: 'Transfer'});
+router.get('/transfer', ensureLoggedIn, function(request, response) {
+  lala = [request.user.emails[0].value];
+  pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
+    client.query("PREPARE amount (TEXT, DECIMAL) AS \
+     SELECT * FROM account WHERE email: $1;\
+      EXECUTE amount('" + lala + "')", function(err, result){
+      done();
+      if(err) {
+        console.error(err); response.send("Error " + err);
+      }else{
+        console.log(request.user);
+        response.render('transfer', {user: request.user, title: 'Transfer', data: result.rows});
+      }
+    });
+  });
 });
 
 router.get('/test', function(req, res) {
@@ -62,9 +74,9 @@ router.get('/db', ensureLoggedIn, function (request, response) {
   });
 });
 
-router.get('/history', ensureLoggedIn , function (request, response) {
+router.get('/user_history', ensureLoggedIn , function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err,client,done) {
-    client.query('SELECT * FROM exchange_logs where ', function(err, result) {
+    client.query('SELECT * FROM exchange_logs', function(err, result) {
       done();
       if (err)
         { console.error(err); response.send("Error " + err); }
@@ -81,7 +93,7 @@ router.get('/history', ensureLoggedIn , function (request, response) {
     });
   });
 });
-var lala = []
+
 
 router.get('/history', ensureLoggedIn,function(request, response){
   lala = [request.user.emails[0].value];
@@ -105,7 +117,6 @@ router.get('/exchanging_system', function(req,res){
 });
 
 router.get('/exchange', function(req,res){
-<<<<<<< HEAD
   res.render('exchange', {user: req.user});
 });
 
@@ -118,10 +129,7 @@ router.get('/setting', ensureLoggedIn, function(req, res){
 });
 
 router.get('/exchange', function(req, res){
-  res.render('exchange', {user: req.user});
-=======
   res.render('exchange', {user: req.user, title: 'Exchange'});
->>>>>>> f11cdf78cd61afe59fdb6ba5854480ab901676ed
 });
 
 router.get('/login',
