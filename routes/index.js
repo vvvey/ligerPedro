@@ -53,13 +53,6 @@ router.get('/', function(request, response){
   });
 });
 
-
-router.get('/transfer', function(req, res) {
-  console.log(req.user)
-  res.render('transfer', {user: req.user, title: 'Transfer'});
-});
-
-
 router.get('/test', function(req, res) {
   res.render('module', {
     recipient : 'Visal Sao',
@@ -70,10 +63,6 @@ router.get('/test', function(req, res) {
 router.get('/transfer_success', ensureLoggedIn, function(req,res){
   res.render('transfer_success');
 }); 
-
-router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
-  res.render('transfer_confirmation');
-});
 
 router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
   res.render('exchange_confirmation');
@@ -120,8 +109,8 @@ router.get('/transfer', ensureLoggedIn, function (request, response) {
           console.error(err); response.send("Error" + err); 
         }
       else 
-      { 
-        response.render('transfer', {budget: result.rows}); 
+      {
+        response.render('transfer', {budget: result.rows,user: request.user}); 
       }
     })
   })
@@ -130,10 +119,6 @@ router.get('/transfer', ensureLoggedIn, function (request, response) {
 
 router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
-});
-
-router.get('/exchange', function(req,res){
-  res.render('exchange', {user: req.user});
 });
 
 

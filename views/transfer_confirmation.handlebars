@@ -48,7 +48,7 @@
         <div class="container text-center" id="win-transfer">
           <h1 class="h1">Transfer Confirmation</h1>
           </br>
-          <button button="button" class="btn btn-primary">Your Current Budget <span class="badge">P{{#each budget}} {{this.budget}}{{/each}}</span></button>
+          <button button="button" class="btn btn-primary" disabled>Your budget <span class="badge" size={{budget.length}}> P{{#each budget}} {{this.budget}}{{/each}}</span></button>
           <br>
           <br>
             <h2> Are you sure that you want to transfer <input type="text" value={{amount}} name="amount" readonly="true" size={{amount.length}}> to <input type ="badge" value={{recipient}} name="recipient" readonly="true" size={{recipient.length}}>??</span></h2>
