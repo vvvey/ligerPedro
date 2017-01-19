@@ -3,7 +3,7 @@ var fake_account = function(req, res, next) {
  displayName: 'Sreyneat',
  id: 'google-oauth2|103126281815949004359',
  name: { familyName: 'Vey', givenName: 'Vuthy' },
- emails: [ { value: 'vuthy.v@ligercambodia.org' } ],
+ emails: [ { value: 'meas.v@ligercambodia.org' } ],
  picture: 'https://lh3.googleusercontent.com/-_K5tTEkSx7A/AAAAAAAAAAI/AAAAAAAABOs/RwqSzZzapGY/photo.jpg',
  locale: 'en',
  nickname: 'vuthy.v',
