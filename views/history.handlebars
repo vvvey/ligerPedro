@@ -1,37 +1,76 @@
 <body id="page-top">
-
-  <!--Head-->
-  {{> navigation}}
+    <!--Head-->
+    {{> navigation}}
 
   <!--Body-->
-  <div class="center-body">
-    <div class="container" id="win-history">
+  <div id="center-body">
+    <h2 class="h2 text-center"><b>Histories</b></h2>
 
-      <div class="table-responsive">
-        <table class="table">
-          <thead class="thead-inverse">
-            <p>{{user._json.email}}</p>
-            <p><h1 align="center"><b>Transfer Logs</b></h1></p>
-            <tr>
-            {{#each columns1}}
-              <th>{{this.name}}</th>
-            {{/each}}
-            </tr>
-           
-            {{#each results1}}
-              <tr>
-                <td>{{this.date}}</td>
-                <td>{{this.sender}}</td>
-                <td>{{this.recipient}}</td>
-                <td>{{this.amount}}</td>
-                <td>{{this.resulting_budget}}</td>               
-              </tr>
-            {{/each}} 
-          </thead>
-        </table>
+    <div class="container text-center">
+      <ul class="nav nav-pills nav-justified btn-lg">
+        <li class="active">
+          <a data-toggle="pill" href="#transfer_his">Transfer</a>
+        </li>
+        <li>
+          <a data-toggle="pill" href="#exchange_his">Exchange</a>
+        </li>
+
+      </ul>
+      <div class="tab-content">
+        <div class="win-history tab-pane fade in active" id="transfer_his">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class="thead-inverse">
+                <tr>
+                {{#each columns1}}
+                  <th>{{this.name}}</th>
+                {{/each}}   
+                </tr>
+               
+                {{#each data1}}
+                  <tr>
+                    <td>{{this.date}}</td>
+                    <td>{{this.sender}}</td>
+                    <td>{{this.recipient}}</td>
+                    <td>{{this.amount}}</td>
+                    <td>{{this.resulting_budget}}</td> 
+                    <td>{{this.who}}</td>               
+                  </tr>
+                {{/each}} 
+              </thead>
+            </table>
+          </div>
+        </div>
+
+        <div class="win-history tab-pane fade" id="exchange_his">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class="thead-inverse">
+                <tr>
+                {{#each columns2}}
+                  <th>{{this.name}}</th>
+                {{/each}}   
+                </tr>
+               
+                {{#each data2}}
+                  <tr>
+                    <td>{{this.date}}</td>
+                    <td>{{this.amount}}</td>
+                    <td>{{this.approval}}</td>
+                    <td>{{this.description}}</td>
+                    <td>{{this.resulting_budget}}</td> 
+                    <td>{{this.exchanging_types}}</td> 
+                    <td>{{this.sender}}</td>               
+                  </tr>
+                {{/each}} 
+              </thead>
+            </table>
+          </div>
+        </div>
       </div>
-
     </div>
   </div>
-{{> footer}}
+
+  <!--Tail-->
+  {{> footer}}
 </body>

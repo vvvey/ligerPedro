@@ -152,20 +152,30 @@ router.get('/history', ensureLoggedIn,function(request, response){
 });*/
 
 router.get('/history', ensureLoggedIn,function(request, response){
-  console.log(request.user.emails[0].value)
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("PREPARE history_query1 (TEXT) AS\
       SELECT * FROM transfer_logs WHERE sender = $1;\
-      EXECUTE history_query1 ('" + request.user.emails[0].value + "');\
+      EXECUTE history_query1 ('"+ request.user.emails[0].value +"');\
       DEALLOCATE PREPARE history_query1", function(err1, result1) {
         done();
         if(err1){
           console.error(err1); 
           response.send("Error " + err1);
         }else{
+          client.query("PREPARE history_query2 (TEXT) AS\
+      SELECT * FROM exchange_list WHERE email = $1;\
+      EXECUTE history_query2 ('"+ request.user.emails[0].value +"');\
+      DEALLOCATE PREPARE history_query2", function(err2, result2) {
+        done();
+        if(err2){
+          console.error(err2);
+          response.send("Error " + err2);
+        }else{
           console.log(result1);
-          response.render('history', {columns1: result1.fields, data1: result1.rows, user:request.user});
+          response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows, user:request.user});
         }
+      });
+      }
     });
   });
 });
