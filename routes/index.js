@@ -140,7 +140,11 @@ router.get('/exchange', function(req,res){
 });
 
 router.post('/exchange_confirmation', function(req,res){
-  res.render('exchange', {user: req.user});
+  res.render('exchange', {amount: req.body.amount,
+                          result: req.body.result,
+                          reason: req.body.reason,
+                          exchange_type: req.body.exchange_type,
+                          user: req.user});
 });
 
 router.get('/exchange_list', function(req,res){
@@ -156,11 +160,9 @@ router.get('/exchange_list', function(req,res){
         res.send("Error " + err);
       }else{
         if(result.rows[0].role == 'RE'){
-          
           res.render('exchange_list', {user: req.user});
-
         } else {
-          res.render('notFound')
+          res.render('notFound');
         }
         
       }
