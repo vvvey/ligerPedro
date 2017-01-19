@@ -23,8 +23,7 @@ router.get('/login',
       }
       res.render('login', {env: env, title: 'Login', message: alert_message});
     }
- 
-  });
+ });
 router.get('/callback',
   passport.authenticate('auth0', {
     failureRedirect: '/logout'
@@ -61,7 +60,7 @@ router.get('/test', function(req, res) {
 });
 
 router.get('/transfer_success', ensureLoggedIn, function(req,res){
-  res.render('transfer_success');
+  res.render('transfer');
 }); 
 
 router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
@@ -121,21 +120,38 @@ router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
 });
 
+router.get('/about_us', function(req,res){
+  res.render('about_us');
+});
+
+router.get('/exchange', function(req,res){
+  res.render('exchange', {user: req.user});
+});
+
+router.post('/exchange_confirmation', function(req,res){
+  res.render('exchange', {amount: req.body.amount,
+                          result: req.body.result,
+                          reason: req.body.reason,
+                          exchange_type: req.body.exchange_type,
+                          user: req.user});
+});
 
 router.get('/exchange_list', function(req,res){
+  var email = req.user.emails[0].value
+  var userName = req.user._json.name;
+
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM account \
-      WHERE username='meas.v@ligercambodia.org'", function(err, result) {
+                  WHERE email='"+ email +"'", function(err, result) {
       done();
       if(err){
         console.error(err); 
         res.send("Error " + err);
       }else{
-        console.log(result.rows[0].role)
         if(result.rows[0].role == 'RE'){
           res.render('exchange_list', {user: req.user});
         } else {
-          res.render('notFound')
+          res.render('notFound');
         }
         
       }
@@ -164,7 +180,6 @@ router.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
-
 
 router.post('/transfer_confirmation', function(req, res) {
     pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {

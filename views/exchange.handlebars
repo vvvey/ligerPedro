@@ -4,84 +4,65 @@
 
     <!--Body-->
     <div id="center-body">
+    <form class="form-inline" method="post" action="/exchange_comfirmation">
         <div class="container text-center" id="win-exchange">
           <h1 class="h1">Exchanging Money</h1>
-          <ul class="nav nav-pills nav-justified btn-lg">
-            <li  class="active"><a data-toggle="pill" href="#ex_p_d"><span class="btn-lg">$</span> Pedro-Dollar</a></li>
-            <li><a data-toggle="pill" href="#ex_d_p"><span class="btn-lg">P</span>  Dollar-Pedro</a></li>
-          </ul>
-          <div class="tab-content">
-            <div id="ex_p_d" class="tab-pane fade in active">
-              <form class="form-inline" method=post action="/exchange_confirmation">
+
+
+                <div class="form-group">       
+                    <div class="col-sm-12 col-md-12">
+                        <div class="input-group">
+                            <div id="radioBtn" class="btn-group">
+                                <a class="btn btn-primary btn-lg active" data-toggle="exchange-type" data-title="Y"><span class="btn-lg">P</span> Pedro-Dollar<span class="btn-lg"> $</span></a>
+                                <a class="btn btn-primary btn-lg notActive" data-toggle="exchange-type" data-title="N"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span></a>
+                            </div>
+                            <input type="hidden" name="exchange-type" id="happy">
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+                <br/>
+
                 <div class="input-group">
                     <div class="input-group-addon">P</div>
-                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount">
+                    <input type="number" class="form-control" id="amount" placeholder="Amount">
                 </div>
                 <div class="input-group">
                     <div class="input-group-addon">$</div>
-                    <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
+                    <input type="number" class="form-control" id="result" placeholder="Result">
                 </div>
                 <br>
                 <br>
                 <div class="input-group">
                   <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-                  <input type="textarea" name="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></input>
+                  <textarea id="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></textarea>
                 </div>
                 </br>        
                 </br>
                 <button class="btn btn-submit btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Exchange</button>
-                </br>
-                </br>
-              </form>
-            </div>
-
-            <div id="ex_d_p" class="tab-pane fade">
-              <form class="form-inline">
-                <div class="input-group">
-                    <div class="input-group-addon">$</div>
-                    <input type="number" class="form-control" id="exampleInputAmount" placeholder="Amount">
                 </div>
-
-                <div class="input-group">
-                    <div class="input-group-addon">P</div>
-                    <input type="number" class="form-control" id="exampleInputAmount" placeholder="Result">
-                </div>
-                </br>
-                </br>
-                <button class="btn btn-submit btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Exchange</button>
-                </br>
-                </br>
-              </form>
-            </div>
+             
+            </form>
           </div>
         </div>
     </div>
 
     <!--Tail-->
     {{> footer}}
+    
+    <script type="text/javascript">
+         $('#radioBtn a').on('click', function(){
+        var sel = $(this).data('title');
+        var tog = $(this).data('toggle');
+   
+
+        $('#'+tog).prop('value', sel);
+        
+        $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
+        $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+
+    })
+
+    </script>
 </body>
-
-<script>
-/*
-$("#amount").change(function(){
-    $("#result").val($("#amount").val());
-});
-*/
-
-$('#amount').each(function() {
-   var elem = $(this);
-
-   // Save current value of element
-   elem.data('oldVal', elem.val());
-
-   // Look for changes in the value
-   elem.bind("propertychange change click keyup input paste", function(event){
-      // If value has changed...
-      if (elem.data('oldVal') != elem.val()) {
-       // Updated stored value
-        elem.data('oldVal', elem.val());
-        $("#result").val($("#amount").val());
-     }
-   });
- });
-</script>

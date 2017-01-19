@@ -2,8 +2,13 @@ var fake_account = function(req, res, next) {
   req.user = { provider: 'google-oauth2',
  displayName: 'chanmalika',
  id: 'google-oauth2|103126281815949004359',
+<<<<<<< HEAD
  name: { familyName: 'Rith', givenName: 'chanmalika' },
  emails: [ { value: 'chanmalika.r@ligercambodia.org' } ],
+=======
+ name: { familyName: 'Vey', givenName: 'Vuthy' },
+ emails: [ { value: 'meas.v@ligercambodia.org' } ],
+>>>>>>> 187bacce2ffcf4aab7e9f7b44661300005ccefde
  picture: 'https://lh3.googleusercontent.com/-_K5tTEkSx7A/AAAAAAAAAAI/AAAAAAAABOs/RwqSzZzapGY/photo.jpg',
  locale: 'en',
  nickname: 'chanmalika',
