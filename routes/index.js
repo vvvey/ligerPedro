@@ -133,11 +133,17 @@ router.get('/exchange', function(req,res){
 });
 
 router.post('/exchange_confirmation', function(req,res){
-  res.render('exchange', {amount: req.body.amount,
-                          result: req.body.result,
-                          reason: req.body.reason,
-                          exchange_type: req.body.exchange_type,
-                          user: req.user});
+  req.exchangeLog = {
+    amount: req.body.amount,
+    result: req.body.result,
+    reason: req.body.reason,
+    exchangeType: req.body.exchangeType
+  }
+  res.render('exchange_confirmation',   {amount: req.body.amount,
+                                        result: req.body.result,
+                                        reason: req.body.reason,
+                                        exchange_type: req.body.exchangeType,
+                                        user: req.user});
 });
 
 router.get('/exchange_list', function(req,res){
@@ -204,10 +210,5 @@ router.post('/transfer_confirmation', function(req, res) {
 router.post('/transfer_success', function(req, res) {
   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
 });
-
-router.post('/exchange_confirmation', function(req, res) {
-  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
-});
-
 
 module.exports = router;

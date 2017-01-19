@@ -1,102 +1,16 @@
 <body id="page-top">
     <!--Head-->
-    <nav class="navbar" id="mainNav" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <div class="animbrand">
-              <a class="navbar-brand animate" href="#">LIGER DIGITAL CURRENCY</a>
-            </div>
-          </div>
-          <div class="bsa-apiads hidden-sm hidden-xs"></div>
-            <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown active">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
-                </a>
+    {{> navigation}}
 
-                <ul class="dropdown-menu">
-                  <li><a href="#" id="nav-transfer">Transfer</a></li>
-                  <li><a href="#" id="nav-exchange">Exchange</a></li>
-                  <li><a href="#" id="nav-history">History</a></li>
-                  <li><a href="#" id="nav-setting">Setting</a></li>
-                  <li><a href="#" id="nav-sign-out">Log Out</a></li>
-                </ul>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="glyphicon glyphicon-king" style="transform:scale(1.5,1.5);"></span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div class="bootsnipp-search">
-            <div class="container">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-danger" type="reset">
-                      <span class="glyphicon glyphicon-search"></span>
-                    </button>
-                  </span>
-                </div>
-            </div>
-          </div>
-        </div>
-    </nav>
-    
     <!--Body-->
     <div id="center-body">
-        <div class="container text-center" id="win-transfer">
-          <h1 class="h1">Exchange Confirmation</h1>
-          </br>
-          <button button="button" class="btn btn-primary">Your Current Budget <span class="badge">P250</span>
-          </button>
-          <br>
-          <br>
-          <h2>You have exchanged <input type="text" value={{amount}} name="amount" readonly size={{amount.length}}></span> from your account.</h2>
-          <br>
-          <form class="form-inline" form class="form-inline" method=post action="/exchange_success">
-                <div class="input-group">
-                    <div class="input-group-addon"><input type="checkbox">
-                    <h3> Please be aware that your exchange will be checked by the Book-Keeper!</h3>
-                </div>
-              </div>
-          <br>
-          <br>
-          <button type="button" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Confirm <span class="glyphicon glyphicon-send"></span></button>
+        <div class="container text-center" id="win-exchange">
+          <h1 class="h1">Exchanging Money</h1>
+            
+            <h2>Are you sure you want to exchange {{amount}}</h2>
         </div>
-        <br>
-        <br>
     </div>
 
 
- <!--Tail-->
-    <aside class="bg-dark">
-        <div class="container-fluid text-center">
-            <h3 class="h3"><a href="/" class="none">LIGER DIGITAL CURRENCY</a></h4>
-            </br>  
-            <div class="row">
-                <div class="col-lg-4 col-sm-4 col-xs-4">
-                    <a href="#" class="none">
-                        <span class="fa fa-4x fa-newspaper-o"></span>
-                        <h5>TUTORIAL</h4>
-                    </a>
-                </div>
-
-                <div class="col-lg-4 col-sm-4 col-xs-4">
-                    <a href="/about_us" class="none">
-                        <span class="fa fa-users fa-4x "></span>
-                        <h5>ABOUT US</h4>
-                    </a>
-                </div>
-
-                <div class="col-lg-4 col-sm-4 col-xs-4">
-                    <a href="#" class="none">
-                        <span class="fa fa-comments fa-4x"></span>
-                        <h5>CONTACT US</h4>
-                    </a>
-                </div>
-            </div>  
-        </div>
-    </aside>
+    {{> footer}}
 </body>
