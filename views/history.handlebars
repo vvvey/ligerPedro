@@ -6,31 +6,31 @@
   <!--Body-->
   <div class="center-body">
     <div class="container" id="win-history">
-      <h1 class="h1 text-center">History</h1>
 
       <div class="table-responsive">
         <table class="table">
           <thead class="thead-inverse">
+            <p>{{user._json.email}}</p>
+            <p><h1 align="center"><b>Transfer Logs</b></h1></p>
             <tr>
-            {{#each columns}}
+            {{#each columns1}}
               <th>{{this.name}}</th>
             {{/each}}
             </tr>
+           
+            {{#each results1}}
+              <tr>
+                <td>{{this.date}}</td>
+                <td>{{this.sender}}</td>
+                <td>{{this.recipient}}</td>
+                <td>{{this.amount}}</td>
+                <td>{{this.resulting_budget}}</td>               
+              </tr>
+            {{/each}} 
           </thead>
-          
-            <tbody>
-          {{#each data}}
-            <tr>
-              <td>{{this.status}}</td>
-              <td>{{this.amount}}</td>
-              <td>{{this.person}}</td>
-              <td>{{this.email}}</td>
-              <td>{{this.date}}</td>
-            </tr>
-          {{/each}}
-           </tbody>
-          </table>
+        </table>
       </div>
+
     </div>
   </div>
 {{> footer}}
