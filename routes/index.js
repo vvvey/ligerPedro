@@ -7,7 +7,6 @@ var pg = require('pg');
 var alert_message;
 
 //PREPARE 
-var lala = [];
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
@@ -52,6 +51,7 @@ router.get('/', function(request, response){
     });
   });
 });
+
 
 router.get('/transfer', ensureLoggedIn, function(request, response) {
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
@@ -123,32 +123,7 @@ router.get('/user_history', ensureLoggedIn , function (request, response) {
   });
 });
 
-/*
-router.get('/history', ensureLoggedIn,function(request, response){
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("PREPARE history_query1 (TEXT) AS\
-      SELECT * FROM transfer_logs WHERE sender = $1;\
-      EXECUTE history_query1 ('" + request.user.emails[0].value + "');\
-      DEALLOCATE PREPARE history_query1", function(err1, result1) {
-        done();
-        if(err1){
-          console.error(err1); 
-          response.send("Error " + err1);
-        }else{
-          client.query("SELECT * FROM exchange_logs WHERE exchanging_types = 'Pedro'", function(err2, result2) {
-              done();
-                if(err2){
-                  console.error(err2);
-                  response.send("Error " + err2);
-                } else{
-                  console.log(request.user);
-                  response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows});
-                }
-          });
-        }
-    });
-  });
-});*/
+
 
 router.get('/history', ensureLoggedIn,function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -258,5 +233,12 @@ router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
 
+router.get('/transfer-test', function (request, response) {
+  response.render('transfer-test');
+});
+
+router.post('/transfer-test', function (request, response) {
+  
+});
 
 module.exports = router;
