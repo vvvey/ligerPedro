@@ -85,10 +85,6 @@ router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
   res.render('transfer');
 });
 
-router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
-  res.render('exchange_confirmation');
-});
-
 
 router.get('/db', ensureLoggedIn, function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
