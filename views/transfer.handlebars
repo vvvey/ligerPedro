@@ -15,15 +15,13 @@
                 <div class="form-group">
                      <div class="input-group">
                         <div class="input-group-addon">P</div>
-                        <input data-validation="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required">
+                        <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="100" step="any" required>
                      </div>
 
                      <div class="input-group">
                         <div class="input-group-addon">@</div>
-                        <input type="text" class="form-control" name="recipient" id="userInput" placeholder="Account">
-                     </div>
-                 
-                               
+                        <input type="email" class="form-control" name="recipient" id="userInput" data-validation="email" placeholder="Account" required>
+                     </div>       
                 </div>
               </br>
               </br>
@@ -39,26 +37,12 @@
 </body>
 <script src="js/jquery.min.js"></script>
 <script src="js/form-validator/jquery.form-validator.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 <script>
     $.validate({
         modules : 'date, security'
+        lang : 'en'
     });
-
-function myFunction() {
-    var input, filter, ul, li, a, i;
-    input = document.getElementById("userInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("allUser");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-
-        }
-    }
 }
 
 </script>   
