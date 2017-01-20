@@ -13,10 +13,18 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="input-group">
                             <div id="radioBtn" class="btn-group">
+                            <!--
                                 <a class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="pedro-dollar"><span class="btn-lg">P</span> Pedro-Dollar<span class="btn-lg"> $</span></a>
                                 <a class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="dollar-pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span></a>
+                            -->
+                                <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="dollar-pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
+                                    <input type="radio" name="exchangeType" value="dollar-pedro" checked></label>
+
+                                <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="pedro-dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
+                                    <input type="radio" name="exchangeType" value="pedro-dollar">
+                                </label>
                             </div>
-                            <input type="hidden" name="exchangeType" id="happy">
+
                         </div>
                     </div>
                 </div>
@@ -75,15 +83,18 @@
     {{> footer}}
     
     <script type="text/javascript">
-         $('#radioBtn a').on('click', function(){
+         $('#radioBtn label').on('click', function(){
         var sel = $(this).data('title');
         var tog = $(this).data('toggle');
+        console.log("sel is " + sel);
+        console.log("tog is " +tog);
    
 
         $('#'+tog).prop('value', sel);
         
-        $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
-        $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+        $('label[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
+
+        $('label[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
 
     })
 

@@ -81,8 +81,8 @@ router.get('/transfer_success', ensureLoggedIn, function(req,res){
   res.render('transfer');
 }); 
 
-router.get('/transfer_confirmation', ensureLoggedIn, function(req,res){
-  res.render('transfer');
+router.get('/exchange_approving', ensureLoggedIn, function(req,res){
+  res.render('exchange');
 });
 
 
@@ -188,17 +188,41 @@ router.get('/exchange', function(req,res){
 });
 
 router.post('/exchange_approving', function(req,res){
-  req.exchangeLog = {
-    amount: req.body.amount,
+  var exchangeLog = {
+    timeCreated: Date.now(),
+    person: req.user._json.name,
+    email: req.user._json.email,
+    type: req.body.exchangeType,
+    amount: req.body.amount ,
     result: req.body.result,
     reason: req.body.reason,
-    exchangeType: req.body.exchangeType
+    re: null,
+    approved: null,
+    timeApproved: null,
+    exchanged: null,
+    timeExchanged:null      
   }
-  res.render('exchange_confirmation',   {amount: req.body.amount,
-                                        result: req.body.result,
-                                        reason: req.body.reason,
-                                        exchangeType: req.body.exchangeType,
-                                        user: req.user});
+
+  var query = "PREPARE newExchange (TEXT, numeric, numeric, TEXT) AS \
+  INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason)\
+  VALUES (CURRENT_TIMESTAMP(2), '" + exchangeLog.person +"', '" + exchangeLog.email +"',\
+  $1, $2::float8::numeric::money, $3::float8::numeric::money, $4);\
+  EXECUTE newExchange('"+ exchangeLog.type+"', '"+ exchangeLog.amount+"', '"+ exchangeLog.result+"', '"+ exchangeLog.reason+"');"
+
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query(query, function(err, result) {
+      done();
+      if(err) {
+        console.log(err);
+      } else {
+        res.render('exchange_approving',   {user: req.user});
+      }
+    })
+  })
+
+
+  
+  
 });
 
 router.get('/exchange_list', function(req,res){
@@ -225,10 +249,6 @@ router.get('/exchange_list', function(req,res){
 
 router.get('/setting', ensureLoggedIn, function(req, res){
   res.render('setting', {user: req.user});
-});
-
-router.get('/exchange', function(req, res){
-  res.render('exchange', {user: req.user, title: 'Exchange'});
 });
 
 router.get('/logout', function(req, res){
