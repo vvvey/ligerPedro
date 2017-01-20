@@ -15,21 +15,74 @@
                 <div class="form-group">
                      <div class="input-group">
                         <div class="input-group-addon">P</div>
-                        <input data-validation="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required">
+                        <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="100" step="any" required>
                      </div>
 
                      <div class="input-group">
                         <div class="input-group-addon">@</div>
-                        <input type="text" class="form-control" name="recipient" id="userInput" placeholder="Account">
+                        <input type="email" class="form-control awesomplete" name="recipient" id="userInput" data-validation="email" placeholder="Account" list="liger_email" required>
+                        <datalist id="liger_email">
+                          <option>chhoeu.c@ligercambodia.org</option>
+                          <option>chimean.h@ligercambodia.org</option>
+                          <option>dalin.s@ligercambodia.org</option>
+                          <option>david.p@ligercambodia.org</option>
+                          <option>davith.c@ligercambodia.org</option>
+                          <option>hongly.p@ligercambodia.org</option>
+                          <option>kangnaneat.s@ligercambodia.org</option>
+                          <option>kanha.s@ligercambodia.org</option>
+                          <option>ketya.n@ligercambodia.org</option>
+                          <option>kimseng.s@ligercambodia.org</option>
+                          <option>lux.s@ligercambodia.org</option>
+                          <option>makara.p@ligercambodia.org</option>
+                          <option>malika.r@ligercambodia.org</option>
+                          <option>marady.h@ligercambodia.org</option>
+                          <option>maya.y@ligercambodia.org</option>
+                          <option>menghouth.s@ligercambodia.org</option>
+                          <option>mengthong.l@ligercambodia.org</option>
+                          <option>nilroth.l@ligercambodia.org</option>
+                          <option>niron.c@ligercambodia.org</option>
+                          <option>panharith.y@ligercambodia.org</option>
+                          <option>puthea.h@ligercambodia.org</option>
+                          <option>rattanak.s@ligercambodia.org</option>
+                          <option>rika.c@ligercambodia.org</option>
+                          <option>rithy.h@ligercambodia.org</option>
+                          <option>samady.s@ligercambodia.org</option>
+                          <option>samnang.h@ligercambodia.org</option>
+                          <option>samnang.n@ligercambodia.org</option>
+                          <option>seyha.k@ligercambodia.org</option>
+                          <option>sokea.s@ligercambodia.org</option>
+                          <option>soliday.y@ligercambodia.org</option>
+                          <option>somphors.y@ligercambodia.org</option>
+                          <option>sophat.s@ligercambodia.org</option>
+                          <option>sopheak.t@ligercambodia.org</option>
+                          <option>sopor.t@ligercambodia.org</option>
+                          <option>souyeth.k@ligercambodia.org</option>
+                          <option>sovannary.r@ligercambodia.org</option>
+                          <option>sovannou.p@ligercambodia.org</option>
+                          <option>kangnaneat.s@ligercambodia.org</option>
+                          <option>sreyneang.l@ligercambodia.org</option>
+                          <option>sreyneang.o@ligercambodia.org</option>
+                          <option>sreynith.s@ligercambodia.org</option>
+                          <option>sreypich.k@ligercambodia.org</option>
+                          <option>theara.k@ligercambodia.org</option>
+                          <option>thiny.t@ligercambodia.org</option>
+                          <option>vattey.l@ligercambodia.org</option>
+                          <option>venghour.t@ligercambodia.org</option>
+                          <option>visal.s@ligercambodia.org</option>
+                          <option>vitou.n@ligercambodia.org</option>
+                          <option>vornsar.s@ligercambodia.org</option>
+                          <option>vuthy.v@ligercambodia.org</option>
+                        </datalist>
                      </div>
-                 
-                               
+
+
                 </div>
               </br>
               </br>
               <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
               </input>
             </form>
+              
         </div>
     </div>
     
@@ -39,26 +92,19 @@
 </body>
 <script src="js/jquery.min.js"></script>
 <script src="js/form-validator/jquery.form-validator.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+<link rel="stylesheet" href="awesomplete.css" />
+<script src="awesomplete.js" async></script>
 <script>
+
     $.validate({
         modules : 'date, security'
+        lang : 'en'
     });
-
-function myFunction() {
-    var input, filter, ul, li, a, i;
-    input = document.getElementById("userInput");
-    filter = input.value.toUpperCase();
-    ul = document.getElementById("allUser");
-    li = ul.getElementsByTagName("li");
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
-        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-        } else {
-            li[i].style.display = "none";
-
-        }
-    }
-}
-
+new Awesomplete(inputReference, {
+  minChars: 3,
+  maxItems: 15,
+  ...
+});
 </script>   
+
