@@ -1,42 +1,6 @@
 <body id="page-top">
 
-    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top">Liger Digital Currency</a>
-            </div>            
-               
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    
-                        
-                    <li>
-                        <a class="page-scroll" href="#about_us">About Us</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#exchanging_system">Exchanging System</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#tutorial">Tutorial</a>
-                    </li>
-                    <li>
-                    {{#if user}}
-                        <a href="/logout">Logout</a>
-                    {{else}}
-                        <a href="#" onclick="signinGoogle()">Login via Google</a>
-                    {{/if}}
-                        
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
+ {{> home_nav}}
 
     <header>
         <div class="header-content">
@@ -64,7 +28,7 @@
             <div class="row">
                 <div class="col-lg-3 col-md-6 text-center">
                     <div class="service-box">
-                        <a href="#about_us">
+                        <a href=/about_us>
                         <i class="fa fa-4x fa-diamond text-primary sr-icons"></i>
                         <h3>About Us</h3>
                         <p class="text-muted">Know more about who we are.</p>
@@ -96,7 +60,7 @@
                         {{#if user}}
                         <a href="/logout"><h3>Logout</h3></a>
                         {{else}}
-                        <a href="#" onclick="signinGoogle()">Login via Google</a>
+                        <a href="#" onclick="signinGoogle()"><h3>Login via Google</h3></a>
                         {{/if}}
                         <p class="text-muted">Visit your account to do your business.</p>
                         </a>
@@ -109,7 +73,7 @@
         <div class="container text-center">
             <div class="call-to-action">
                 <h2>LIGER DIGITAL CURRENCY</h2>
-                <a href="http://www.ligerlearning.org/" class="btn btn-default btn-xl sr-button">@Copyrights Liger Learning Center!</a>
+                <a href="http://www.ligerlearning.org/" class="btn btn-default btn-xl sr-button" target="_blank">Liger Learning Center!</a>
             </div>
         </div>
     </aside>
