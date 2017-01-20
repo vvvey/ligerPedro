@@ -56,7 +56,7 @@ router.get('/', function(request, response){
 router.get('/transfer', ensureLoggedIn, function(request, response) {
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
-     SELECT * FROM account WHERE email = $1;\
+     SELECT budget FROM account WHERE email = $1;\
       EXECUTE account_table('" + request.user.emails[0].value + "');\
       DEALLOCATE PREPARE account_table", function(err, result){
       done();
@@ -64,7 +64,7 @@ router.get('/transfer', ensureLoggedIn, function(request, response) {
         console.error(err); response.send("Error " + err);
       }else{
         console.log(request.user);
-        response.render('transfer', {user: request.user, title: 'Transfer', data: result.rows});
+        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows});
       }
     });
   });
