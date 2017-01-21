@@ -7,6 +7,7 @@ var pg = require('pg');
 var alert_message;
 
 //PREPARE 
+var lala = [];
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
@@ -22,21 +23,22 @@ router.get('/login',
         alert_message = 'You need to login before you can access!'
       }
       res.render('login', {env: env, title: 'Login', message: alert_message});
-    }
- });
+   }
+});
+
 router.get('/callback',
   passport.authenticate('auth0', {
     failureRedirect: '/logout'
   }),
   function(req, res) {
     res.redirect(req.session.returnTo || '/');
-  });
+});
 
 router.get('*', function (req, res, next) {
   alert_message = null;
   req.session.returnTo = null;
   next();
-})
+});
 
 router.get('/', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -48,6 +50,23 @@ router.get('/', function(request, response){
         {
           //console.log(request.user);
           response.render('home', {results: result.rows, user: request.user, env: env});}
+    });
+  });
+});
+
+router.get('/transfer', ensureLoggedIn, function(request, response) {
+  pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
+    client.query("PREPARE account_table(TEXT) AS \
+     SELECT budget FROM account WHERE email = $1;\
+      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      DEALLOCATE PREPARE account_table", function(err, result){
+      done();
+      if(err) {
+        console.error(err); response.send("Error " + err);
+      }else{
+        console.log(request.user);
+        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows});
+      }
     });
   });
 });
@@ -67,6 +86,10 @@ router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
   res.render('exchange_confirmation');
 });
 
+router.get('/exchange_approving', ensureLoggedIn, function(req,res){
+  res.render('exchange');
+});
+
 
 router.get('/db', ensureLoggedIn, function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
@@ -80,41 +103,87 @@ router.get('/db', ensureLoggedIn, function (request, response) {
   });
 });
 
-var lala = []
 
-router.get('/history', ensureLoggedIn,function(request, response){
-  lala = [request.user.emails[0].value];
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("PREPARE history_query (text) AS \
-      SELECT * FROM user_history WHERE email = $1;\
-      EXECUTE history_query ('" + lala + "')", function(err, result) {
+router.get('/user_history', ensureLoggedIn , function (request, response) {
+  pg.connect(process.env.PEDRO_db_URL, function(err,client,done) {
+    client.query('SELECT * FROM exchange_logs', function(err, result) {
       done();
-      if(err){
-        console.error(err); 
-        response.send("Error " + err);
-      }else{
-        response.render('history', {columns: result.fields, data: result.rows});
-      }
+      if (err)
+        { console.error(err); response.send("Error " + err); }
+      else
+        { 
+          client.query('SELECT * FROM transfer_logs', function(err2, result2) {
+            done();
+              if (err2)
+              { console.error(err2); response.send("Error " + err2); }
+              else
+              { response.render('user_history', {columns: result.fields, results:result.rows, columns2: result2.fields, results2: result2.rows, title: 'History'}); }
+          });
+        }
     });
   });
 });
 
-router.get('/transfer', ensureLoggedIn, function (request, response) {
-  pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {
-    client.query("SELECT budget FROM account where email = '" + request.user.emails[0].value + "'", function(err,result) { 
-      done();
-      if (err)
-        { 
-          console.error(err); response.send("Error" + err); 
+/*
+router.get('/history', ensureLoggedIn,function(request, response){
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("PREPARE history_query1 (TEXT) AS\
+      SELECT * FROM transfer_logs WHERE sender = $1;\
+      EXECUTE history_query1 ('" + request.user.emails[0].value + "');\
+      DEALLOCATE PREPARE history_query1", function(err1, result1) {
+        done();
+        if(err1){
+          console.error(err1); 
+          response.send("Error " + err1);
+        }else{
+          client.query("SELECT * FROM exchange_logs WHERE exchanging_types = 'Pedro'", function(err2, result2) {
+              done();
+                if(err2){
+                  console.error(err2);
+                  response.send("Error " + err2);
+                } else{
+                  console.log(request.user);
+                  response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows});
+                }
+          });
         }
+<<<<<<< HEAD
       else 
       {
         response.render('transfer', {budget: result.rows,user: request.user}); 
-      }
-    })
-  })
-});
+=======
+    });
+  });
+});*/
 
+router.get('/history', ensureLoggedIn,function(request, response){
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("PREPARE history_query1 (TEXT) AS\
+      SELECT * FROM transfer_logs WHERE sender = $1;\
+      EXECUTE history_query1 ('"+ request.user.emails[0].value +"');\
+      DEALLOCATE PREPARE history_query1", function(err1, result1) {
+        done();
+        if(err1){
+          console.error(err1); 
+          response.send("Error " + err1);
+        }else{
+          client.query("PREPARE history_query2 (TEXT) AS\
+      SELECT * FROM exchange_list WHERE email = $1;\
+      EXECUTE history_query2 ('"+ request.user.emails[0].value +"');\
+      DEALLOCATE PREPARE history_query2", function(err2, result2) {
+        done();
+        if(err2){
+          console.error(err2);
+          response.send("Error " + err2);
+        }else{
+          console.log(result1);
+          response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows, user:request.user});
+        }
+      });
+      }
+    });
+  });
+});
 
 router.get('/exchanging_system', function(req,res){
   res.render('exchanging_system');
@@ -128,18 +197,43 @@ router.get('/exchange', function(req,res){
   res.render('exchange', {user: req.user});
 });
 
-router.post('/exchange_confirmation', function(req,res){
-  res.render('exchange', {amount: req.body.amount,
-                          result: req.body.result,
-                          reason: req.body.reason,
-                          exchange_type: req.body.exchange_type,
-                          user: req.user});
+router.post('/exchange_approving', function(req,res){
+  var exchangeLog = {
+    timeCreated: Date.now(),
+    person: req.user._json.name,
+    email: req.user._json.email,
+    type: req.body.exchangeType,
+    amount: req.body.amount ,
+    result: req.body.result,
+    reason: req.body.reason,
+    re: null,
+    approved: null,
+    timeApproved: null,
+    exchanged: null,
+    timeExchanged:null      
+  }
+
+  var query = "PREPARE newExchange (TEXT, numeric, numeric, TEXT) AS \
+  INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason)\
+  VALUES (CURRENT_TIMESTAMP(2), '" + exchangeLog.person +"', '" + exchangeLog.email +"',\
+  $1, $2::float8::numeric::money, $3::float8::numeric::money, $4);\
+  EXECUTE newExchange('"+ exchangeLog.type+"', '"+ exchangeLog.amount+"', '"+ exchangeLog.result+"', '"+ exchangeLog.reason+"');"
+
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query(query, function(err, result) {
+      done();
+      if(err) {
+        console.log(err);
+      } else {
+        res.render('exchange_approving',   {user: req.user});
+      }
+  })
 });
+}); 
 
 router.get('/exchange_list', function(req,res){
   var email = req.user.emails[0].value
   var userName = req.user._json.name;
-
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM account \
                   WHERE email='"+ email +"'", function(err, result) {
@@ -153,7 +247,6 @@ router.get('/exchange_list', function(req,res){
         } else {
           res.render('notFound');
         }
-        
       }
     });
   })
@@ -162,19 +255,6 @@ router.get('/exchange_list', function(req,res){
 router.get('/setting', ensureLoggedIn, function(req, res){
   res.render('setting', {user: req.user});
 });
-
-router.get('/exchange', function(req, res){
-  res.render('exchange', {user: req.user, title: 'Exchange'});
-});
-
-router.get('/login',
-  function(req, res){
-  	if(req.user){
-		  res.render('notFound');
-  	} else {
-  		res.render('login', {env: env, title: 'Login'});
-  	}
-  });
 
 router.get('/logout', function(req, res){
   req.logout();
@@ -237,10 +317,8 @@ router.post('/transfer_success', function(req, res) {
 });
 
 
-
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
-
 
 module.exports = router;
