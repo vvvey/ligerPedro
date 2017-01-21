@@ -236,7 +236,7 @@ router.post('/exchange_list/approve/:id',function(req, res, next) {
   var status = req.body.status;
   var re = req.user._json.given_name;
 
-  var query = "UPDATE exchange_list SET re = '"+ re +"', approved = '"+ status +"' \
+  var query = "UPDATE exchange_list SET re = '"+ re +"', approved = '"+ status +"', timeapproved = CURRENT_TIMESTAMP(2) \
   WHERE id = '"+ exchangeReq_id +"';"
 
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
