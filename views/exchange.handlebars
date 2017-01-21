@@ -77,11 +77,9 @@ $(document).ready(function() {
     var amount_btn = document.getElementById('checkValidate');
     var result = document.getElementById('result');
     var reason = document.getElementById('reason');
-
     amount.addEventListener("keyup", function(event) {
         result.value = amount.value * 1.00;
     });
-
     amount_btn.addEventListener("click", function(event) {
         if (amount.validity.valueMissing) {
             amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
