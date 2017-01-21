@@ -13,7 +13,7 @@ var fake_account = function(req, res, next) {
       connection: 'google-oauth2',
       isSocial: true } ],
  _json: 
-  { email: 'vuthy.v@ligercambodia.org',
+  { email: 'meas.v@ligercambodia.org',
     name: 'Vuthy Vey',
     given_name: 'Vuthy',
     family_name: 'Vey',
