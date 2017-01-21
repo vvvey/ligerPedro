@@ -231,21 +231,30 @@ router.post('/exchange_approving', function(req,res){
 });
 });
 
-router.get('/exchange_list/approve/:id',function(req, res, next) {
+router.post('/exchange_list/approve/:id',function(req, res, next) {
   var exchangeReq_id = req.params.id;
-  if(exchangeReq_id === undefined){
-    console.log(exchangeReq_id)
-    res.redirect('/exchange_list');
-  }else {
-    console.log("exchange Id is " + exchangeReq_id);
-    res.redirect('/exchange_list')
-  }
+  var status = req.body.status;
+  var re = req.user._json.given_name;
+
+  var query = "UPDATE exchange_list SET re = '"+ re +"', approved = '"+ status +"' \
+  WHERE id = '"+ exchangeReq_id +"';"
+
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query(query, function(err, result){
+      if (err) {
+        console.log(err)
+      } else {
+        res.redirect('/exchange_list')
+      }
+    })
+  })
+  
 });
   
 router.get('/exchange_list', function(req,res){
   var email = req.user.emails[0].value;
   var userName = req.user._json.name;
-  var exchangeListQuery = "SELECT id, timeCreated, person, type, amount, result, reason FROM exchange_list \
+  var exchangeListQuery = "SELECT * FROM exchange_list \
   ORDER BY timecreated DESC;";
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM account WHERE email = '"+ email+"'", function(err, result) {
