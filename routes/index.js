@@ -198,8 +198,45 @@ router.post('/transfer_confirmation', function(req, res) {
 });
 
 router.post('/transfer_success', function(req, res) {
-  res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+  pg.connect(process.env.PEDRO_db_URL, function (err,client, done) { 
+    client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+      done();
+      if (err)
+        { 
+          console.error(err); res.send("Error" + err); 
+        }
+      else 
+      {
+        var new_budget = result.rows[0].budget - req.body.amount;
+        client.query("update account set budget = (" + new_budget + ") where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+          done();
+          if (err)
+            { 
+              console.error(err); res.send("Error" + err); 
+            }
+          else 
+            { 
+            client.query("insert into transfer_logs (amount, sender, recipient, sender_resulting_budget) \
+              values (" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', '" + new_budget + "')", function(err,result) { 
+
+              done();
+                 if (err)
+                  { 
+                    console.error(err); res.send("Error" + err); 
+                  }
+                 else 
+                  { 
+                   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+                  }
+              });
+            }
+          });
+        }
+     });
+  });
 });
+
+
 
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
