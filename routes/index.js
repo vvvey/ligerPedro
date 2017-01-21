@@ -23,21 +23,22 @@ router.get('/login',
         alert_message = 'You need to login before you can access!'
       }
       res.render('login', {env: env, title: 'Login', message: alert_message});
-    }
- });
+   }
+});
+
 router.get('/callback',
   passport.authenticate('auth0', {
     failureRedirect: '/logout'
   }),
   function(req, res) {
     res.redirect(req.session.returnTo || '/');
-  });
+});
 
 router.get('*', function (req, res, next) {
   alert_message = null;
   req.session.returnTo = null;
   next();
-})
+});
 
 router.get('/', function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -80,6 +81,10 @@ router.get('/test', function(req, res) {
 router.get('/transfer_success', ensureLoggedIn, function(req,res){
   res.render('transfer');
 }); 
+
+router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
+  res.render('exchange_confirmation');
+});
 
 router.get('/exchange_approving', ensureLoggedIn, function(req,res){
   res.render('exchange');
@@ -142,6 +147,11 @@ router.get('/history', ensureLoggedIn,function(request, response){
                 }
           });
         }
+<<<<<<< HEAD
+      else 
+      {
+        response.render('transfer', {budget: result.rows,user: request.user}); 
+=======
     });
   });
 });*/
@@ -217,30 +227,35 @@ router.post('/exchange_approving', function(req,res){
       } else {
         res.render('exchange_approving',   {user: req.user});
       }
-    })
   })
 });
+});
 
-
-router.get('/exchange_list/approve/:id',function(req, res, next) {
+router.post('/exchange_list/approve/:id',function(req, res, next) {
   var exchangeReq_id = req.params.id;
-  if(exchangeReq_id === undefined){
-    console.log(exchangeReq_id)
-    res.redirect('/exchange_list');
-  }else {
-    console.log("exchange Id is " + exchangeReq_id);
-    res.redirect('/exchange_list')
-  }
-  
+  var status = req.body.status;
+  var re = req.user._json.given_name;
 
-})
+  var query = "UPDATE exchange_list SET re = '"+ re +"', approved = '"+ status +"' \
+  WHERE id = '"+ exchangeReq_id +"';"
+
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query(query, function(err, result){
+      if (err) {
+        console.log(err)
+      } else {
+        res.redirect('/exchange_list')
+      }
+    })
+  })
+  
+});
   
 router.get('/exchange_list', function(req,res){
-  var email = req.user.emails[0].value
+  var email = req.user.emails[0].value;
   var userName = req.user._json.name;
-  var exchangeListQuery = "SELECT id, timeCreated, person, type, amount, result, reason FROM exchange_list \
+  var exchangeListQuery = "SELECT * FROM exchange_list \
   ORDER BY timecreated DESC;";
-
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM account WHERE email = '"+ email+"'", function(err, result) {
       if(err){
@@ -290,7 +305,47 @@ router.post('/transfer_confirmation', function(req, res) {
 });
 
 router.post('/transfer_success', function(req, res) {
-  res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+  pg.connect(process.env.PEDRO_db_URL, function (err,client, done) { 
+    client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+      done();
+      if (err)
+        { 
+          console.error(err); res.send("Error" + err); 
+        }
+      else 
+      {
+        var new_budget = result.rows[0].budget - req.body.amount;
+        client.query("update account set budget = (" + new_budget + ") where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+          done();
+          if (err)
+            { 
+              console.error(err); res.send("Error" + err); 
+            }
+          else 
+            { 
+            client.query("insert into transfer_logs (amount, sender, recipient, sender_resulting_budget) \
+              values (" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', '" + new_budget + "')", function(err,result) { 
+
+              done();
+                 if (err)
+                  { 
+                    console.error(err); res.send("Error" + err); 
+                  }
+                 else 
+                  { 
+                   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+                  }
+              });
+            }
+          });
+        }
+     });
+  });
+});
+
+
+router.post('/exchange_confirmation', function(req, res) {
+  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
 
 module.exports = router;

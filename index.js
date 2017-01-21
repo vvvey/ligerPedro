@@ -7,7 +7,20 @@ var session = require('express-session');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+var hbs = exphbs.create({
+  defaultLayout: 'main',
+  // Specify helpers which are only registered on this instance.
+  helpers: {
+    ifCond: function(v1, v2, options) {
+      if (v1 == v2) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    }
+  }
+});
+
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('port', (process.env.PORT || 5000));
 
@@ -25,11 +38,11 @@ var strategy = new Auth0Strategy({
   });
 
 
-
 passport.use(strategy);
 var fake_account = require('./fake')
 var routes = require('./routes/index');
 var user = require('./routes/user');
+
 
 app.use(fake_account);
 // This can be used to keep a smaller payload
