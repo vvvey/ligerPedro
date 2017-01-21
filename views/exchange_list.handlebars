@@ -1,6 +1,36 @@
 {{> navigation}}
 
-
+<div class="tab-content">
+        <div class="win-history tab-pane fade in active" id="transfer_his">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class="thead-inverse">
+                <tr>
+                <th>Time Created</th>
+                <th>Person</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Result</th>
+                <th>Reason</th>
+                <th>Approve</th>
+                </tr>
+               
+                {{#each requestRow}}
+                  <tr>
+                    <td>{{this.timecreated}}</td>
+                    <td>{{this.person}}</td>
+                    <td>{{this.type}}</td>
+                    <td>{{this.amount}}</td>
+                    <td>{{this.result}}</td> 
+                    <td>{{this.reason}}</td>  
+                    <td><form method="get" action="/exchange_list/approve/{{this.id}}"><button type="submit">Yes</button><button type="submit">No</button>
+                    </form></td>             
+                  </tr>
+                {{/each}} 
+              </thead>
+            </table>
+          </div>
+        </div>
 
 
 

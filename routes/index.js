@@ -193,7 +193,7 @@ router.get('/about_us', function(req,res){
   res.render('about_us');
 });
 
-router.get('/exchange', function(req,res){
+router.get('/exchange', ensureLoggedIn, function(req,res){
   res.render('exchange', {user: req.user});
 });
 
@@ -229,21 +229,39 @@ router.post('/exchange_approving', function(req,res){
       }
   })
 });
-}); 
+});
 
+router.get('/exchange_list/approve/:id',function(req, res, next) {
+  var exchangeReq_id = req.params.id;
+  if(exchangeReq_id === undefined){
+    console.log(exchangeReq_id)
+    res.redirect('/exchange_list');
+  }else {
+    console.log("exchange Id is " + exchangeReq_id);
+    res.redirect('/exchange_list')
+  }
+});
+  
 router.get('/exchange_list', function(req,res){
-  var email = req.user.emails[0].value
+  var email = req.user.emails[0].value;
   var userName = req.user._json.name;
+  var exchangeListQuery = "SELECT id, timeCreated, person, type, amount, result, reason FROM exchange_list \
+  ORDER BY timecreated DESC;";
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM account \
-                  WHERE email='"+ email +"'", function(err, result) {
-      done();
+    client.query("SELECT * FROM account WHERE email = '"+ email+"'", function(err, result) {
       if(err){
         console.error(err); 
         res.send("Error " + err);
       }else{
-        if(result.rows[0].role == 'RE'){
-          res.render('exchange_list', {user: req.user});
+        if(result.rows[0].role == 're'){
+          client.query(exchangeListQuery, function(err2, result2) {
+            done();
+            if (err2) {
+              console.log(err2)
+            } else {
+              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user});
+            }
+          })
         } else {
           res.render('notFound');
         }
