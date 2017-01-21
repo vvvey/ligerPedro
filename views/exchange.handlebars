@@ -1,112 +1,101 @@
 <body id="page-top">
     <!--Head-->
     {{> navigation}}
-
     <!--Body-->
     <div id="center-body">
-      <form class="form-inline" method="post" action="/exchange_approving">
-        <div class="container text-center" id="win-exchange">
-          <h1 class="h1" style='margin-bottom: 40px'>Exchanging Money</h1>
-            <div class="form-group">       
-              <div class="col-sm-12 col-md-12">
-                <div class="input-group">
-                  <div id="radioBtn" class="btn-group">
-                    <!-- label for Dollar-Pedro -->
-                    <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="dollar-pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
-                      <input type="radio" name="exchangeType" value="dollar-pedro" checked></label>
-                    <!-- label for pedro to dollar -->
-                    <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="pedro-dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
-                      <input type="radio" name="exchangeType" value="pedro-dollar">
-                    </label>
-                  </div>
+        <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
+            <div class="container text-center" id="win-exchange">
+                <h1 class="h1">Exchanging Money</h1>
+                <div class="form-group">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="input-group">
+                            <div id="radioBtn" class="btn-group">
+                                <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="dollar-pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
+                            <input type="radio" name="exchangeType" value="dollar-pedro" checked></label>
+                            <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="pedro-dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
+                            <input type="radio" id="exchangeType" name="exchangeType" value="pedro-dollar">
+                        </label>
+                    </div>
                 </div>
-              </div>
             </div>
-            <br/>
-            <br/>
-
-            <!-- Form that can put the amount -->  
-            <div class="input-group">
-              <div class="input-group-addon">P</div>
-                <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="any" min="0" required>
-            </div>
-
-            <!-- Result that show after the amount input -->
-            <div class="input-group">
-              <div class="input-group-addon">$</div>
-                <input type="number" class="form-control" id="result" name="result" placeholder="Result">
-            </div>
-            </br>
-            </br>
-
-            <!-- Textarea for user to comment on the reason why their exchange -->
-            <div class="input-group">
-              <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-                <textarea name="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></textarea>
-            </div>
-            </br>
-            </br>
-
-            <!-- Button trigger modal --> 
-            <button id="checkValidate" class="btn btn-submit btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5"> Exchange </button> 
-            </br>
-            </br>
-            <!-- Modal --> 
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
-              <div class="modal-dialog" role="document"> 
-                <div class="modal-content"> 
-                  <div class="modal-header"> 
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
-                      <h4 class="modal-title" id="myModalLabel">Exchange confirmation</h4> 
-                  </div> 
-                  <div class="modal-body"> Are you sure that you want to exchange (amount of money) Pedro to Dollar with the reason below.
-                  </div> 
-                  <div class="modal-footer"> 
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> 
-                    <button type="submit" class="btn btn-primary" id="exchangeAgree">Okay</button> 
-                  </div> 
-                </div> 
-              </div> 
-            </div>
-          </form>
         </div>
-        </br>
-        </br>
-
-    <!--Tail-->
-    {{> footer}}
-
-  <script type="text/javascript">
-    $('#radioBtn label').on('click', function(){
-      var sel = $(this).data('title');
-      var tog = $(this).data('toggle');
-      console.log("sel is " + sel);
-      console.log("tog is " +tog);
-      $('#'+tog).prop('value', sel);
-      $('label[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
-      $('label[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+        <br/>
+        <br/>
+        <div class="input-group">
+            <div class="input-group-addon">P</div>
+            <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon">$</div>
+            <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
+        </div>
+        <br>
+        <br>
+        <div class="input-group">
+            <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
+            <textarea name="reason" id="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!" required></textarea>
+        </div>
+        <br>
+        <br>
+        <!-- Button trigger modal -->
+        <button id="checkValidate" class="btn btn-primary btn-lg">
+        Exchange
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h3 id="confirmSMS"></h3> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+<!--Tail-->
+{{> footer}}
+<script type="text/javascript">
+$('#radioBtn label').on('click', function() {
+    var sel = $(this).data('title');
+    var tog = $(this).data('toggle');
+    $('#' + tog).prop('value', sel);
+    $('label[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
+    $('label[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
+})
+$(document).ready(function() {
+    var amount = document.getElementById('amount');
+    var amount_btn = document.getElementById('checkValidate');
+    var result = document.getElementById('result');
+    var reason = document.getElementById('reason');
+    amount.addEventListener("keyup", function(event) {
+        result.value = amount.value * 1.00;
     });
-
-    $(document).ready(function(){
-      var amount = document.getElementById("amount");
-      var btn = document.getElementById("checkValidate")
-      btn.addEventListener("click", function (event) {
-      if (amount.validity.rangeUnderflow || amount.value.length == 0) {
-        amount.setCustomValidity("I expect a number, {{user._json.given_name}}!");
-      } else {
-      amount.setCustomValidity(""); 
-      $("#myModal").modal("show");   
-      }
-      });
-    });
-
-    $(document).on("click", "#exchangeAgree", function(){
-       var exchangeAmount = $("#amount").val();
-       alert("user exchange " + exchangeAmount);
-    });
-  </script>
-</body>
-<!-- CDN for modal -->
+    amount_btn.addEventListener("click", function(event) {
+        if (amount.validity.valueMissing) {
+            amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
+        } else if (amount.validity.rangeUnderflow) {
+            amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
+        } else if (amount.validity.stepMismatch) {
+            amount.setCustomValidity("Please enter your currency at second decimal place!");
+        } else {
+            $('#myModal').modal('toggle')
+            $("#myModal").modal("show");
+            event.preventDefault();
+        }
+    }, false);
+});
+</script>
+<!-- Modal Script -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+</body>
