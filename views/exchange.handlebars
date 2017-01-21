@@ -4,7 +4,7 @@
 
     <!--Body-->
     <div id="center-body">
-    <form class="form-inline" method="post" action="/exchange_comfirmation">
+    <form class="form-inline" method="post" action="/exchange_approving">
         <div class="container text-center" id="win-exchange">
           <h1 class="h1">Exchanging Money</h1>
 
@@ -13,10 +13,10 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="input-group">
                             <div id="radioBtn" class="btn-group">
-                                <a class="btn btn-primary btn-lg active" data-toggle="exchange-type" data-title="Y"><span class="btn-lg">P</span> Pedro-Dollar<span class="btn-lg"> $</span></a>
-                                <a class="btn btn-primary btn-lg notActive" data-toggle="exchange-type" data-title="N"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span></a>
+                                <a class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="pedro-dollar"><span class="btn-lg">P</span> Pedro-Dollar<span class="btn-lg"> $</span></a>
+                                <a class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="dollar-pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span></a>
                             </div>
-                            <input type="hidden" name="exchange-type" id="happy">
+                            <input type="hidden" name="exchangeType" id="happy">
                         </div>
                     </div>
                 </div>
@@ -26,26 +26,49 @@
 
                 <div class="input-group">
                     <div class="input-group-addon">P</div>
-                    <input type="number" class="form-control" id="amount" placeholder="Amount">
+
+                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="any" min="0" required>
+
+  
                 </div>
                 <div class="input-group">
                     <div class="input-group-addon">$</div>
-                    <input type="number" class="form-control" id="result" placeholder="Result">
+                    <input type="number" class="form-control" id="result" name="result" placeholder="Result">
                 </div>
                 <br>
                 <br>
                 <div class="input-group">
                   <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-                  <textarea id="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></textarea>
+                  <textarea name="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!"></textarea>
                 </div>
                 </br>        
                 </br>
                 <button class="btn btn-submit btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Exchange</button>
+                </br>
+                </br>
+              </form>
+            </div>
+          <form class="form-inline">
+            <div id="ex_d_p" class="tab-pane fade">
+              
+                <div class="input-group">
+                    <div class="input-group-addon">$</div>
+                    <input type="number" class="form-control" id="exampleInputAmount" placeholder="Amount">
                 </div>
-             
-            </form>
-          </div>
-        </div>
+
+                <div class="input-group">
+                    <div class="input-group-addon">P</div>
+                    <input type="number" class="form-control" id="exampleInputAmount" placeholder="Result">
+                </div>
+                </br>
+                </br>
+                <button class="btn btn-submit btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Exchange</button>
+                </br>
+                </br>
+                
+            </div>
+          </form>
+        </form>
     </div>
 
     <!--Tail-->

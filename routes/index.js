@@ -56,15 +56,23 @@ router.get('/', function(request, response){
 router.get('/transfer', ensureLoggedIn, function(request, response) {
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
-     SELECT * FROM account WHERE email = $1;\
+     SELECT budget FROM account WHERE email = $1;\
       EXECUTE account_table('" + request.user.emails[0].value + "');\
-      DEALLOCATE PREPARE account_table", function(err, result){
+      DEALLOCATE PREPARE account_table", function(err1, result1){
       done();
-      if(err) {
-        console.error(err); response.send("Error " + err);
+      if(err1) {
+        console.error(err1); response.send("Error " + err);
       }else{
-        console.log(request.user);
-        response.render('transfer', {user: request.user, title: 'Transfer', data: result.rows});
+        client.query("SELECT * FROM exchange_list", function(err2, result2) {
+            done();
+            if(err2){
+              console.error(err2);
+              response.send("Error " + err2);
+            }else{
+              console.log(request.user);
+              response.render('transfer', {user: request.user, title: 'Transfer', budget: result1.rows, emails: result2.rows});            
+            }
+        });
       }
     });
   });
@@ -166,12 +174,18 @@ router.get('/exchange', function(req,res){
   res.render('exchange', {user: req.user});
 });
 
-router.post('/exchange_confirmation', function(req,res){
-  res.render('exchange', {amount: req.body.amount,
-                          result: req.body.result,
-                          reason: req.body.reason,
-                          exchange_type: req.body.exchange_type,
-                          user: req.user});
+router.post('/exchange_approving', function(req,res){
+  req.exchangeLog = {
+    amount: req.body.amount,
+    result: req.body.result,
+    reason: req.body.reason,
+    exchangeType: req.body.exchangeType
+  }
+  res.render('exchange_confirmation',   {amount: req.body.amount,
+                                        result: req.body.result,
+                                        reason: req.body.reason,
+                                        exchangeType: req.body.exchangeType,
+                                        user: req.user});
 });
 
 router.get('/exchange_list', function(req,res){
