@@ -33,12 +33,19 @@
         <br>
         <div class="input-group">
             <div class="boxed"  style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-            <textarea name="reason" id="reason" rows="4" cols="50" placeholder="Please tell us your reasons for exchanging money!" required></textarea>
+            <div class="wrap">
+            <textarea onKeyUp="count_it()" name="reason" id="reason" rows="4" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style=" 
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; 
+    width: 100%;}" required></textarea>
+    <span id="count" class="counter"></span>
+    </div>
         </div>
         <br>
         <br>
         <!-- Button trigger modal -->
-        <button id="checkValidate" class="btn btn-primary btn-lg">
+        <button id="checkValidate" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
         Exchange
         </button>
         <!-- Modal -->
@@ -64,6 +71,29 @@
     </div>
 </form>
 </div>
+<style type="text/css">
+  .wrap {
+    position: relative;
+    display: inline-block;
+}
+.wrap span {
+    position: absolute;
+    bottom: 5px;
+    right: 0px;
+    }
+.counter{
+    background-color: #5dc991;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 5px;
+    line-height: 12px;
+    height: 14px;
+    text-align: center;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font-weight: 400;
+}
+</style>
 <!--Tail-->
 {{> footer}}
 <script type="text/javascript">
@@ -91,7 +121,10 @@ $(document).ready(function() {
       amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
     } else if (amount.validity.stepMismatch) {
       amount.setCustomValidity("Please enter your currency at second decimal place!");
-    } else {
+    } else if (reason.validity.valueMissing) {
+      reason.setCustomValidity("Please enter a reason, {{user._json.given_name}}!");
+    }
+    else {
       $('#myModal').modal('toggle')
       $("#myModal").modal("show");
       event.preventDefault();
@@ -113,6 +146,15 @@ $(document).on("click", "#checkValidate", function() {
   document.getElementById("amountExtractResult").innerHTML = exchangeAmountResult;
   document.getElementById("amountExtract").innerHTML = exchangeAmount;
 });
+
+var reasonInput = document.getElementById('reason');
+var length = reasonInput.getAttribute("maxlength");
+var allowWords = document.getElementById('count');
+allowWords.innerHTML = length;
+reasonInput.onkeyup = function () {
+  document.getElementById('count').innerHTML = (length - this.value.length);
+};
+
 </script>
 <!-- Modal Script -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
