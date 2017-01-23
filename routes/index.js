@@ -290,6 +290,10 @@ router.get('/logout', function(req, res){
   res.redirect('/');
 });
 
+router.get('/transfer_success', function(req, res){
+  res.render('transfer_success');
+});
+
 router.post('/transfer_confirmation', function(req, res) {
     pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {
     client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
@@ -316,34 +320,62 @@ router.post('/transfer_success', function(req, res) {
         }
       else 
       {
-        var new_budget = result.rows[0].budget - req.body.amount;
-        client.query("update account set budget = (" + new_budget + ") where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+        var sender_new_budget = result.rows[0].budget - req.body.amount; 
+        client.query("update account set budget = (" + sender_new_budget + ") where email = '" + req.user.emails[0].value + "'", function(err,result) { 
           done();
-          if (err)
-            { 
-              console.error(err); res.send("Error" + err); 
-            }
-          else 
-            { 
-            client.query("insert into transfer_logs (amount, sender, recipient, sender_resulting_budget, date) \
-              values (" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', '" + new_budget + "', CURRENT_TIMESTAMP(0))", function(err,result) { 
-
-              done();
                  if (err)
-                  { 
+                   { 
                     console.error(err); res.send("Error" + err); 
                   }
                  else 
                   { 
-                   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
-                  }
-              });
-            }
-          });
-        }
-     });
+                    client.query("select * from account where email = '" + req.body.recipient + "'", function(err2,result2) {
+                      done();
+                      if (err2)
+                        { 
+                          console.error(err2); res.send("Error" + err2); 
+                        }
+                      else 
+                        {
+                          var recipient_new_budget = parseInt(result2.rows[0].budget) + parseInt(req.body.amount);
+                          console.log("add these: " + req.body.amount, result2.rows[0].budget);
+                          console.log("equals: " + recipient_new_budget);
+                          console.log("recip email: " + req.body.recipient);
+
+                          client.query("update account set budget = " + recipient_new_budget + " \
+                            where email = '" + req.body.recipient + "'", function (err3,result3) {
+                            
+                            done();
+                            if (err3)
+                             { 
+                               console.error(err3); res.send("Error" + err); 
+                             }
+                               else
+                               {
+                                client.query("insert into transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
+                                values (" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', '" + sender_new_budget + "', '" + recipient_new_budget + "', CURRENT_TIMESTAMP(0))", function(err,result) { 
+                                done(); {
+                                    if (err3)
+                                      { 
+                                    console.error(err3); res.send("Error" + err3); 
+                                      }
+                                    else
+                                    {
+                                        res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+                                    }
+                              };
+                            })                       
+                      }
+                  });
+               }
+            });
+          }
+        });
+      }
+    });
   });
 });
+
 
 
 router.post('/exchange_confirmation', function(req, res) {
