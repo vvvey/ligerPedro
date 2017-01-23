@@ -5,7 +5,7 @@
 			<table class="table">
 				<thead class="thead-inverse">
 					<tr>
-						<th>Time Created</th>
+						<th>Time Requested</th>
 						<th>Person</th>
 						<th>Type</th>
 						<th>Amount</th>
@@ -16,7 +16,7 @@
 					
 					{{#each requestRow}}
 					<tr>
-						<td>{{this.timecreated}}</td>
+						<td>{{dateFormat this.timecreated}}</td>
 						<td>{{this.person}}</td>
 						<td>{{this.type}}</td>
 						<td>{{this.amount}}</td>
@@ -29,8 +29,8 @@
 								Approved by {{this.re}}
 							{{else ifCond this.approved null}}
 								<form method="post" action="/exchange_list/approve/{{this.id}}">
-								<button type="submit" name="status" value="true">Yes</button>
-								<button type="submit" name="status" value="false">No</button>
+								<button type="submit" name="status" value="true">Accept</button>
+								<button type="submit" name="status" value="false">Deny</button>
 								</form>
 							{{else}}
 								Denied by {{this.re}}
