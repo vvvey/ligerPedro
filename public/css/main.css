@@ -79,3 +79,7 @@
     color: #3276b1;
     background-color: #fff;
 }
+
+#radioBtn input[type="radio"]{
+  display: none;
+}
