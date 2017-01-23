@@ -15,6 +15,7 @@
             </div>
         </div>
     </header>
+
     <section id="services">
         <div class="container">
             <div class="row">
@@ -69,6 +70,7 @@
             </div>
         </div>
     </section>
+
     <aside class="bg-dark">
         <div class="container text-center">
             <div class="call-to-action">
@@ -77,6 +79,7 @@
             </div>
         </div>
     </aside>
+    
     <!-- jQuery -->
     <script src="/vendor/jquery/jquery.min.js"></script>
 
@@ -91,21 +94,17 @@
     <!-- Theme JavaScript -->
     <script src="/js/creative.min.js"></script>
     <script>
-            var auth0 = new Auth0({
-                domain: '{{env.AUTH0_DOMAIN}}',
-                clientID: '{{env.AUTH0_CLIENT_ID}}',
-                callbackURL: '{{env.AUTH0_CALLBACK_URL}}'
+        var auth0 = new Auth0({
+            domain: '{{env.AUTH0_DOMAIN}}',
+            clientID: '{{env.AUTH0_CLIENT_ID}}',
+            callbackURL: '{{env.AUTH0_CALLBACK_URL}}'
+        });
+
+        function signinGoogle(){
+            console.log("hello")
+            auth0.signin({
+                connection: 'google-oauth2',
             });
-
-            function signinGoogle(){
-                console.log("hello")
-                auth0.signin({
-                    connection: 'google-oauth2',
-                });
-            }
-        </script>
-
-
-
-
+        }
+    </script>
 </body>
