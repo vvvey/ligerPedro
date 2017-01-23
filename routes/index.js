@@ -64,7 +64,7 @@ router.get('/transfer', ensureLoggedIn, function(request, response) {
       if(err) {
         console.error(err); response.send("Error " + err);
       }else{
-        console.log(request.user);
+        //console.log(request.user);
         response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows});
       }
     });
@@ -77,10 +77,6 @@ router.get('/test', function(req, res) {
     amount : 30
   });
 });
-
-router.get('/transfer_success', ensureLoggedIn, function(req,res){
-  res.render('transfer');
-}); 
 
 router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
   res.render('exchange_confirmation');
@@ -176,7 +172,7 @@ router.get('/history', ensureLoggedIn,function(request, response){
           console.error(err2);
           response.send("Error " + err2);
         }else{
-          console.log(result1);
+          //console.log(result1);
           response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows, user:request.user});
         }
       });
@@ -234,10 +230,10 @@ router.post('/exchange_approving', function(req,res){
 router.get('/exchange_list/approve/:id',function(req, res, next) {
   var exchangeReq_id = req.params.id;
   if(exchangeReq_id === undefined){
-    console.log(exchangeReq_id)
+    //console.log(exchangeReq_id)
     res.redirect('/exchange_list');
   }else {
-    console.log("exchange Id is " + exchangeReq_id);
+    //console.log("exchange Id is " + exchangeReq_id);
     res.redirect('/exchange_list')
   }
 });
@@ -314,8 +310,8 @@ router.post('/transfer_success', function(req, res) {
             }
           else 
             { 
-            client.query("insert into transfer_logs (amount, sender, recipient, sender_resulting_budget) \
-              values (" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', '" + new_budget + "')", function(err,result) { 
+            client.query("insert into transfer_logs (amount, sender, recipient, sender_resulting_budget, date) \
+              values (" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', '" + new_budget + "', CURRENT_TIMESTAMP(0))", function(err,result) { 
 
               done();
                  if (err)
