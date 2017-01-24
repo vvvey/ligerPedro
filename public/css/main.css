@@ -83,3 +83,16 @@
 #radioBtn input[type="radio"]{
   display: none;
 }
+#mainNav {
+  background-color: white;
+  padding: 4px 8px 5px 4px;
+}
+
+.profile-drop {
+  background-color: #1e8bc3;
+  color: white;
+  padding: 0px 100px 0px 100px;
+}
+.profile-drop:hover {
+  color: white;
+}

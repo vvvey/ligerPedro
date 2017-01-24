@@ -67,10 +67,6 @@ router.get('/test', function(req, res) {
   });
 });
 
-router.get('/ ', ensureLoggedIn, function(req,res){
-  res.render('exchange');
-});
-
 
 router.get('/db', ensureLoggedIn, function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
@@ -121,21 +117,24 @@ router.get('/history', ensureLoggedIn,function(request, response){
 });
 
 router.get('/exchanging_system', function(req,res){
-  res.render('exchanging_system');
+    res.render('exchanging_system');
 });
 
 router.get('/about_us', function(req,res){
-  res.render('about_us');
+  res.render('about_us', {user: req.user, env: env});
 });
 
 router.get('/exchange', ensureLoggedIn, function(request,response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-    client.query("SELECT * FROM account WHERE email = ('" + request.user.emails[0].value + "')", function(err, result){
+    client.query("PREPARE account_table(TEXT) AS \
+     SELECT * FROM account WHERE email = $1;\
+      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      DEALLOCATE PREPARE account_table", function(err, result){
       done();
       if(err){
-        console.log('Error: ' + err);
+        console.error(err);
       }else{
-        response.render('exchange', {user: request.user, data: request.rows});
+        response.render('exchange', {user: request.user, data: result.rows});
       }
     });
   });
@@ -222,7 +221,7 @@ router.get('/exchange_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
-              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user});
+              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user, data: result.rows});
             }
           })
         } else {
@@ -234,7 +233,19 @@ router.get('/exchange_list', function(req,res){
 });
 
 router.get('/setting', ensureLoggedIn, function(req, res){
-  res.render('setting', {user: req.user});
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query("PREPARE account_table(TEXT) AS \
+     SELECT * FROM account WHERE email = $1;\
+      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      DEALLOCATE PREPARE account_table", function(err, result){
+      done();
+      if(err){
+        console.error(err);
+      }else{
+        response.render('setting', {user: request.user, data: result.rows});
+      }
+    });
+  });
 });
 
 router.get('/logout', function(req, res){

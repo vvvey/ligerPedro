@@ -1,62 +1,88 @@
-<nav class="navbar" id="mainNav" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
+<nav class="navbar navbar-fixed-top" id="mainNav" role="navigation">
+    <div class="container-fluid">
 
+      <div class="navbar-header">
         <div class="animbrand">
-          <a class="navbar-brand animate" href="#">LIGER DIGITAL CURRENCY</a>
+          <a class="navbar-brand animate" href="/">LIGER DIGITAL CURRENCY</a>
         </div>
       </div>
-    <ul class="nav navbar-nav navbar-right">
-    {{#each data}}
-      {{#ifCond this.role 're'}}
-        <li class="dropdown active">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
-          </a>
 
-          <ul class="dropdown-menu">
-            <li><a href="/transfer">Transfer</a></li>
-            <li><a href="/exchange">Exchange</a></li>
-            <li><a href="/history">History</a></li>
-            <li><a href="/exchange_list">Request</a></li>
-            <li><a href="/setting" id="nav-setting">Setting</a></li>
-            <li><a href="/logout" id="nav-sign-out">Log Out</a></li>
-          </ul>
-        </li>
-      {{else}}
-        <li class="dropdown active">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="/transfer">Transfer</a></li>
-            <li><a href="/exchange">Exchange</a></li>
-            <li><a href="/history">History</a></li>
-            <li><a href="/setting" id="nav-setting">Setting</a></li>
-            <li><a href="/logout" id="nav-sign-out">Log Out</a></li>
-          </ul>
-        </li>
-      {{/ifCond}}
-    {{/each}}
+      <div class="bsa-apiads hidden-sm hidden-xs"></div>
+        <ul class="nav navbar-nav navbar-right">
 
-      {{#if user}}
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="transform:scale(1.5,1.5);">
-          <img src="{{user.picture}}" class="img-circle" width="20px"/>
-        </a>
-
-        <ul class="dropdown-menu btn-success">
-          <li class="text-center"><a href="/transfer" style="transform:scale(1.5,1.5);">{{user.displayName}}</a></li>
-        </ul>
-      </li>
-      {{else}}
           <li>
-            <a href="#">
-              <span class="glyphicon glyphicon-king" style="transform:scale(1.5,1.5);"></span>
-            </a>
+            <a class="page-scroll" href="/about_us">About Us</a>
           </li>
-      {{/if}}
-    </ul>
-  </div>
-      
+
+          <li>
+            <a class="page-scroll" href="/tutorial">Tutorial</a>
+          </li>
+
+          <li>
+            {{#if user}}
+            <a href="/logout">Logout</a>
+            {{else}}
+            <a href="#" onclick="signinGoogle()">Login via Google</a>
+            {{/if}}
+          </li>
+
+
+          {{#if user}}
+            {{#each data}}
+              {{#ifCond this.role 're'}}
+                <li class="dropdown active">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
+                  </a>
+
+                  <ul class="dropdown-menu">
+                    <li><a href="/transfer">Transfer</a></li>
+                    <li><a href="/exchange">Exchange</a></li>
+                    <li><a href="/history">History</a></li>
+                    <li><a href="/exchange_list">Request</a></li>
+                    <li><a href="/setting" id="nav-setting">Setting</a></li>
+                  </ul>
+                </li>
+              {{else}}
+                <li class="dropdown active">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/transfer">Transfer</a></li>
+                    <li><a href="/exchange">Exchange</a></li>
+                    <li><a href="/history">History</a></li>
+                    <li><a href="/setting" id="nav-setting">Setting</a></li>
+                  </ul>
+                </li>
+              {{/ifCond}}
+            {{/each}}
+            <li class="dropdown">
+
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <img src='{{user.picture}}' class="img-circle" style="transform:scale(1.5,1.5);" width="20px"/>
+              </a>
+
+              <ul class="dropdown-menu profile-drop">
+                <p class="text-center"><a href="/transfer">
+                <img src="{{user.picture}}" class="img-text-center img-circle">
+                </br>
+                {{user.displayName}}
+                </a></p>
+              </ul>
+
+            </li>
+          {{else}}
+          {{/if}}
+        </ul>
+      </div> 
+
+    </div>     
 </nav>
+
+<style>
+  .navbar {
+    margin-bottom: 0;
+  }
+</style>
+
