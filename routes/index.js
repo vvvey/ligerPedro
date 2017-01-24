@@ -169,9 +169,6 @@ router.post('/exchange_list/approve/:id',function(req, res, next) {
   if(exchangeReq_id === undefined){
     //console.log(exchangeReq_id)
     res.redirect('/exchange_list');
-  }else {
-    //console.log("exchange Id is " + exchangeReq_id);
-    res.redirect('/exchange_list')
   }
   var status = req.body.status;
   var re = req.user._json.given_name;
