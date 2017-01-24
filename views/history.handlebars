@@ -65,7 +65,7 @@
                
                 {{#each data2}}
                   <tr>
-                    <td>{{this.timecreated}}</td>
+                    <td>{{dateFormat this.timecreated}}</td>
                     <td>{{this.person}}</td>
                     <td>{{this.type}}</td>
                     <td>{{this.amount}}</td> 
@@ -81,12 +81,12 @@
                           Pendding
                         {{/ifCond}}
                     </td>  
-                    <td>{{this.timeapproved}}</td>
+                    <td>{{dateFormat this.timeapproved}}</td>
                     <td></td>  
                     <td>{{#ifCond this.exchanged true}}
                           Finished
                         {{else}}
-                          Padding
+                          Pendding
                         {{/ifCond}}
                     </td>  
                     <td>{{this.timeexchanged}}</td>  
