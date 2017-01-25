@@ -28,7 +28,7 @@ router.get('/callback',
     failureRedirect: '/logout'
   }),
   function(req, res) {
-    res.redirect(req.session.returnTo || '/');
+    res.redirect(req.session.returnTo || '/transfer');
 });
 
 router.get('*', function (req, res, next) {
