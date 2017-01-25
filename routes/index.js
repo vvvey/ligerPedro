@@ -28,7 +28,7 @@ router.get('/callback',
     failureRedirect: '/logout'
   }),
   function(req, res) {
-    res.redirect(req.session.returnTo || '/');
+    res.redirect(req.session.returnTo || '/transfer');
 });
 
 router.get('*', function (req, res, next) {
@@ -53,7 +53,7 @@ router.get('/transfer', ensureLoggedIn, function(request, response) {
         console.error(err); response.send("Error " + err);
       }else{
         //console.log(request.user);
-        response.render('transfer', {user: request.user, title: 'Transfer', data: result.rows});
+        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows[0].budget, data: result.rows});
       }
     });
   });
