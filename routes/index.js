@@ -304,7 +304,8 @@ router.post('/transfer_success', function(req, res) {
                 client.query("PREPARE update_account_recipient(DECIMAL) AS\
                   UPDATE account SET budget = $1 \
                   WHERE email = '" + req.body.recipient + "';\
-                  EXECUTE update_account_recipient(" + recipient_new_budget + ");", function (err3,result3) {
+                  EXECUTE update_account_recipient(" + recipient_new_budget + ");\
+                  DEALLOCATE PREPARE update_account_recipient", function (err3,result3) {
                   done();
                   if (err3){ 
                      console.error(err3); res.send("Error" + err); 
@@ -313,7 +314,7 @@ router.post('/transfer_success', function(req, res) {
                       INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
                       VALUES ($1, $2, $3, $4, $5);\
                       EXECUTE insert_account(" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', \
-                      '" + sender_new_budget + "', '" + recipient_new_budget + "', CURRENT_TIMESTAMP(0)); DEALOLCATE PREPARE insert_account", function(err,result) { 
+                      '" + sender_new_budget + "', '" + recipient_new_budget + "', CURRENT_TIMESTAMP(0)); DEALLOCATE PREPARE insert_account", function(err,result) { 
                         done(); {
                         if (err3){ 
                           console.error(err3); res.send("Error" + err3); 
