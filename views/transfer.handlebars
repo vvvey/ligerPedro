@@ -7,7 +7,7 @@
         <div class="container text-center" id="win-transfer">
           <h1 class="h1">Transferring Money</h1>
           </br>
-          <button button="button" class="btn btn-primary">Your Current Budget <span class="badge"> P{{#each budget}} {{this.budget}}{{/each}}</span></button>
+          <button button="button" class="btn btn-primary">Your Current Budget <span class="badge"> P{{budget}}</span></button>
             </br>
             </br>
             <form class="form-inline" method=post action="/transfer_confirmation" action="/trying">
@@ -18,12 +18,14 @@
 
                      <div class="input-group">
                         <div class="input-group-addon">P</div>
-                        <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="{{#each budget}} {{this.budget}} {{/each}} step="any" required>
+                        <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="{{budget}}" step="any" id="amount" required>
                      </div>
 
                      <div class="input-group">
                         <div class="input-group-addon">@</div>
-                        <input type="email" class="form-control awesomplete" name="recipient" id="userInput" data-validation="email" placeholder="Account" list="liger_email" required>
+                        <input type="email" class="form-control awesomplete" name="recipient" id="userInput" data-validation="email" placeholder="Account" list="liger_email" pattern="chhoeu.c@ligercambodia.org|chimean.h@ligercambodia.org|dalin.s@ligercambodia.org|david.p@ligercambodia.org|davith.c@ligercambodia.org|hongly.p@ligercambodia.org|kangnaneat.s@ligercambodia.org|kanha.s@ligercambodia.org|ketya.n@ligercambodia.org|kimseng.s@ligercambodia.org|lux.s@ligercambodia.org|makara.p@ligercambodia.org|chanmalika.r@ligercambodia.org|marady.h@ligercambodia.org|maya.y@ligercambodia.org|menghouth.s@ligercambodia.org|mengthong.l@ligercambodia.org|nilroth.l@ligercambodia.org|niron.c@ligercambodia.org|panharith.y@ligercambodia.org|puthea.h@ligercambodia.org|rattanak.s@ligercambodia.org|rika.c@ligercambodia.org|rithy.h@ligercambodia.org|samady.s@ligercambodia.org|samnang.h@ligercambodia.org|samnang.n@ligercambodia.org|seyha.k@ligercambodia.org|sokea.s@ligercambodia.org|soliday.y@ligercambodia.org|somphors.y@ligercambodia.org|sophat.s@ligercambodia.org|sopheak.t@ligercambodia.org|sopor.t@ligercambodia.org|souyeth.k@ligercambodia.org|sovannary.r@ligercambodia.org|sovannou.p@ligercambodia.org|kangnaneat.s@ligercambodia.org|sreyneang.l@ligercambodia.org|sreyneang.o@ligercambodia.org|sreynith.s@ligercambodia.org|sreypich.k@ligercambodia.org|theara.k@ligercambodia.org|thiny.t@ligercambodia.org|vattey.l@ligercambodia.org|venghour.t@ligercambodia.org|visal.s@ligercambodia.org|vitou.n@ligercambodia.org|vornsar.s@ligercambodia.org|vuthy.v@ligercambodia.org" required>
+
+
                         <datalist id="liger_email">
                           <option>chhoeu.c@ligercambodia.org</option>
                           <option>chimean.h@ligercambodia.org</option>
@@ -76,11 +78,13 @@
                           <option>vornsar.s@ligercambodia.org</option>
                           <option>vuthy.v@ligercambodia.org</option>
                         </datalist>
+                          
+
                      </div>
                 </div>
               </br>
               </br>
-              <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+              <input type="submit" id="submit-btn" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
               </input>
             </form>
               
@@ -91,21 +95,45 @@
     {{> footer}}
 
 </body>
-<script src="js/jquery.min.js"></script>
+<!-- <script src="js/jquery.min.js"></script>
 <script src="js/form-validator/jquery.form-validator.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 <link rel="stylesheet" href="awesomplete.css" />
-<script src="awesomplete.js" async></script>
+<script src="awesomplete.js" async></script> -->
 <script>
+//  $.validate({
+//         modules : 'date, security'
+//         lang : 'en'
+// });
+// new Awesomplete(inputReference, {
+//   minChars: 3,
+//   maxItems: 15,
+//   ...
+// });
 
-    $.validate({
-        modules : 'date, security'
-        lang : 'en'
-    });
-new Awesomplete(inputReference, {
-  minChars: 3,
-  maxItems: 15,
-  ...
+$(document).ready(function() {
+var amount = document.getElementById('amount');
+var email = document.getElementById('userInput');
+var submit_btn = document.getElementById('submit-btn')
+
+submit_btn.addEventListener("click", function(event) {
+  console.log("Click")
+  if(amount.validity.rangeOverflow) {
+    amount.setCustomValidity("Not enough money to transfer!")
+  } else {
+    amount.setCustomValidity("");
+  } 
+  
+  if (email.validity.valueMissing){
+    email.setCustomValidity("Please enter your recipient's email!")
+  } else if (email.validity.patternMismatch){
+    email.setCustomValidity("This email is not in the list!")
+  } else {
+    email.setCustomValidity("")
+  }
 });
+});
+
+
 </script>   
 
