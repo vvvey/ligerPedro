@@ -53,7 +53,7 @@ router.get('/transfer', ensureLoggedIn, function(request, response) {
         console.error(err); response.send("Error " + err);
       }else{
         //console.log(request.user);
-        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows[0].budget});
+        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows[0].budget, data: result.rows});
       }
     });
   });
