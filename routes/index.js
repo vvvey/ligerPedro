@@ -233,17 +233,17 @@ router.get('/exchange_list', function(req,res){
   })
 });
 
-router.get('/setting', ensureLoggedIn, function(req, res){
+router.get('/settings', ensureLoggedIn, function(req, res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
      SELECT * FROM account WHERE email = $1;\
-      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      EXECUTE account_table('" + req.user.emails[0].value + "');\
       DEALLOCATE PREPARE account_table", function(err, result){
       done();
       if(err){
         console.error(err);
       }else{
-        response.render('setting', {user: request.user, data: result.rows});
+        res.render('settings', {user: req.user, data: result.rows});
       }
     });
   });
