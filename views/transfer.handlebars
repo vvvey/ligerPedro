@@ -16,8 +16,11 @@
               <!-- method=post action="/transfer_confirmation" -->
                 <div class="form-group">
                      <div class="input-group">
-                        <div class="input-group-addon">P</div>
-                        <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="{{budget}}" step="any" id="amount" required>
+                        {{#each data}} 
+                          <div class="input-group-addon">P</div>
+                          <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="{{this.budget}}"  step="any" required>
+                        {{/each}}
+
                      </div>
 
                      <div class="input-group">
@@ -84,8 +87,7 @@
                 </div>
               </br>
               </br>
-              <input type="submit" id="submit-btn" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
-              </input>
+              <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" style="background-color: #ee4b28">
             </form>
               
         </div>

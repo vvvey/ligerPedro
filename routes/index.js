@@ -160,7 +160,8 @@ router.post('/exchange_approving', function(req,res){
   INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason)\
   VALUES (CURRENT_TIMESTAMP(2), '" + exchangeLog.person +"', '" + exchangeLog.email +"',\
   $1, $2::float8::numeric::money, $3::float8::numeric::money, $4);\
-  EXECUTE newExchange('"+ exchangeLog.type+"', '"+ exchangeLog.amount+"', '"+ exchangeLog.result+"', '"+ exchangeLog.reason+"');"
+  EXECUTE newExchange('"+ exchangeLog.type+"', '"+ exchangeLog.amount+"', '"+ exchangeLog.result+"', '"+ exchangeLog.reason+"'); \
+  DEALLOCATE PREPARE newExchange;"
 
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query(query, function(err, result) {
@@ -168,12 +169,12 @@ router.post('/exchange_approving', function(req,res){
       if(err) {
         console.log(err);
       } else {
-        client.query("SELECT * FROM account WHERE email = ('" + request.user.emails[0].value + "')", function(err, result){
+        client.query("SELECT * FROM account WHERE email = ('" + req.user.emails[0].value + "')", function(err, result1){
           done();
           if(err){
             console.log('Error: ' + err);
           }else{
-            res.render('exchange_approving',   {user: req.user, data: request.rows});
+            res.render('exchange_approving',   {user: req.user, data: result1.rows});
           }
         });
       }

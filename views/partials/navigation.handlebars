@@ -1,9 +1,9 @@
-<nav class="navbar navbar-fixed-top" id="mainNav" role="navigation">
+<nav class="navbar navbar-fixed-top" id="mainNav" role="navigation" style="background-color:#173F91">
     <div class="container-fluid">
 
       <div class="navbar-header">
         <div class="animbrand">
-          <a class="navbar-brand animate" href="/">LIGER DIGITAL CURRENCY</a>
+          <a class="navbar-brand animate" href="/" style="color: white">LIGER DIGITAL CURRENCY</a>
         </div>
       </div>
 
@@ -11,18 +11,18 @@
         <ul class="nav navbar-nav navbar-right">
 
           <li>
-            <a class="page-scroll" href="/about_us">About Us</a>
+            <a class="page-scroll" href="/about_us" style="color:white">About Us</a>
           </li>
 
           <li>
-            <a class="page-scroll" href="/tutorial">Tutorial</a>
+            <a class="page-scroll" href="/tutorial" style="color:white">Tutorial</a>
           </li>
 
           <li>
             {{#if user}}
-            <a href="/logout">Logout</a>
+            <a href="/logout" style="color: white">Logout</a>
             {{else}}
-            <a href="#" onclick="signinGoogle()">Login via Google</a>
+            <a href="#" onclick="signinGoogle()" style="color: white">Login via Google</a>
             {{/if}}
           </li>
 
@@ -45,7 +45,7 @@
                 </li>
               {{else}}
                 <li class="dropdown active">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: white">
                     <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
                   </a>
                   <ul class="dropdown-menu">
@@ -70,7 +70,7 @@
                 </br>
                 {{user.displayName}}
                 <!--I don't know how to add the email of user, so this is just an example-->
-                <h6>example@ligercambodia.org</h6>
+                <h6>{{user._json.email}}</h6>
                 </a></h5>
               </ul>
 
