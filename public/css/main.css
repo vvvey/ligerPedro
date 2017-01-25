@@ -83,3 +83,19 @@
 #radioBtn input[type="radio"]{
   display: none;
 }
+#mainNav {
+  background-color: white;
+  padding: 4px 8px 0px 0px;
+}
+
+.profile-drop {
+  background-color: #f0f0f0;
+  color: white;
+  padding: 15px 30px 30px 30px;
+  font-size: 1px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.profile-drop img{
+  border: 4px solid #337ab7;
+}

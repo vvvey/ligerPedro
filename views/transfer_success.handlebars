@@ -1,7 +1,5 @@
 <body id="page-top">
 
-    <!--Head-->
-    {{> navigation}}
     
     <div id="center-body">
         <div class="container text-center" id="win-transfer">
@@ -9,11 +7,10 @@
           </br>
           <h2>You have successfully transferred <span class="badge">{{amount}}</span> Pedros to <span class="badge">{{recipient}}</span>!!</h2>
           <br>  
-            <button type="button" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">Back to Home Page <span class="glyphicon glyphicon-send"></span></button>
-        </div>
+            <button type="button" id="return" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" >Back to Home Page <span class="glyphicon glyphicon-send"></span></button>
+    </div>
         <br>
         <br>
-{{> footer}}
     <script type="text/javascript">
         $("#nav-transfer").on("click", function (event){
             $("#win-transfer").show();
@@ -76,3 +73,8 @@
         }
     </style>
 </body>
+<script type="text/javascript">
+    $('#return').on('click', function(event){
+        location.href = '/transfer';
+    });
+</script>

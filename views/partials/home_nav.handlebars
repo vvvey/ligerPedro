@@ -9,29 +9,25 @@
             </div>            
                
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    
-                        
+                <ul class="nav navbar-nav navbar-right">                        
                     <li>
                         <a class="page-scroll" href="/about_us">About Us</a>
                     </li>
-                    <li>
-                        <a class="page-scroll" href="/exchanging_system">Exchanging System</a>
-                    </li>
+
                     <li>
                         <a class="page-scroll" href="/tutorial">Tutorial</a>
                     </li>
+
                     <li>
-                    {{#if user}}
-                        <a href="/logout">Logout</a>
-                    {{else}}
-                        <a href="#" onclick="signinGoogle()">Login via Google</a>
-                    {{/if}}
-                        
+                        {{#if user}}
+                            <a href="/logout">Logout</a>
+                        {{else}}
+                            <a href="#" onclick="signinGoogle()">Login via Google</a>
+                        {{/if}}
                     </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
-    </nav>
+</nav>
