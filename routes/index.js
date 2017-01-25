@@ -3,7 +3,6 @@ var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
-
 var alert_message;
 
 var env = {
@@ -46,7 +45,7 @@ router.get('/', function(request, response){
 router.get('/transfer', ensureLoggedIn, function(request, response) {
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
-     SELECT budget FROM account WHERE email = $1;\
+     SELECT * FROM account WHERE email = $1;\
       EXECUTE account_table('" + request.user.emails[0].value + "');\
       DEALLOCATE PREPARE account_table", function(err, result){
       done();
@@ -54,7 +53,7 @@ router.get('/transfer', ensureLoggedIn, function(request, response) {
         console.error(err); response.send("Error " + err);
       }else{
         //console.log(request.user);
-        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows});
+        response.render('transfer', {user: request.user, title: 'Transfer', data: result.rows});
       }
     });
   });
@@ -66,14 +65,6 @@ router.get('/test', function(req, res) {
     recipient : 'Visal Sao',
     amount : 30
   });
-});
-
-router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
-  res.render('exchange_confirmation');
-});
-
-router.get('/ ', ensureLoggedIn, function(req,res){
-  res.render('exchange');
 });
 
 
@@ -109,8 +100,15 @@ router.get('/history', ensureLoggedIn,function(request, response){
             console.error(err2);
             response.send("Error " + err2);
           } else {
-            //console.log(result1);
-            response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows, user:request.user});
+            client.query("SELECT * FROM account WHERE email = ('" + request.user.emails[0].value + "')", function(err3, result3){
+              done();
+              if(err3){
+                console.error(err3); 
+                response.send("Error " + err3);
+              }else{
+                response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows, user:request.user, data: result3.rows});
+              }
+            });
           }
         });
       }
@@ -119,15 +117,27 @@ router.get('/history', ensureLoggedIn,function(request, response){
 });
 
 router.get('/exchanging_system', function(req,res){
-  res.render('exchanging_system');
+    res.render('exchanging_system');
 });
 
 router.get('/about_us', function(req,res){
   res.render('about_us', {user: req.user, env: env});
 });
 
-router.get('/exchange', ensureLoggedIn, function(req,res){
-  res.render('exchange', {user: req.user});
+router.get('/exchange', ensureLoggedIn, function(request,response){
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query("PREPARE account_table(TEXT) AS \
+     SELECT * FROM account WHERE email = $1;\
+      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      DEALLOCATE PREPARE account_table", function(err, result){
+      done();
+      if(err){
+        console.error(err);
+      }else{
+        response.render('exchange', {user: request.user, data: result.rows});
+      }
+    });
+  });
 });
 
 router.post('/exchange_approving', function(req,res){
@@ -158,10 +168,17 @@ router.post('/exchange_approving', function(req,res){
       if(err) {
         console.log(err);
       } else {
-        res.render('exchange_approving',   {user: req.user});
+        client.query("SELECT * FROM account WHERE email = ('" + request.user.emails[0].value + "')", function(err, result){
+          done();
+          if(err){
+            console.log('Error: ' + err);
+          }else{
+            res.render('exchange_approving',   {user: req.user, data: request.rows});
+          }
+        });
       }
-  })
-});
+    })
+  });
 });
 
 router.post('/exchange_list/approve/:id',function(req, res, next) {
@@ -204,7 +221,7 @@ router.get('/exchange_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
-              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user});
+              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user, data: result.rows});
             }
           })
         } else {
@@ -216,7 +233,19 @@ router.get('/exchange_list', function(req,res){
 });
 
 router.get('/setting', ensureLoggedIn, function(req, res){
-  res.render('setting', {user: req.user});
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+    client.query("PREPARE account_table(TEXT) AS \
+     SELECT * FROM account WHERE email = $1;\
+      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      DEALLOCATE PREPARE account_table", function(err, result){
+      done();
+      if(err){
+        console.error(err);
+      }else{
+        response.render('setting', {user: request.user, data: result.rows});
+      }
+    });
+  });
 });
 
 router.get('/logout', function(req, res){
@@ -230,18 +259,18 @@ router.get('/transfer_success', function(req, res){
 
 router.post('/transfer_confirmation', function(req, res) {
     pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {
-    client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
-      done();
-      if (err)
+      client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+        done();
+        if (err)
+          { 
+            console.error(err); res.send("Error" + err); 
+          }
+        else 
         { 
-          console.error(err); res.send("Error" + err); 
+          res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount}); 
         }
-      else 
-      { 
-        res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount}); 
-      }
-    })
-  }) 
+      })
+    }) 
 });
 
 router.post('/transfer_success', function(req, res) {
