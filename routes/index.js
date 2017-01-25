@@ -67,6 +67,20 @@ router.get('/test', function(req, res) {
   });
 });
 
+router.get('/tutorials', ensureLoggedIn, function(req,res) {
+  res.render('tutorials');
+});
+router.get('/exchange_confirmation', ensureLoggedIn, function(req,res){
+  res.render('exchange_confirmation');
+});
+
+router.get('/exchange_approving', ensureLoggedIn, function(req,res){
+  res.render('exchange');
+});
+
+router.get('/contact_us', ensureLoggedIn, function(req,res){
+  res.render('contact_us');
+});
 
 router.get('/db', ensureLoggedIn, function (request, response) {
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
