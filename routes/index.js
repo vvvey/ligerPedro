@@ -97,7 +97,7 @@ router.get('/db', ensureLoggedIn, function (request, response) {
 router.get('/history', ensureLoggedIn,function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("PREPARE history_query1 (TEXT) AS\
-    SELECT * FROM transfer_logs WHERE sender = $1;\
+    SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1;\
     EXECUTE history_query1 ('"+ request.user.emails[0].value +"');\
     DEALLOCATE PREPARE history_query1", function(err1, result1) {
       done();
@@ -289,59 +289,125 @@ router.post('/transfer_confirmation', function(req, res) {
 });
 
 router.post('/transfer_success', function(req, res) {
+  var senderEmail = req.user.emails[0].value;
+  var recipientEmail = req.body.recipient;
+
   pg.connect(process.env.PEDRO_db_URL, function (err,client, done) { 
-    client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+    client.query("SELECT budget FROM account where email = '" + senderEmail + "'", function(err,sender) { 
       done();
       if (err) { 
         console.error(err); res.send("Error" + err); 
       } else {
-        var sender_new_budget = result.rows[0].budget - req.body.amount; 
-        client.query("PREPARE update_account_sender(DECIMAL) AS\
-          UPDATE account SET budget = $1\
-          WHERE email = '" + req.user.emails[0].value + "';\
-          EXECUTE update_account_sender(" + sender_new_budget + ");\
-          DEALLOCATE PREPARE update_account_sender", function(err,result) { 
-          done();
-          if (err){ 
-            console.error(err); res.send("Error" + err); 
-          }else { 
-            client.query("select * from account where email = '" + req.body.recipient + "'", function(err2,result2) {
-              done();
-              if (err2) { 
-                  console.error(err2); res.send("Error" + err2); 
-              } else {
-                var recipient_new_budget = parseInt(result2.rows[0].budget) + parseInt(req.body.amount);
-                console.log("add these: " + req.body.amount, result2.rows[0].budget);
-                console.log("equals: " + recipient_new_budget);
-                console.log("recip email: " + req.body.recipient);
+        var senderCurrentBudget = parseFloat(sender.rows[0].budget);
+        var transferBudget = parseFloat(req.body.amount);
+        var senderNewBudget = senderCurrentBudget - transferBudget;
+        console.log("senderNewBudget: " + senderNewBudget)
 
-                client.query("PREPARE update_account_recipient(DECIMAL) AS\
-                  UPDATE account SET budget = $1 \
-                  WHERE email = '" + req.body.recipient + "';\
-                  EXECUTE update_account_recipient(" + recipient_new_budget + ");", function (err3,result3) {
-                  done();
-                  if (err3){ 
-                     console.error(err3); res.send("Error" + err); 
-                  }else {
-                    client.query("PREPARE insert_account(numeric(100,2), TEXT, TEXT, TEXT, TIMESTAMP) AS\
-                      INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
-                      VALUES ($1, $2, $3, $4, $5);\
-                      EXECUTE insert_account(" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', \
-                      '" + sender_new_budget + "', '" + recipient_new_budget + "', CURRENT_TIMESTAMP(0)); DEALOLCATE PREPARE insert_account", function(err,result) { 
-                        done(); {
-                        if (err3){ 
-                          console.error(err3); res.send("Error" + err3); 
-                        }else{
-                          res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
-                        }
-                        };
-                    });                       
+        var updateSenderBudgetQuery = "PREPARE update_account_sender(numeric(2)) AS\
+        UPDATE account SET budget = $1\
+        WHERE email = '" + senderEmail + "';\
+        EXECUTE update_account_sender(" + senderNewBudget + ");\
+        DEALLOCATE PREPARE update_account_sender";
+
+        client.query(updateSenderBudgetQuery, function(sUpdateErr, sResult) {
+          if (sUpdateErr) {
+            console.error(sUpdateErr); 
+            res.send("Error " + sUpdateErr);
+          } else {
+            client.query("SELECT * FROM account WHERE email = '" + recipientEmail + "';", function(err1, recipient) {
+              if(err1) {
+                console.error(err1);
+                res.send("Error " + err1);
+              } else {
+                var recipientCurrentBudget = parseFloat(recipient.rows[0].budget);
+                var recipientNewBudget = transferBudget + recipientCurrentBudget;
+                console.log("recipientNewBudget " + recipientNewBudget);
+
+                var updateRecipientBudgetQuery = "PREPARE update_account_recipient(numeric(2)) AS\
+                UPDATE account SET budget = $1 \
+                WHERE email = '" + recipientEmail + "';\
+                EXECUTE update_account_recipient('" + recipientNewBudget + "');"
+
+                client.query(updateRecipientBudgetQuery, function(rUpdateErr, rResult) {
+                  if (rUpdateErr) {
+                    console.error(rUpdateErr);
+                    res.send("Error " + rUpdateErr);
+                  } else {
+                    var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric AS\
+                    INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget)\
+                    VALUES ($1, $2, $3, $4, $5, $6);\
+                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"');"
+
+                    var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP) AS\
+                    INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
+                    VALUES ($1, $2, $3, $4, $5, $6);\
+                    EXECUTE newTransfer(" + transferBudget + ", '" + senderEmail + "', '" + recipientEmail + "', \
+                    '" + senderNewBudget + "', '" + recipientNewBudget + "', CURRENT_TIMESTAMP(2)); DEALLOCATE PREPARE newTransfer";
+                    
+                    client.query(x, function (transferErr, transferResult) {
+                      if (transferErr) {
+                        console.error(transferErr);
+                        res.send("Error " + transferErr);
+                      } else {
+                        res.send("Inserted!");
+                      }
+                    })
                   }
-                });
-              }
-            });
+                })
+            }
+            })           
           }
-        });
+        })
+          
+        // var sender_new_budget = result.rows[0].budget - req.body.amount; 
+        // client.query("PREPARE update_account_sender(DECIMAL) AS\
+        //   UPDATE account SET budget = $1\
+        //   WHERE email = '" + req.user.emails[0].value + "';\
+        //   EXECUTE update_account_sender(" + sender_new_budget + ");\
+        //   DEALLOCATE PREPARE update_account_sender", function(err,result) { 
+        //   done();
+        //   if (err){ 
+        //     console.error(err); res.send("Error" + err); 
+        //   }else { 
+        //     client.query("select * from account where email = '" + req.body.recipient + "'", function(err2,result2) {
+        //       done();
+        //       if (err2) { 
+        //           console.error(err2); res.send("Error" + err2); 
+        //       } else {
+        //         console.log(result2.rows[0].budget);
+        //         var recipient_new_budget = parseInt(result2.rows[0].budget) + parseInt(req.body.amount);
+        //         console.log("add these: " + req.body.amount, result2.rows[0].budget);
+        //         console.log("equals: " + recipient_new_budget);
+        //         console.log("recip email: " + req.body.recipient);
+
+        //         client.query("PREPARE update_account_recipient(DECIMAL) AS\
+        //           UPDATE account SET budget = $1 \
+        //           WHERE email = '" + req.body.recipient + "';\
+        //           EXECUTE update_account_recipient(" + recipient_new_budget + ");", function (err3,result3) {
+        //           done();
+        //           if (err3){ 
+        //              console.error(err3); res.send("Error" + err); 
+        //           }else {
+        //             client.query("PREPARE insert_account(numeric, TEXT, TEXT, TEXT, TIMESTAMP) AS\
+        //               INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
+        //               VALUES ($1, $2, $3, $4, $5);\
+        //               EXECUTE insert_account(" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', \
+        //               '" + sender_new_budget + "', '" + recipient_new_budget + "', CURRENT_TIMESTAMP(0)); DEALOLCATE PREPARE insert_account", function(err,result) { 
+        //                 done(); {
+        //                 if (err3){ 
+        //                   console.error(err3); res.send("Error" + err3); 
+        //                 }else{
+        //                   console.log("Success!")
+        //                   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
+        //                 }
+        //                 };
+        //             });                       
+        //           }
+        //         });
+        //       }
+        //     });
+        //   }
+        // });
       }
     });
   });
