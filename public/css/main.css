@@ -83,6 +83,33 @@
 #radioBtn input[type="radio"]{
   display: none;
 }
+<<<<<<< HEAD
+
+
+.navbar-content
+{
+    width:320px;
+    padding: 15px;
+    padding-bottom:0px;
+}
+.navbar-content:before, .navbar-content:after
+{
+    display: table;
+    content: "";
+    line-height: 0;
+}
+.navbar-nav.navbar-right:last-child {
+margin-right: 15px !important;
+}
+.navbar-footer 
+{
+    background-color:#DDD;
+}
+.navbar-footer-content { padding:15px 15px 15px 15px; }
+.dropdown-menu {
+padding: 0px;
+overflow: hidden;
+=======
 #mainNav {
   background-color: white;
   padding: 4px 8px 0px 0px;
@@ -98,4 +125,5 @@
 }
 .profile-drop img{
   border: 4px solid #337ab7;
+>>>>>>> master
 }

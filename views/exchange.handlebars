@@ -23,6 +23,20 @@
                         </div>
                       </div>
                     </div>
+<<<<<<< HEAD
+                    <div class="modal-body">
+                        <p>Are you sure that you want to exchange <span id="amountExtract" style="font-size: 
+                        30px; color: #EE4B28"></span> <span id="typeExchangeExtract"></span><span id="plural"></span> to <span id="amountExtractResult" style="font-size: 
+                        30px; color: #EE4B28"></span> <span id="currencyName"></span><span id="plural1"></span>.</p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="submit" class="btn btn-primary">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+=======
                   </div>
 
                   <br/>
@@ -81,6 +95,7 @@
                   </div>
               </div>
       </form>
+>>>>>>> master
     </div>
     
 <style type="text/css">
@@ -149,16 +164,20 @@ $(document).ready(function() {
 $(document).on("click", "#checkValidate", function() {
   var typeExchange = $('input[name="exchangeType"]:checked', '#exchangeForm').val();
   if (typeExchange == "dollar-pedro") {
-    document.getElementById("typeExchangeExtract").innerHTML = "Dollar to";
+    document.getElementById("typeExchangeExtract").innerHTML = "Dollar";
     document.getElementById("currencyName").innerHTML = "Pedro";
   } else {
-    document.getElementById("typeExchangeExtract").innerHTML = "Pedro to";
+    document.getElementById("typeExchangeExtract").innerHTML = "Pedro";
     document.getElementById("currencyName").innerHTML = "Dollar";
   }
   var exchangeAmount = $("#amount").val();
   var exchangeAmountResult = $("#amount").val();
   document.getElementById("amountExtractResult").innerHTML = exchangeAmountResult;
   document.getElementById("amountExtract").innerHTML = exchangeAmount;
+  if (exchangeAmount > 1) {
+    document.getElementById("plural").innerHTML = "s";
+    document.getElementById("plural1").innerHTML = "s";
+  }
 });
 
 var reasonInput = document.getElementById('reason');
