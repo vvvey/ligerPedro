@@ -18,6 +18,9 @@ var hbs = exphbs.create({
       return options.inverse(this);
     },
     dateFormat: function(date) {
+      if(date == null) {
+        return;
+      }
       var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
       var offset = date.getTimezoneOffset() / 60;
       var hours = date.getHours();
