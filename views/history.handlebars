@@ -19,12 +19,14 @@
       <div class="tab-content">
         <div class="win-history tab-pane fade in active" id="transfer_his">
           <div class="table-responsive">
-            <table class="table">
+            <table class="table table-bordered">
               <thead class="thead-inverse">
                 <tr>
-                {{#each columns1}}
-                  <th>{{this.name}}</th>
-                {{/each}}   
+                  <th class="text-center">Date</th>
+                  <th class="text-center">Sender</th>
+                  <th class="text-center">Recipient</th>
+                  <th class="text-center">Amount</th>
+                  <th class="text-center">Total Budget</th>
                 </tr>
                
                 {{#each data1}}
@@ -33,8 +35,7 @@
                     <td>{{this.sender}}</td>
                     <td>{{this.recipient}}</td>
                     <td>{{this.amount}}</td>
-                    <td>{{this.resulting_budget}}</td> 
-                    <td>{{this.who}}</td>               
+                    <td>{{this.sender_resulting_budget}}</td> 
                   </tr>
                 {{/each}} 
               </thead>
@@ -44,23 +45,52 @@
 
         <div class="win-history tab-pane fade" id="exchange_his">
           <div class="table-responsive">
-            <table class="table">
+            <table class="table table-bordered">
               <thead class="thead-inverse">
                 <tr>
-                {{#each columns2}}
-                  <th>{{this.name}}</th>
-                {{/each}}   
+                  <th class="text-center">Time</th> 
+                  <th class="text-center">Person</th>
+                  <th class="text-center">Exchange Type</th> 
+                  <th class="text-center">Amount</th> 
+                  <th class="text-center">Result</th>
+                  <th class="text-center">Reason</th> 
+                  <th class="text-center">To RE</th> 
+                  <th class="text-center"></th>
+                  <th class="text-center">Approved</th>
+                  <th class="text-center">Time</th>
+                  <th class="text-center"></th>
+                  <th class="text-center">Exchanged</th>
+                  <th class="text-center">Time</th>
                 </tr>
                
                 {{#each data2}}
                   <tr>
-                    <td>{{this.date}}</td>
-                    <td>{{this.amount}}</td>
-                    <td>{{this.approval}}</td>
-                    <td>{{this.description}}</td>
-                    <td>{{this.resulting_budget}}</td> 
-                    <td>{{this.exchanging_types}}</td> 
-                    <td>{{this.sender}}</td>               
+                    <td>{{dateFormat this.timecreated}}</td>
+                    <td>{{this.person}}</td>
+                    <td>{{this.type}}</td>
+                    <td>{{this.amount}}</td> 
+                    <td>{{this.result}}</td> 
+                    <td>{{this.reason}}</td>  
+                    <td>{{this.re}}</td>
+                    <td></td>
+                    <td>{{#ifCond this.approved true}}
+                          Accept
+                        {{else ifCond this.approved false}}
+                          Denied
+                        {{else}}
+                          Pending
+                        {{/ifCond}}
+                    </td>  
+                    <td>{{dateFormat this.timeapproved}}</td>
+                    <td></td>  
+                    <td>{{#ifCond this.exchanged true}}
+                          Finished
+                        {{else}}
+                          Pending
+                        {{/ifCond}}
+                    </td>  
+                    <td>{{this.timeexchanged}}</td>  
+                               
                   </tr>
                 {{/each}} 
               </thead>

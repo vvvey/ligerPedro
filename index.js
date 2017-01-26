@@ -16,6 +16,41 @@ var hbs = exphbs.create({
         return options.fn(this);
       }
       return options.inverse(this);
+    },
+    dateFormat: function(date) {
+      var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+      var offset = date.getTimezoneOffset() / 60;
+      var hours = date.getHours();
+      newDate.setHours(hours - offset);
+
+      var seconds = Math.floor((new Date() - newDate) / 1000);
+      
+      var interval = Math.floor(seconds / 86400); //1 day equal 86400
+      if (interval >= 2) { //more than two days
+        function pad(s) { return (s < 10) ? '0' + s : s; }//change the 1 digit number to 2 digit numbers like 1 --> 01
+        return [pad(newDate.getDate()), pad(newDate.getMonth()+1), newDate.getFullYear()].join('.');//date format seperated by .
+      }
+      
+      function plural(number, text){
+        if(number == 1){
+          return number + ' ' + text + ' ago';
+        } else {
+          return number + ' ' + text + 's ago';
+        }
+      }
+      
+      if (interval >= 1) {
+        return plural(interval,'day')
+      }
+      interval = Math.floor(seconds / 3600); //1 hour equal 3600
+      if (interval >= 1) {
+        return plural(interval, 'hour')
+      }
+      interval = Math.floor(seconds / 60); //1 minutes equal 60
+      if (interval >= 1) {
+        return plural(interval, 'minute')
+      }
+      return plural(Math.floor(seconds), "second");
     }
   }
 });
