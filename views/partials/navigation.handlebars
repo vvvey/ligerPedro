@@ -1,52 +1,94 @@
-<nav class="navbar" id="mainNav" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
+<nav class="navbar navbar-fixed-top" id="mainNav" role="navigation" style="background-color:#173F91">
+    <div class="container-fluid">
 
+      <div class="navbar-header">
         <div class="animbrand">
-          <a class="navbar-brand animate" href="#">LIGER DIGITAL CURRENCY</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" style="background-color: white">
+          <span class="sr-only" style="font-color: white">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+          </button>
+          <a class="navbar-brand animate" href="/" style="color: white">LIGER DIGITAL CURRENCY</a>
         </div>
       </div>
-  <div class="bsa-apiads hidden-sm hidden-xs"></div>
-      
 
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="bsa-apiads hidden-sm hidden-xs"></div>
         <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown active">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
-            </a>
 
-            <ul class="dropdown-menu">
-              <li><a href="/transfer">Transfer</a></li>
-              <li><a href="/exchange">Exchange</a></li>
-              <li><a href="/history">History</a></li>
-              <li><a href="/setting" id="nav-setting">Setting</a></li>
-              <li><a href="/logout" id="nav-sign-out">Log Out</a></li>
-            </ul>
+          <li>
+            <a class="page-scroll" href="/about_us" style="color:white">About Us</a>
           </li>
+
+          <li>
+            <a class="page-scroll" href="/tutorial" style="color:white">Tutorial</a>
+          </li>
+
+          <li>
+            {{#if user}}
+            <a href="/logout" style="color: white">Logout</a>
+            {{else}}
+            <a href="#" onclick="signinGoogle()" style="color: white">Login via Google</a>
+            {{/if}}
+          </li>
+
 
           {{#if user}}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="{{user.picture}}" class="img-circle" style="transform:scale(1.5,1.5);" width="25px"/>
-              
-            </a>
+            {{#each data}}
+              {{#ifCond this.role 're'}}
+                <li class="dropdown active">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
+                  </a>
 
-            <ul class="dropdown-menu btn-success">
-              <img src="lang-logo.png" class="img-text-center img-circle">
-              <li class="text-center"><a href="/transfer">{{user.displayName}}</a></li>
-            </ul>
-          </li>
+                  <ul class="dropdown-menu">
+                    <li><a href="/transfer">Transfer</a></li>
+                    <li><a href="/exchange">Exchange</a></li>
+                    <li><a href="/history">History</a></li>
+                    <li><a href="/exchange_list">Request</a></li>
+                    <li><a href="/settings" id="nav-settings">Settings</a></li>
+                  </ul>
+                </li>
+              {{else}}
+                <li class="dropdown active">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: white">
+                    <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/transfer">Transfer</a></li>
+                    <li><a href="/exchange">Exchange</a></li>
+                    <li><a href="/history">History</a></li>
+                    <li><a href="/settings" id="nav-settings">Settings</a></li>
+                  </ul>
+                </li>
+              {{/ifCond}}
+            {{/each}}
+            <li class="dropdown">
+
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <img src='{{user.picture}}' class="img-circle" style="transform:scale(1.5,1.5);" width="23px"/>
+              </a>
+
+              <ul class="dropdown-menu profile-drop">
+                <h5 class="text-center"><a href="/transfer">
+                <img src="{{user.picture}}" class="img-text-center img-circle" width="90px"/>
+                </br>
+                </br>
+                {{user.displayName}}
+                <!--I don't know how to add the email of user, so this is just an example-->
+                <h6>{{user._json.email}}</h6>
+                </a></h5>
+              </ul>
+
+            </li>
           {{else}}
-              <li>
-                <a href="#">
-                  <span class="glyphicon glyphicon-king" style="transform:scale(1.5,1.5);"></span>
-                </a>
-              </li>
           {{/if}}
-
         </ul>
-      
-    
-</div>
-      
+      </div> 
+      </div>
+    </div>     
 </nav>
+
+<style>
+  .navbar {
+    margin-bottom: 0;
+  }
+</style>
