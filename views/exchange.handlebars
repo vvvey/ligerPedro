@@ -1,29 +1,61 @@
 <body id="page-top">
     <!--Head-->
-      {{> navigation}}
+    {{> navigation}}
     <!--Body-->
-
     <div id="center-body">
-      <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
-              <div class="container text-center" id="win-exchange">
-                  <h1 class="h1" style="margin-top: 50px; margin-bottom: 20px;">Exchanging Money</h1>
-                  <div class="form-group">
+        <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
+            <div class="container text-center" id="win-exchange">
+                <h1 class="h1" style="margin-bottom: 20px">Exchanging Money</h1>
+                <div class="form-group">
                     <div class="col-sm-12 col-md-12">
-                      <div class="input-group">
-                        <div id="radioBtn" class="btn-group">
-                          <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="Dollar to Pedro">
-                            <span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
-                            <input type="radio" name="exchangeType" value="dollar-pedro" checked>
-                          </label>
-
-                          <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="Pedro to Dollar">
-                            <span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
+                        <div class="input-group">
+                            <div id="radioBtn" class="btn-group">
+                            <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="Dollar to Pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
+                            <input type="radio" name="exchangeType" value="dollar-pedro" checked></label>
+                            <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="Pedro to Dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
                             <input type="radio" id="exchangeType" name="exchangeType" value="pedro-dollar">
-                          </label>
-                        </div>
-                      </div>
+                        </label>
                     </div>
-<<<<<<< HEAD
+                </div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <div class="input-group">
+            <div class="input-group-addon">P</div>
+            <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
+        </div>
+        <div class="input-group">
+            <div class="input-group-addon">$</div>
+            <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
+        </div>
+        <br>
+        <br>
+        <div class="input-group">
+            <div class="boxed"  style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
+            <div class="wrap">
+            <textarea onKeyUp="count_it()" name="reason" id="reason" rows="4" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style=" 
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; 
+    width: 100%;}" required></textarea>
+    <span id="count" class="counter"></span>
+    </div>
+        </div>
+        <br>
+        <br>
+        <!-- Button trigger modal -->
+        <button id="checkValidate" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+        Exchange
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Exchange Comfirmation</h4>
+                    </div>
                     <div class="modal-body">
                         <p>Are you sure that you want to exchange <span id="amountExtract" style="font-size: 
                         30px; color: #EE4B28"></span> <span id="typeExchangeExtract"></span><span id="plural"></span> to <span id="amountExtractResult" style="font-size: 
@@ -36,68 +68,9 @@
                 </div>
             </div>
         </div>
-=======
-                  </div>
-
-                  <br/>
-                  <br/>
-
-                  <div class="input-group">
-                      <div class="input-group-addon">P</div>
-                      <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
-                  </div>
-
-                  <div class="input-group">
-                      <div class="input-group-addon">$</div>
-                      <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
-                  </div>
-
-                  <br>
-                  <br>
-          <div class="input-group">
-              <div class="boxed"  style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-              <div class="wrap">
-              <textarea onKeyUp="count_it()" name="reason" id="reason" rows="4" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style=" 
-                -webkit-box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                box-sizing: border-box; 
-                width: 100%;}" required>
-              </textarea>
-              <span id ="count" class="counter"></span>
-
-              </div>
-                  </div>
-                  <br>
-                  <br>
-                  <!-- Button trigger modal -->
-                  <button id="checkValidate" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" style="background-color: #ee4b28">
-                  Exchange
-                  </button>
-                  <!-- Modal -->
-                  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                      <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                  <h4 class="modal-title" id="myModalLabel">Exchange Comfirmation</h4>
-                              </div>
-                              <div class="modal-body">
-                                  <p>Are you sure that you want to exchange <span id="amountExtract" style="font-size: 
-                                  30px; color: #EE4B28"></span> <span id="typeExchangeExtract"></span> <span id="amountExtractResult" style="font-size: 
-                                  30px; color: #EE4B28"></span> <span id="currencyName"></span>.</p> 
-                              </div>
-                              <div class="modal-footer">
-                                  <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-                                  <button type="submit" class="btn btn-primary">Yes</button>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-      </form>
->>>>>>> master
     </div>
-    
+</form>
+</div>
 <style type="text/css">
   .wrap {
     position: relative;
@@ -123,7 +96,6 @@
 </style>
 <!--Tail-->
 {{> footer}}
-
 <script type="text/javascript">
 $('#radioBtn label').on('click', function() {
   var sel = $(this).data('title');
@@ -132,14 +104,12 @@ $('#radioBtn label').on('click', function() {
   $('label[data-toggle="' + tog + '"]').not('[data-title="' + sel + '"]').removeClass('active').addClass('notActive');
   $('label[data-toggle="' + tog + '"][data-title="' + sel + '"]').removeClass('notActive').addClass('active');
 })
-
 $(document).ready(function() {
   var amount = document.getElementById('amount');
   var amount_btn = document.getElementById('checkValidate');
   var result = document.getElementById('result');
   var reason = document.getElementById('reason');
   var span = document.getElementById('amountExtract');
-
   amount.addEventListener("keyup", function(event) {
     result.value = amount.value * 1.00;
   });
@@ -160,7 +130,6 @@ $(document).ready(function() {
     }
   }, false);
 });
-
 $(document).on("click", "#checkValidate", function() {
   var typeExchange = $('input[name="exchangeType"]:checked', '#exchangeForm').val();
   if (typeExchange == "dollar-pedro") {
@@ -179,7 +148,6 @@ $(document).on("click", "#checkValidate", function() {
     document.getElementById("plural1").innerHTML = "s";
   }
 });
-
 var reasonInput = document.getElementById('reason');
 var length = reasonInput.getAttribute("maxlength");
 var allowWords = document.getElementById('count');
@@ -187,7 +155,8 @@ allowWords.innerHTML = length;
 reasonInput.onkeyup = function () {
   document.getElementById('count').innerHTML = (length - this.value.length);
 };
-
 </script>
-
+<!-- Modal Script -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
