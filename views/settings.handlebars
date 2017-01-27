@@ -1,12 +1,41 @@
 {{> navigation}}
-	<div id="center-body">
-        <div class="container text-center" id="win-transfer">
-        	<p class="text-lg">Family name: <input type="text" value="{{user.name.familyName}}" readonly></p>
-        	<p>Given name: <input type="text" value="{{user.name.givenName}}" readonly></p>
-        	
-        	<p>Fullname: <input type="text" value="{{user.displayName}}" readonly></p>
-        	
-        	<p>Email: <input type="text" value="{{user.provider}}" readonly></p>
-        </div>
-    </div>
+    <div id="center-body">
+<table class="container text-center"" id="win-transfer">
+<tr>
+  <th>Account Setting</th>
+  <th>Change</th>
+</tr>
+<tr>
+  <td class="text-lg">Family name:</td>
+  <td><input type="text" value="{{user.name.familyName}}" readonly></td>
+</tr>
+<tr>
+  <td>Given name:</td>
+  <td><input type="text" value="{{user.name.givenName}}" readonly></td>
+</tr>
+<tr>
+  <td>Fullname:</td>
+  <td><input type="text" value="{{user.displayName}}" readonly></td>
+</tr>
+<tr>
+  <td>Email: </td>
+  <td><input type="text" value="{{user.provider}}" readonly></td>    
+</tr>
+</table>
+</div>
 {{> footer}}
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+td, th {
+    border: 2px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
