@@ -326,7 +326,8 @@ router.post('/transfer_success', function(req, res) {
                 var updateRecipientBudgetQuery = "PREPARE update_account_recipient(numeric(2)) AS\
                 UPDATE account SET budget = $1 \
                 WHERE email = '" + recipientEmail + "';\
-                EXECUTE update_account_recipient('" + recipientNewBudget + "');"
+                EXECUTE update_account_recipient('" + recipientNewBudget + "');\
+                DEALLOCATE PREPARE update_account_recipient";
 
                 client.query(updateRecipientBudgetQuery, function(rUpdateErr, rResult) {
                   if (rUpdateErr) {
