@@ -269,7 +269,7 @@ router.get('/logout', function(req, res){
 });
 
 router.get('/transfer_success', function(req, res){
-  res.render('transfer_success');
+  res.render('transfer');
 });
 
 router.post('/transfer_confirmation', function(req, res) {
@@ -350,7 +350,7 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-                        res.render('transfer_success', {recipient: senderEmail, amount: transferBudget});
+                        res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     })
                   }
