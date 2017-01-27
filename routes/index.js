@@ -350,7 +350,7 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-                        res.send("Inserted!");
+                        res.render('transfer_success', {recipient: senderEmail, amount: transferBudget});
                       }
                     })
                   }
