@@ -247,6 +247,87 @@ router.get('/exchange_list', function(req,res){
   })
 });
 
+router.get('/keeper_list', function(req,res){
+  var email = req.user.emails[0].value;
+  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = true\
+  ORDER BY timecreated DESC;";
+
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("SELECT * FROM account WHERE email = '"+ email +"'", function(err, result) {
+      if(err){
+        console.error(err); 
+        res.send("Error " + err);
+      }else {
+        if(result.rows[0].role == 'keeper'){
+          client.query(exchangeListQuery, function(err2, result2) {
+            done();
+            if (err2) {
+              console.log(err2)
+            } else {
+              res.render('keeper_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
+            }
+          })
+        } else {
+          res.render('notFound');
+        }
+      }
+    });
+  })
+});
+
+router.post('/keeper_list/approve/:id', function(request, response, next){
+  var id = request.params.id;
+  if(id === undefined){
+    response.redirect('/keeper_list');
+  }
+  var status = request.body.status;
+  var upadte_keeper = "UPDATE exchange_list SET exchanged = '"+ status +"', timeexchanged = CURRENT_TIMESTAMP(2)\
+   WHERE id = '"+ id +"';"
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query(upadte_keeper, function (err) {
+      if (err) {
+        console.log(err);
+      }else{
+        client.query("SELECT * FROM exchange_list WHERE id = '"+ id +"';", function(err2, result2){
+          if(err2){
+            console.log(err2);
+          }else {
+            if (result2.rows[0].exchanged === false) {
+              response.redirect('/keeper_list');
+              console.log("false");
+            } else{
+              client.query("SELECT budget FROM account WHERE email = '" + result2.rows[0].email + "';", function(err3, result3){
+                if(err3){
+                  console.log(err3);
+                }else{
+
+                  var after_change = parseInt(result3.rows[0].budget) + parseInt(result2.rows[0].result);
+                  console.log(result3.rows[0].budget); //problem NaN
+                  console.log(result2.rows[0].email);
+                  console.log(result2.rows[0].result);// in $
+                  console.log(after_change);
+                  var update_budget = "UPDATE account SET budget = '" + after_change + "' WHERE \
+                  email = '" + result2.rows[0].email + "';";
+
+                  client.query(update_budget, function(err4){
+                    console.log("Success!");
+                    if(err4){
+                      console.log(err4);
+                    }else{
+                      response.redirect('/keeper_list');
+                    }
+                  });
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  });
+});
+
+
 router.get('/settings', ensureLoggedIn, function(req, res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
