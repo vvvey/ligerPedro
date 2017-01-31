@@ -350,7 +350,7 @@ router.get('/logout', function(req, res){
 });
 
 router.get('/transfer_success', function(req, res){
-  res.render('transfer_success');
+  res.render('transfer');
 });
 
 router.post('/transfer_confirmation', function(req, res) {
@@ -407,7 +407,8 @@ router.post('/transfer_success', function(req, res) {
                 var updateRecipientBudgetQuery = "PREPARE update_account_recipient(numeric(2)) AS\
                 UPDATE account SET budget = $1 \
                 WHERE email = '" + recipientEmail + "';\
-                EXECUTE update_account_recipient('" + recipientNewBudget + "');"
+                EXECUTE update_account_recipient('" + recipientNewBudget + "');\
+                DEALLOCATE PREPARE update_account_recipient";
 
                 client.query(updateRecipientBudgetQuery, function(rUpdateErr, rResult) {
                   if (rUpdateErr) {
@@ -430,7 +431,7 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-                        res.send("Inserted!");
+                        res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
                   }
