@@ -7,6 +7,8 @@ var session = require('express-session');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 
+
+
 var hbs = exphbs.create({
   defaultLayout: 'main',
   // Specify helpers which are only registered on this instance.
