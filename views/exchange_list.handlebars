@@ -26,7 +26,7 @@
 								<td>
 									
 									
-									{{#ifCond this.approved true}}
+									{{#ifCond this.approved "true"}}
 										Approved by {{this.re}}
 									{{else ifCond this.approved null}}
 										<form method="post" action="/exchange_list/approve/{{this.id}}">
