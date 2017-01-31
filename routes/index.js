@@ -460,7 +460,6 @@ router.post('/transfer_success', function(req, res) {
                         emailTo('Success Transfer!', body1, senderEmail);
                         emailTo('Transfer in!', body2, recipientEmail);
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
-
                       }
                     });
                   }
