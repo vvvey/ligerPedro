@@ -1,28 +1,31 @@
 {{> navigation}}
-    <div id="center-body">
+</table>
+  <th>Change</th>
+	<div id="center-body">
 <table class="container text-center"" id="win-transfer">
-<tr>
   <th>Account Setting</th>
+<tr>
   <th>Change</th>
 </tr>
+  <td><input type="text" value="{{user.name.familyName}}" readonly></td>
 <tr>
   <td class="text-lg">Family name:</td>
-  <td><input type="text" value="{{user.name.familyName}}" readonly></td>
 </tr>
 <tr>
   <td>Given name:</td>
   <td><input type="text" value="{{user.name.givenName}}" readonly></td>
-</tr>
-<tr>
   <td>Fullname:</td>
-  <td><input type="text" value="{{user.displayName}}" readonly></td>
 </tr>
 <tr>
-  <td>Email: </td>
-  <td><input type="text" value="{{user.provider}}" readonly></td>    
+  <td><input type="text" value="{{user.displayName}}" readonly></td>
+<tr>
 </tr>
-</table>
+
+
 </div>
+</tr>
+  <td><input type="text" value="{{user.provider}}" readonly></td>    
+  <td>Email: </td>
 {{> footer}}
 <style>
 table {
@@ -35,6 +38,24 @@ td, th {
     text-align: left;
     padding: 8px;
 }
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 2px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
 tr:nth-child(even) {
     background-color: #dddddd;
 }

@@ -1,14 +1,38 @@
+'use strict';
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var alert_message;
+var SparkPost = require('sparkpost'); 
+var sparky = new SparkPost('39c7e079b09af0a4e513ec4457d0a217c80f2020');
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
+};
+
+function emailTo(subject, body, recipients){
+  sparky.transmissions.send({
+    content: {
+      from: 'testing@sparkpostbox.com',
+      subject: subject,
+      html: body
+    },
+    recipients: [
+      {address: recipients}
+    ]
+  })
+  .then(data => {
+    console.log("Success!");
+    console.log(data);
+  })
+  .catch(err => {
+    console.log("There's some mistakes!");
+    console.log(err);
+  })
 };
 
 router.get('/login',
@@ -431,9 +455,13 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
+                        var body1 = '<h1>Hey,</br></h1><h2>You\'re successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
+                        var body2 = '<h1>Hey,</br></h1><h2>You\'re just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
+                        emailTo('Success Transfer!', body1, senderEmail);
+                        emailTo('Transfer in!', body2, recipientEmail);
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
-                    })
+                    });
                   }
                 })
             }
@@ -500,6 +528,7 @@ router.post('/exchange_confirmation', function(req, res) {
 });
 
 
+
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
@@ -507,10 +536,13 @@ router.post('/exchange_confirmation', function(req, res) {
 router.get('/transfer-test', function (request, response) {
   response.render('transfer-test');
 });
+
 router.post('/db', function(request, response){
   var text = request.body.transfer;
-
   response.render('db', {transfer:text});
 });
+
+
+
 
 module.exports = router;
