@@ -3,7 +3,7 @@ var fake_account = function(req, res, next) {
  displayName: 'Keeper',
  id: 'google-oauth2|103126281815949004359',
  name: { familyName: 'Rith', givenName: 'chanmalika' },
- emails: [ { value: 'dalin.l@ligercambodia.org' } ], //meas.v@ligercambodia.org dalin.l@ligercambodia.org
+ emails: [ { value: 'visal.s@ligercambodia.org' } ], //meas.v@ligercambodia.org dalin.l@ligercambodia.org
  picture: 'https://lh3.googleusercontent.com/-_K5tTEkSx7A/AAAAAAAAAAI/AAAAAAAABOs/RwqSzZzapGY/photo.jpg',
  locale: 'en',
  nickname: 'meas',
@@ -13,7 +13,7 @@ var fake_account = function(req, res, next) {
       connection: 'google-oauth2',
       isSocial: true } ],
  _json: 
-  { email: 'dalin.l@ligercambodia.org',
+  { email: 'visal.s@ligercambodia.org',
     name: 'Sreymeas Veng',
     given_name: 'Keeper',
     family_name: 'Rith',
