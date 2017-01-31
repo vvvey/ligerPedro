@@ -152,13 +152,14 @@ $(document).ready(function() {
       }
 
     } else {
+      event.preventDefault();
       reason.setCustomValidity("")
       amount.setCustomValidity("");
       date.setCustomValidity("")
     
       $('#myModal').modal('toggle')
       $("#myModal").modal("show");
-      event.preventDefault();
+      
     }
   }, false);
 });
