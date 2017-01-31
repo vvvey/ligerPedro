@@ -1,14 +1,38 @@
+'use strict';
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var alert_message;
+var SparkPost = require('sparkpost'); 
+var sparky = new SparkPost('39c7e079b09af0a4e513ec4457d0a217c80f2020');
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
+};
+
+function emailTo(subject, body, recipients){
+  sparky.transmissions.send({
+    content: {
+      from: 'testing@sparkpostbox.com',
+      subject: subject,
+      html: body
+    },
+    recipients: [
+      {address: recipients}
+    ]
+  })
+  .then(data => {
+    console.log("Success!");
+    console.log(data);
+  })
+  .catch(err => {
+    console.log("There's some mistakes!");
+    console.log(err);
+  })
 };
 
 router.get('/login',
@@ -251,6 +275,87 @@ router.get('/exchange_list', function(req,res){
   })
 });
 
+router.get('/keeper_list', function(req,res){
+  var email = req.user.emails[0].value;
+  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = true\
+  ORDER BY timecreated DESC;";
+
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query("SELECT * FROM account WHERE email = '"+ email +"'", function(err, result) {
+      if(err){
+        console.error(err); 
+        res.send("Error " + err);
+      }else {
+        if(result.rows[0].role == 'keeper'){
+          client.query(exchangeListQuery, function(err2, result2) {
+            done();
+            if (err2) {
+              console.log(err2)
+            } else {
+              res.render('keeper_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
+            }
+          })
+        } else {
+          res.render('notFound');
+        }
+      }
+    });
+  })
+});
+
+router.post('/keeper_list/approve/:id', function(request, response, next){
+  var id = request.params.id;
+  if(id === undefined){
+    response.redirect('/keeper_list');
+  }
+  var status = request.body.status;
+  var upadte_keeper = "UPDATE exchange_list SET exchanged = '"+ status +"', timeexchanged = CURRENT_TIMESTAMP(2)\
+   WHERE id = '"+ id +"';"
+  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
+    client.query(upadte_keeper, function (err) {
+      if (err) {
+        console.log(err);
+      }else{
+        client.query("SELECT * FROM exchange_list WHERE id = '"+ id +"';", function(err2, result2){
+          if(err2){
+            console.log(err2);
+          }else {
+            if (result2.rows[0].exchanged === false) {
+              response.redirect('/keeper_list');
+              console.log("false");
+            } else{
+              client.query("SELECT budget FROM account WHERE email = '" + result2.rows[0].email + "';", function(err3, result3){
+                if(err3){
+                  console.log(err3);
+                }else{
+
+                  var after_change = parseInt(result3.rows[0].budget) + parseInt(result2.rows[0].result);
+                  console.log(result3.rows[0].budget); //problem NaN
+                  console.log(result2.rows[0].email);
+                  console.log(result2.rows[0].result);// in $
+                  console.log(after_change);
+                  var update_budget = "UPDATE account SET budget = '" + after_change + "' WHERE \
+                  email = '" + result2.rows[0].email + "';";
+
+                  client.query(update_budget, function(err4){
+                    console.log("Success!");
+                    if(err4){
+                      console.log(err4);
+                    }else{
+                      response.redirect('/keeper_list');
+                    }
+                  });
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  });
+});
+
+
 router.get('/settings', ensureLoggedIn, function(req, res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
@@ -273,7 +378,7 @@ router.get('/logout', function(req, res){
 });
 
 router.get('/transfer_success', function(req, res){
-  res.render('transfer_success');
+  res.render('transfer');
 });
 
 router.post('/transfer_confirmation', function(req, res) {
@@ -330,7 +435,8 @@ router.post('/transfer_success', function(req, res) {
                 var updateRecipientBudgetQuery = "PREPARE update_account_recipient(numeric(2)) AS\
                 UPDATE account SET budget = $1 \
                 WHERE email = '" + recipientEmail + "';\
-                EXECUTE update_account_recipient('" + recipientNewBudget + "');"
+                EXECUTE update_account_recipient('" + recipientNewBudget + "');\
+                DEALLOCATE PREPARE update_account_recipient";
 
                 client.query(updateRecipientBudgetQuery, function(rUpdateErr, rResult) {
                   if (rUpdateErr) {
@@ -353,9 +459,13 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-                        res.send("Inserted!");
+                        var body1 = '<h1>Hey,</br></h1><h2>You\'re successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
+                        var body2 = '<h1>Hey,</br></h1><h2>You\'re just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
+                        emailTo('Success Transfer!', body1, senderEmail);
+                        emailTo('Transfer in!', body2, recipientEmail);
+                        res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
-                    })
+                    });
                   }
                 })
             }
@@ -422,6 +532,7 @@ router.post('/exchange_confirmation', function(req, res) {
 });
 
 
+
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
@@ -429,10 +540,13 @@ router.post('/exchange_confirmation', function(req, res) {
 router.get('/transfer-test', function (request, response) {
   response.render('transfer-test');
 });
+
 router.post('/db', function(request, response){
   var text = request.body.transfer;
-
   response.render('db', {transfer:text});
 });
+
+
+
 
 module.exports = router;

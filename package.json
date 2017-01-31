@@ -22,7 +22,8 @@
     "jquery-form-validator": "^2.3.54",
     "passport": "^0.3.2",
     "passport-auth0": "^0.6.0",
-    "pg": "4.5.6"
+    "pg": "4.5.6",
+    "sparkpost": "^2.1.2"
   },
   "repository": {
     "type": "git",
