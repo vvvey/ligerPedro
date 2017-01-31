@@ -138,6 +138,10 @@ router.get('/about_us', function(req,res){
   res.render('about_us', {user: req.user, env: env});
 });
 
+router.get('/tutorial', function(req,res){
+  res.render('tutorial', {user: req.user, env: env});
+});
+
 router.get('/exchange', ensureLoggedIn, function(request,response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \

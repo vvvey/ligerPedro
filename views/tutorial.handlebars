@@ -1,0 +1,78 @@
+<body id="page-top">
+    <!--Head-->
+    {{> navigation}}
+
+  <!--Body-->
+  <header>
+    <h2 class="h2 text-center"><b>Tutorial</b></h2>
+
+    <div class="container text-center">
+      <ul class="nav nav-pills nav-justified btn-lg">
+        <li class="active">
+          <a data-toggle="pill" href="#transfer_his"><span>Exchanging Rules</a>
+        </li>
+        <li>
+          <a data-toggle="pill" href="#exchange_his"><span>Website Tutorial</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="win-history tab-pane fade in active" id="transfer_his">
+          <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" style="background-color:#ee4b28">Click here to learn</button>
+          <!-- Modal -->
+          <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+            
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title" style="color: black">Exchanging Rules</h4>
+                </div>
+                <div class="modal-body">
+                  <p style="color: black;"><span class="glyphicon glyphicon-asterisk"></span><span class="text-center" style="font-weight: bold;"> Currency Exchanging System</span> 
+                  <br>
+                  </br>
+                  <span>The process of exchanging</span>
+                  <br>
+                    Exchanging from paper notes to Pedros or Kips
+                    Students go to meet the admin with paper notes
+                    They will give the money to the admin
+                    The admin then takes the money and retain in a secured place (ex:vault)
+                    After retaining the money, the admin will transfer Pedros/Kips to the student’s account; could be apartment account or their personal account using the transferring system.
+
+                    Exchanging from Pedros or Kips to paper notes
+                    Students go to meet the admin with their Account ID and their computer
+                    The admin will ask for the purpose of exchanging and the amount of money he/she wants to exchange
+                    The students will then transfer their money online (Pedros/Kips) to the admin account
+                    After receiving the money from the student’s account, the admin will give the actual paper notes to the students
+
+                    Rules of Exchanging
+                    General Rules
+                    Weekdays only
+                    Exchanging must have purpose
+                    Can’t exchange more than $25 per person per week
+                    Exchanging must be approved by someone (by adult)
+                    On Friday can’t exchange more than $10
+                    Limit amount of exchange per day
+                     Each student can only exchange once per week
+                    In the weekday they can exchange from 4:00pm until 4:45pm
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div class="win-history tab-pane fade" id="exchange_his">
+      </div>
+    </div>
+  </div>
+    </div>
+
+  </header>
+
+  <!--Tail-->
+  {{> footer}}
+</body>
