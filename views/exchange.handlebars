@@ -1,101 +1,111 @@
 <body id="page-top">
-    <!--Head-->
-    {{> navigation}}
-    <!--Body-->
-    <div id="center-body">
-        <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
-            <div class="container text-center" id="win-exchange">
-                <h1 class="h1" style="margin-bottom: 20px">Exchanging Money</h1>
-                <div class="form-group">
-                    <div class="col-sm-12 col-md-12">
-                        <div class="input-group">
-                            <div id="radioBtn" class="btn-group">
-                            <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="Dollar to Pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
-                            <input type="radio" name="exchangeType" value="dollar-pedro" checked></label>
-                            <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="Pedro to Dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
-                            <input type="radio" id="exchangeType" name="exchangeType" value="pedro-dollar">
-                        </label>
-                    </div>
-                </div>
-            </div>
+  <!--Head-->
+  {{> navigation}}
+  <!--Body-->
+  <div id="center-body">
+    <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
+      <div class="container text-center" id="win-exchange">
+        <h1 class="h1" style="margin-bottom: 20px">Exchanging Money</h1>
+        <div class="form-group">
+          <div class="col-sm-12 col-md-12">
+            <div class="input-group">
+              <div id="radioBtn" class="btn-group">
+                <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="Dollar to Pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
+              <input type="radio" name="exchangeType" value="Dollar to Pedro" checked></label>
+              <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="Pedro to Dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
+              <input type="radio" id="exchangeType" name="exchangeType" value="Pedro to Dollar">
+            </label>
+          </div>
         </div>
-        <br/>
-        <br/>
-        <div class="input-group">
-            <div class="input-group-addon">P</div>
-            <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
-        </div>
-        <div class="input-group">
-            <div class="input-group-addon">$</div>
-            <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
-        </div>
-        <br>
-        <br>
-        <div class="input-group">
-            <div class="boxed"  style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-            <div class="wrap">
-            <textarea onKeyUp="count_it()" name="reason" id="reason" rows="4" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style=" 
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box; 
-    width: 100%;}" required></textarea>
-    <span id="count" class="counter"></span>
+      </div>
     </div>
-        </div>
-        <br>
-        <br>
-        <!-- Button trigger modal -->
-        <button id="checkValidate" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
-        Exchange
-        </button>
-        <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Exchange Comfirmation</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure that you want to exchange <span id="amountExtract" style="font-size: 
-                        30px; color: #EE4B28"></span> <span id="typeExchangeExtract"></span><span id="plural"></span> to <span id="amountExtractResult" style="font-size: 
-                        30px; color: #EE4B28"></span> <span id="currencyName"></span><span id="plural1"></span>.</p> 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-                        <button type="submit" class="btn btn-primary">Yes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <br/>
+    <br/>
+    <div class="input-group">
+      <div class="input-group-addon">P</div>
+      <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
     </div>
-</form>
+    <div class="input-group">
+      <div class="input-group-addon">$</div>
+      <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
+    </div>
+    <br>
+    <br>
+    <div class="control-group">
+      <label class="control-label">Appointment Date</label>
+      <div class="controls input-append date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+        <input size="16" type="text" value="" id="apptDate" placeholder="Pick a Date" class="readonly" required>
+        <span class="add-on"><i class="icon-remove"></i></span>
+        <span class="add-on" style="cursor: pointer;"><i class="icon-th"><span class="glyphicon glyphicon-calendar inline-block"></span></i></span>
+      </div>
+      <input type="hidden" id="dtp_input2" value="" /><br/>
+    </div>
+    <div class="input-group">
+      <div class="boxed"  style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
+      <div class="wrap">
+        <textarea onKeyUp="count_it()" name="reason" id="reason" rows="4" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style="
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 100%;}" required></textarea>
+        <span id="count" class="counter"></span>
+      </div>
+    </div>
+    <br>
+    <br>
+    <!-- Button trigger modal -->
+    <button id="checkValidate" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+    Exchange
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Exchange Comfirmation</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure that you want to exchange <span id="amountExtract" style="font-size:
+              30px; color: #EE4B28"></span> <span id="typeExchangeExtract"></span><span id="plural"></span> to <span id="amountExtractResult" style="font-size:
+              30px; color: #EE4B28"></span> <span id="currencyName"></span><span id="plural1"></span>.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+              <button type="submit" class="btn btn-primary">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 <style type="text/css">
-  .wrap {
-    position: relative;
-    display: inline-block;
+.wrap {
+position: relative;
+display: inline-block;
 }
 .wrap span {
-    position: absolute;
-    bottom: 5px;
-    right: 0px;
-    }
+position: absolute;
+bottom: 5px;
+right: 0px;
+}
 .counter{
-    background-color: #5dc991;
-    color: #fff;
-    font-size: 10px;
-    padding: 2px 5px;
-    line-height: 12px;
-    height: 14px;
-    text-align: center;
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    font-weight: 400;
+background-color: #5dc991;
+color: #fff;
+font-size: 10px;
+padding: 2px 5px;
+line-height: 12px;
+height: 14px;
+text-align: center;
+border-top-right-radius: 4px;
+border-bottom-left-radius: 4px;
+font-weight: 400;
 }
 </style>
 <!--Tail-->
 {{> footer}}
+<script type="text/javascript" src="/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
 <script type="text/javascript">
 $('#radioBtn label').on('click', function() {
   var sel = $(this).data('title');
@@ -107,23 +117,45 @@ $('#radioBtn label').on('click', function() {
 $(document).ready(function() {
   var amount = document.getElementById('amount');
   var amount_btn = document.getElementById('checkValidate');
-  var result = document.getElementById('result');
+  var result = document.getElementById('result'); 
   var reason = document.getElementById('reason');
   var span = document.getElementById('amountExtract');
+  var date = document.getElementById('dtp_input2');
+
   amount.addEventListener("keyup", function(event) {
     result.value = amount.value * 1.00;
   });
   amount_btn.addEventListener("click", function(event) {
-    if (amount.validity.valueMissing) {
-      amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
-    } else if (amount.validity.rangeUnderflow) {
-      amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
-    } else if (amount.validity.stepMismatch) {
-      amount.setCustomValidity("Please enter your currency at second decimal place!");
-    } else if (reason.validity.valueMissing) {
-      reason.setCustomValidity("Please enter a reason, {{user._json.given_name}}!");
-    }
-    else {
+    console.log(date.validity.valid);
+
+    if (!amount.validity.valid || !reason.validity.valid || !date.validity.valid) {
+      if (amount.validity.valueMissing) {
+        amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
+      } else if (amount.validity.rangeUnderflow) {
+        amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
+      } else if (amount.validity.stepMismatch) {
+        amount.setCustomValidity("Please enter your currency at second decimal place!");
+      } else {
+        amount.setCustomValidity("");
+      }
+
+      if (reason.validity.valueMissing) {
+        reason.setCustomValidity("Please enter a reason, {{user._json.given_name}}!");
+      } else {
+        reason.setCustomValidity("")
+      }
+
+      if (date.validity.valueMissing) {
+        date.setCustomValidity("Please enter appointment date!")
+      } else {
+        date.setCustomValidity("");
+      }
+
+    } else {
+      reason.setCustomValidity("")
+      amount.setCustomValidity("");
+      date.setCustomValidity("")
+    
       $('#myModal').modal('toggle')
       $("#myModal").modal("show");
       event.preventDefault();
@@ -132,7 +164,7 @@ $(document).ready(function() {
 });
 $(document).on("click", "#checkValidate", function() {
   var typeExchange = $('input[name="exchangeType"]:checked', '#exchangeForm').val();
-  if (typeExchange == "dollar-pedro") {
+  if (typeExchange == "Dollar to Pedro") {
     document.getElementById("typeExchangeExtract").innerHTML = "Dollar";
     document.getElementById("currencyName").innerHTML = "Pedro";
   } else {
@@ -155,6 +187,47 @@ allowWords.innerHTML = length;
 reasonInput.onkeyup = function () {
   document.getElementById('count').innerHTML = (length - this.value.length);
 };
+
+$('.form_datetime').datetimepicker({
+        //language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+    autoclose: 1,
+    todayHighlight: 1,
+    startView: 2,
+    forceParse: 0,
+        showMeridian: 1
+    });
+  $('.form_date').datetimepicker({
+        language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+    autoclose: 1,
+    todayHighlight: 1,
+    startView: 2,
+    minView: 2,
+    forceParse: 0
+    });
+  $('.form_time').datetimepicker({
+        language:  'fr',
+        weekStart: 1,
+        todayBtn:  1,
+    autoclose: 1,
+    todayHighlight: 1,
+    startView: 1,
+    minView: 0,
+    maxView: 1,
+    forceParse: 0
+    });
+
+
+  $(".readonly").on('keydown paste', function(e){
+        e.preventDefault();
+    });
 </script>
+<!-- Modal Script -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
 
 </body>
