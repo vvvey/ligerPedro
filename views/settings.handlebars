@@ -1,32 +1,30 @@
+<body id="page-top">
 {{> navigation}}
-</table>
+
+<div id="center-body">
+  <table class="container text-center"" id="win-transfer">
+  <th>Account Settings</th>
   <th>Change</th>
-	<div id="center-body">
-<table class="container text-center"" id="win-transfer">
-  <th>Account Setting</th>
-<tr>
-  <th>Change</th>
-</tr>
-  <td><input type="text" value="{{user.name.familyName}}" readonly></td>
-<tr>
+  <tr>
   <td class="text-lg">Family name:</td>
-</tr>
-<tr>
+  <td><input type="text" value="{{user.name.familyName}}" readonly></td>
+  </tr>
+  <tr>
   <td>Given name:</td>
   <td><input type="text" value="{{user.name.givenName}}" readonly></td>
+  </tr>
+  <tr>
   <td>Fullname:</td>
-</tr>
-<tr>
   <td><input type="text" value="{{user.displayName}}" readonly></td>
-<tr>
-</tr>
-
-
-</div>
-</tr>
-  <td><input type="text" value="{{user.provider}}" readonly></td>    
+  </tr>
+  <tr>
   <td>Email: </td>
+  <td><input type="text" value="{{user.provider}}" readonly></td>  
+  </tr>
+</table>
+</div>
 {{> footer}}
+
 <style>
 table {
     font-family: arial, sans-serif;
@@ -60,3 +58,5 @@ tr:nth-child(even) {
     background-color: #dddddd;
 }
 </style>
+
+</body>
