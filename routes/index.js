@@ -15,11 +15,14 @@ var env = {
 };
 
 function emailTo(subject, body, recipients){
+  console.log("subject: " + subject);
+  console.log("body: " + body);
+  console.log("recip: " + recipients);
   sparky.transmissions.send({
     content: {
       from: 'testing@sparkpostbox.com',
       subject: subject,
-      html: body
+      html: '<html><body>' + body + '</body></html>'
     },
     recipients: [
       {address: recipients}
@@ -387,7 +390,7 @@ router.post('/transfer_confirmation', function(req, res) {
           }
         else 
         { 
-          res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount}); 
+          res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount, reason: req.body.reason}); 
         }
       })
     }) 
@@ -396,6 +399,8 @@ router.post('/transfer_confirmation', function(req, res) {
 router.post('/transfer_success', function(req, res) {
   var senderEmail = req.user.emails[0].value;
   var recipientEmail = req.body.recipient;
+  var reason = req.body.reason;
+  console.log("The reason is: " + reason);
 
   pg.connect(process.env.PEDRO_db_URL, function (err,client, done) { 
     client.query("SELECT budget FROM account where email = '" + senderEmail + "'", function(err,sender) { 
@@ -439,16 +444,16 @@ router.post('/transfer_success', function(req, res) {
                     console.error(rUpdateErr);
                     res.send("Error " + rUpdateErr);
                   } else {
-                    var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric AS\
-                    INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget)\
-                    VALUES ($1, $2, $3, $4, $5, $6);\
-                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"');"
+                    var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric, TEXT) AS\
+                    INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget, reason)\
+                    VALUES ($1, $2, $3, $4, $5, $6, $7);\
+                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"', '" + reason + "');"
 
-                    var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP) AS\
-                    INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
-                    VALUES ($1, $2, $3, $4, $5, $6);\
+                    var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP, TEXT) AS\
+                    INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason) \
+                    VALUES ($1, $2, $3, $4, $5, $6, $7);\
                     EXECUTE newTransfer(" + transferBudget + ", '" + senderEmail + "', '" + recipientEmail + "', \
-                    '" + senderNewBudget + "', '" + recipientNewBudget + "', CURRENT_TIMESTAMP(2)); DEALLOCATE PREPARE newTransfer";
+                    '" + senderNewBudget + "', '" + recipientNewBudget + "', CURRENT_TIMESTAMP(2), '" + reason + "'); DEALLOCATE PREPARE newTransfer";
                     
                     client.query(x, function (transferErr, transferResult) {
                       if (transferErr) {
@@ -526,8 +531,6 @@ router.post('/transfer_success', function(req, res) {
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
-
-
 
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
