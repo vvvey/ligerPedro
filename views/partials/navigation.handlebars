@@ -35,15 +35,15 @@
                     <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
                   </a>
                   <ul class="dropdown-menu" style="color: white">
-                    <li><a href="/transfer">Transfer</a></li>
-                    <li><a href="/exchange">Exchange</a></li>
-                    <li><a href="/history">History</a></li>
-                    <li><a href="/settings" id="nav-settings">Settings</a></li>
+                    <li><a href="/transfer" style="color: orange">Transfer</a></li>
+                    <li><a href="/exchange" style="color: orange">Exchange</a></li>
+                    <li><a href="/history" style="color: orange">History</a></li>
+                    <li><a href="/settings" style="color: orange"id="nav-settings">Settings</a></li>
 
                     {{#if user}}
                       {{#each data}}
                         {{#ifCond this.role 're'}}                    
-                          <li><a href="/exchange_list">Request</a></li>
+                          <li><a href="/exchange_list" style="color: orange">Request</a></li>
                         {{/ifCond}}
                       {{/each}}
                     {{/if}}
