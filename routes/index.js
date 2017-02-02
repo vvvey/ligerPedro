@@ -1,38 +1,14 @@
-'use strict';
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var alert_message;
-var SparkPost = require('sparkpost'); 
-var sparky = new SparkPost('39c7e079b09af0a4e513ec4457d0a217c80f2020');
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
-};
-
-function emailTo(subject, body, recipients){
-  sparky.transmissions.send({
-    content: {
-      from: 'testing@sparkpostbox.com',
-      subject: subject,
-      html: body
-    },
-    recipients: [
-      {address: recipients}
-    ]
-  })
-  .then(data => {
-    console.log("Success!");
-    console.log(data);
-  })
-  .catch(err => {
-    console.log("There's some mistakes!");
-    console.log(err);
-  })
 };
 
 router.get('/login',
