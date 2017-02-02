@@ -437,8 +437,6 @@ router.post('/transfer_success', function(req, res) {
                       } else {
                         var body1 = '<h1>Hey,</br></h1><h2>You successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
                         var body2 = '<h1>Hey,</br></h1><h2>You just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
-                        emailTo('Success Transfer!', body1, senderEmail);
-                        emailTo('Transfer in!', body2, recipientEmail);
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
