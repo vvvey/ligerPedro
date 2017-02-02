@@ -73,18 +73,26 @@
                     <td>{{this.reason}}</td>  
                     <td>{{this.re}}</td>
                     <td></td>
-                    <td>{{#ifCond this.approved true}}
+                    <td>{{#ifCond this.approved "true"}}
                           Accept
-                        {{else ifCond this.approved false}}
+                        {{else ifCond this.approved "false"}}
                           Denied
+                        {{else ifCond this.approved "more_info"}}
+                          Need more information
                         {{else}}
                           Pending
                         {{/ifCond}}
                     </td>  
                     <td>{{dateFormat this.timeapproved}}</td>
                     <td></td>  
-                    <td>{{#ifCond this.exchanged true}}
+                    <td>{{#ifCond this.exchanged "true"}}
                           Finished
+                        {{else ifCond this.approved undefine}}
+                          Not arrive
+                        {{else ifCond this.approved "more_info"}}
+                          Cancled
+                        {{else ifCond this.approved "false"}}
+                          Cancled
                         {{else}}
                           Pending
                         {{/ifCond}}

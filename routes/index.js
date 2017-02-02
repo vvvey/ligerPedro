@@ -6,7 +6,7 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var alert_message;
 var SparkPost = require('sparkpost'); 
-var sparky = new SparkPost('39c7e079b09af0a4e513ec4457d0a217c80f2020');
+var sparky = new SparkPost(process.env.SPARKPOST_API_KEY);
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -20,7 +20,7 @@ function emailTo(subject, body, recipients){
   console.log("recip: " + recipients);
   sparky.transmissions.send({
     content: {
-      from: 'testing@sparkpostbox.com',
+      from: '@sparkpostbox.com',
       subject: subject,
       html: '<html><body>' + body + '</body></html>'
     },
@@ -37,7 +37,9 @@ function emailTo(subject, body, recipients){
     console.log(err);
   })
 };
-
+router.get('/apartment', function(request, response){
+  response.render('apartment', {user: request.user});
+});
 router.get('/login',
   function(req, res){
     if(req.user){
@@ -263,7 +265,7 @@ router.get('/exchange_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
-              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user, data: result.rows});
+              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
             }
           })
         } else {
@@ -273,10 +275,10 @@ router.get('/exchange_list', function(req,res){
     });
   })
 });
-
+///////////////////////////
 router.get('/keeper_list', function(req,res){
   var email = req.user.emails[0].value;
-  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = true\
+  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = 'true'\
   ORDER BY timecreated DESC;";
 
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -291,6 +293,14 @@ router.get('/keeper_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
+              var fug = 'SELECT SUM(budget) FROM exchange_list;';
+              client.quer(fug, function(err3, result3){
+                if(err3){
+                  console.log(err3);
+                }else{
+                  ////////////////////////////////////////////////////////////////////////////////////////////
+                }
+              });
               res.render('keeper_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
             }
           })
@@ -319,7 +329,7 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
           if(err2){
             console.log(err2);
           }else {
-            if (result2.rows[0].exchanged === false) {
+            if (result2.rows[0].exchanged === 'false') {
               response.redirect('/keeper_list');
               console.log("false");
             } else{
@@ -353,7 +363,7 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
     });
   });
 });
-
+/////////////////////////////////////////
 
 router.get('/settings', ensureLoggedIn, function(req, res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
