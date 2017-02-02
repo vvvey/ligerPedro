@@ -138,6 +138,10 @@ router.get('/about_us', function(req,res){
   res.render('about_us', {user: req.user, env: env});
 });
 
+router.get('/tutorial', function(req,res){
+  res.render('tutorial', {user: req.user, env: env});
+});
+
 router.get('/exchange', ensureLoggedIn, function(request,response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
@@ -431,9 +435,13 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
+                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
+                        var body2 = '<h1>Hey,</br></h1><h2>You just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
+                        emailTo('Success Transfer!', body1, senderEmail);
+                        emailTo('Transfer in!', body2, recipientEmail);
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
-                    })
+                    });
                   }
                 })
             }
@@ -500,6 +508,7 @@ router.post('/exchange_confirmation', function(req, res) {
 });
 
 
+
 router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
@@ -507,10 +516,13 @@ router.post('/exchange_confirmation', function(req, res) {
 router.get('/transfer-test', function (request, response) {
   response.render('transfer-test');
 });
+
 router.post('/db', function(request, response){
   var text = request.body.transfer;
-
   response.render('db', {transfer:text});
 });
+
+
+
 
 module.exports = router;
