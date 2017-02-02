@@ -7,8 +7,6 @@ var session = require('express-session');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 
-
-
 var hbs = exphbs.create({
   defaultLayout: 'main',
   // Specify helpers which are only registered on this instance.
@@ -84,7 +82,7 @@ var routes = require('./routes/index');
 var user = require('./routes/user');
 
 
-app.use(fake_account);
+//app.use(fake_account);
 // This can be used to keep a smaller payload
 passport.serializeUser(function(user, done) {
   done(null, user);
