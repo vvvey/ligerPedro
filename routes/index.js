@@ -5,8 +5,6 @@ var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var alert_message;
-var SparkPost = require('sparkpost'); 
-var sparky = new SparkPost(process.env.SPARKPOST_API_KEY);
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -14,29 +12,6 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
-function emailTo(subject, body, recipients){
-  console.log("subject: " + subject);
-  console.log("body: " + body);
-  console.log("recip: " + recipients);
-  sparky.transmissions.send({
-    content: {
-      from: '@sparkpostbox.com',
-      subject: subject,
-      html: '<html><body>' + body + '</body></html>'
-    },
-    recipients: [
-      {address: recipients}
-    ]
-  })
-  .then(data => {
-    console.log("Success!");
-    console.log(data);
-  })
-  .catch(err => {
-    console.log("There's some mistakes!");
-    console.log(err);
-  })
-};
 router.get('/apartment', function(request, response){
   response.render('apartment', {user: request.user});
 });
@@ -275,7 +250,7 @@ router.get('/exchange_list', function(req,res){
     });
   })
 });
-///////////////////////////
+
 router.get('/keeper_list', function(req,res){
   var email = req.user.emails[0].value;
   var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = 'true'\
@@ -494,8 +469,6 @@ router.post('/transfer_success', function(req, res) {
                       } else {
                         var body1 = '<h1>Hey,</br></h1><h2>You\'re successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
                         var body2 = '<h1>Hey,</br></h1><h2>You\'re just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
-                        emailTo('Success Transfer!', body1, senderEmail);
-                        emailTo('Transfer in!', body2, recipientEmail);
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
