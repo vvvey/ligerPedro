@@ -455,11 +455,12 @@ router.post('/transfer_success', function(req, res) {
                     console.error(rUpdateErr);
                     res.send("Error " + rUpdateErr);
                   } else {
+                    /*
                     var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric, TEXT) AS\
                     INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget, reason)\
                     VALUES ($1, $2, $3, $4, $5, $6, $7);\
-                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"', '" + reason + "');"
-
+                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"', '" + reason + "');"*/
+                    
                     var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP, TEXT) AS\
                     INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason) \
                     VALUES ($1, $2, $3, $4, $5, $6, $7);\
@@ -471,13 +472,6 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-<<<<<<< HEAD
-                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
-                        var body2 = '<h1>Hey,</br></h1><h2>You just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
-=======
-                        var body1 = '<h1>Hey,</br></h1><h2>You\'re successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
-                        var body2 = '<h1>Hey,</br></h1><h2>You\'re just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
->>>>>>> c1d489b9437d6d70f8708020c2e2633cea3cd509
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
