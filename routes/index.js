@@ -196,12 +196,15 @@ router.post('/exchange_approving', function(req,res){
     timeApproved: null,
     exchanged: null,
     timeExchanged:null,
-    apptDate: req.body.apptDate      
+    apptDate: req.body.apptDate,
+    apptTime: req.body.apptTime    
   }
 
   var apptDate = exchangeLog.apptDate;
+  var apptTime = 16;
 
     apptDate = new Date(apptDate);
+    apptDate.setHours(apptTime);
     apptDate = apptDate.getUTCFullYear() + '-' +
             ('00' + (apptDate.getUTCMonth() + 1)).slice(-2) + '-' +
             ('00' + apptDate.getUTCDate()).slice(-2) + ' ' +

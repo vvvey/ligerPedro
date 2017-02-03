@@ -39,8 +39,8 @@
     
     <div class="input-group date form_time" data-date="" data-link-field="dtp_input3" data-link-format="hh:00">
       <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
-      <input class="form-control readonly" size="16" type="text" value="" required>
-      <input type="hidden" id="dtp_input3" value="" />
+      <input class="form-control readonly" size="16" type="text" name="apptTime" value="04:00 PM" readonly>
+      <!-- <input type="hidden" id="dtp_input3" value="" /> -->
     </div>
     <br>
     <br>
@@ -141,30 +141,23 @@ $(document).ready(function() {
 
       $('#myModal').modal('toggle')
       $("#myModal").modal("show");
-    } else {
-      if (amount.validity.valueMissing) {
-        amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
-      } else if (amount.validity.rangeUnderflow) {
-        amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
-      } else if (amount.validity.stepMismatch) {
-        amount.setCustomValidity("Please enter your currency at second decimal place!");
-      } else {
-        amount.setCustomValidity("");
-      }
+     } //else {
+    //   if (amount.validity.valueMissing) {
+    //     amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
+    //   } else if (amount.validity.rangeUnderflow) {
+    //     amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
+    //   } else if (amount.validity.stepMismatch) {
+    //     amount.setCustomValidity("Please enter your currency at second decimal place!");
+    //   } else {
+    //     amount.setCustomValidity("");
+    //   }
     
-      if (date.validity.valueMissing) {
-        date.setCustomValidity("Appointment date is needed!")
-      } else {
-        date.setCustomValidity("");
-      }
-
-      if (reason.validity.valueMissing) {
-        reason.setCustomValidity("Please fill out the reason!")
-      } else {
-        reason.setCustomValidity("");
-        event.preventDefault();
-      }
-    }
+    //   if (date.validity.valueMissing) {
+    //     date.setCustomValidity("Appointment date is needed!")
+    //   } else {
+    //     date.setCustomValidity("");
+    //   }
+    // }
  
   }, false);
 });
