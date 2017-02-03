@@ -293,15 +293,17 @@ router.get('/keeper_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
-              var fug = 'SELECT SUM(budget) FROM exchange_list;';
-              client.quer(fug, function(err3, result3){
+              var fug = 'SELECT SUM(budget) FROM account;';
+              client.query(fug, function(err3, result3){
                 if(err3){
                   console.log(err3);
                 }else{
-                  ////////////////////////////////////////////////////////////////////////////////////////////
+                  console.log("this is my result: " + Object.keys(result3.rows[0]));
+                  console.log("rows: " + result3.rows[0].sum)
+                  res.render('keeper_list', {totalBudget: result3.rows[0].sum,requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
+
                 }
               });
-              res.render('keeper_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
             }
           })
         } else {
@@ -336,24 +338,45 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
               client.query("SELECT budget FROM account WHERE email = '" + result2.rows[0].email + "';", function(err3, result3){
                 if(err3){
                   console.log(err3);
-                }else{
+                }else{              
 
-                  var after_change = parseInt(result3.rows[0].budget) + parseInt(result2.rows[0].result);
-                  console.log(result3.rows[0].budget); //problem NaN
-                  console.log(result2.rows[0].email);
-                  console.log(result2.rows[0].result);// in $
-                  console.log(after_change);
-                  var update_budget = "UPDATE account SET budget = '" + after_change + "' WHERE \
-                  email = '" + result2.rows[0].email + "';";
+                  if(result2.rows[0].type == 'Dollar to Pedro'){
+                    //Exchange in
+                    var after_change_in = parseInt(result3.rows[0].budget) + parseInt(result2.rows[0].result);
+                    console.log('Exhcange in email: ' + result2.rows[0].email);
+                    console.log('Exhcange in account budget: ' + result3.rows[0].budget); 
+                    console.log('Exhcange in value: ' + result2.rows[0].result);
+                    console.log('Exhcange in calculated: ' + after_change_in);
 
-                  client.query(update_budget, function(err4){
-                    console.log("Success!");
-                    if(err4){
-                      console.log(err4);
-                    }else{
-                      response.redirect('/keeper_list');
-                    }
-                  });
+                    var update_budget_exchange_in = "UPDATE account SET budget = '" + after_change_in + "' WHERE \
+                    email = '" + result2.rows[0].email + "';";
+                    client.query(update_budget_exchange_in, function(err4){
+                      console.log("Success! (IN)");
+                      if(err4){
+                        console.log(err4);
+                      }else{
+                        response.redirect('/keeper_list');
+                      }
+                    });
+                  }else {
+                    //Exchagne out
+                    var after_change_out = parseInt(result3.rows[0].budget) - parseInt(result2.rows[0].result);
+                    console.log('Exhcange out email: ' + result2.rows[0].email);
+                    console.log('Exhcange out account budget: ' + result3.rows[0].budget); 
+                    console.log('Exhcange out value: ' + result2.rows[0].result);
+                    console.log('Exhcange out calculated: ' + after_change_out);
+
+                    var update_budget_exchange_out = "UPDATE account SET budget = '" + after_change_out + "' WHERE \
+                    email = '" + result2.rows[0].email + "';"
+                    client.query(update_budget_exchange_out, function(err5){
+                      console.log("Success! (OUT)");
+                      if(err5){
+                        console.log(err5);
+                      }else{
+                        response.redirect('/keeper_list');
+                      }
+                    });
+                  }
                 }
               });
             }
@@ -363,7 +386,6 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
     });
   });
 });
-/////////////////////////////////////////
 
 router.get('/settings', ensureLoggedIn, function(req, res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {

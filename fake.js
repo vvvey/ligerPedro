@@ -1,9 +1,11 @@
+//var email = 'meas.v@ligercambodia.org';
+var email = 'dalin.l@ligercambodia.org';
 var fake_account = function(req, res, next) {
   req.user = { provider: 'google-oauth2',
  displayName: 'Visal',
  id: 'google-oauth2|103126281815949004359',
  name: { familyName: 'Rith', givenName: 'chanmalika' },
- emails: [ { value: 'dalin.l@ligercambodia.org' } ], //meas.v@ligercambodia.org dalin.l@ligercambodia.org
+ emails: [ { value: email } ], //meas.v@ligercambodia.org dalin.l@ligercambodia.org
  picture: 'https://lh3.googleusercontent.com/-_K5tTEkSx7A/AAAAAAAAAAI/AAAAAAAABOs/RwqSzZzapGY/photo.jpg',
  locale: 'en',
  nickname: 'meas',
@@ -13,7 +15,7 @@ var fake_account = function(req, res, next) {
       connection: 'google-oauth2',
       isSocial: true } ],
  _json: 
-  { email: 'dalin.l@ligercambodia.org',
+  { email: email,
     name: 'Sreymeas Veng',
     given_name: 'Visal',
     family_name: 'Rith',
