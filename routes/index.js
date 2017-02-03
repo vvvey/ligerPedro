@@ -471,13 +471,8 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-<<<<<<< HEAD
-                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
-                        var body2 = '<h1>Hey,</br></h1><h2>You just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
-=======
-                        var body1 = '<h1>Hey,</br></h1><h2>You\'re successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
-                        var body2 = '<h1>Hey,</br></h1><h2>You\'re just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
->>>>>>> c1d489b9437d6d70f8708020c2e2633cea3cd509
+                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transferred P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
+                        var body2 = '<h1>Hey,</br></h1><h2>You just received P '+ transferBudget +' from '+ senderEmail +'!</h2>';
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
@@ -496,9 +491,6 @@ router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
 
-router.post('/exchange_confirmation', function(req, res) {
-  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
-});
 
 router.get('/transfer-test', function (request, response) {
   response.render('transfer-test');
