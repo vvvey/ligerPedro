@@ -11,6 +11,10 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
+router.get('/apartment', function(request, response){
+  response.render('apartment', {user: request.user});
+});
+
 router.get('/login',
   function(req, res){
     if(req.user){
@@ -467,8 +471,13 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
+<<<<<<< HEAD
                         var body1 = '<h1>Hey,</br></h1><h2>You successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
                         var body2 = '<h1>Hey,</br></h1><h2>You just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
+=======
+                        var body1 = '<h1>Hey,</br></h1><h2>You\'re successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
+                        var body2 = '<h1>Hey,</br></h1><h2>You\'re just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
+>>>>>>> c1d489b9437d6d70f8708020c2e2633cea3cd509
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
