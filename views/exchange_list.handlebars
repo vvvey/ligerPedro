@@ -32,7 +32,10 @@
 										<form method="post" action="/exchange_list/approve/{{this.id}}">
 											<button type="submit" name="status" value="true">Accept</button>
 											<button type="submit" name="status" value="false">Deny</button>
+											<button type="submit" name="status" value="more_info">More Info</button>
 										</form>
+									{{else ifCond this.approved "more_info"}}
+										Need more inforation by {{this.re}}
 									{{else}}
 										Denied by {{this.re}}
 									{{/ifCond}}
