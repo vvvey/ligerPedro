@@ -33,7 +33,7 @@
     <h4>Appointment Date</h4>
     <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
       <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-      <input class="form-control readonly" size="16" type="text" value="" id="apptDate" required> 
+      <input class="form-control readonly" size="16" type="text" value="" id="apptDate" placeholder="Choose a date" required> 
       <input type="hidden" id="dtp_input2" value="" name="apptDate" /><br/>
     </div>
     
@@ -132,33 +132,30 @@ $(document).ready(function() {
   amount_btn.addEventListener("click", function(event) {
     console.log(date.validity.valid);
 
-
-    if(amount.validity.valid && reason.validity.valid && date.validity.valid){
-      reason.setCustomValidity("");
+    if (amount.validity.valueMissing) {
+      amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
+    } else if (amount.validity.rangeUnderflow) {
+      amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
+    } else if (amount.validity.stepMismatch) {
+      amount.setCustomValidity("Please enter your currency at second decimal place!");
+    } else {
       amount.setCustomValidity("");
-      date.setCustomValidity("");
-      event.preventDefault();
 
-      $('#myModal').modal('toggle')
-      $("#myModal").modal("show");
-     } //else {
-    //   if (amount.validity.valueMissing) {
-    //     amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
-    //   } else if (amount.validity.rangeUnderflow) {
-    //     amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
-    //   } else if (amount.validity.stepMismatch) {
-    //     amount.setCustomValidity("Please enter your currency at second decimal place!");
-    //   } else {
-    //     amount.setCustomValidity("");
-    //   }
-    
-    //   if (date.validity.valueMissing) {
-    //     date.setCustomValidity("Appointment date is needed!")
-    //   } else {
-    //     date.setCustomValidity("");
-    //   }
-    // }
- 
+      if (date.validity.valueMissing) {
+        date.setCustomValidity("Appointment date is needed!")
+      } else {
+        date.setCustomValidity("");
+        
+        if (reason.validity.valueMissing) {
+          reason.setCustomValidity("Please enter your reason!");
+        } else {
+          reason.setCustomValidity("");
+          event.preventDefault();
+          $('#myModal').modal('toggle')
+          $("#myModal").modal("show");
+        }
+      }
+    }
   }, false);
 });
 $(document).on("click", "#checkValidate", function() {
@@ -197,15 +194,15 @@ $('.form_date').datetimepicker({
   forceParse: 0,
   minDate: Date.now()
 });
-$('.form_time').datetimepicker({
-  autoclose: 1,
-  startView: 1,
-  minView: 1,
-  maxView: 0,
-  showMeridian: 1,
-  format: 'HH:00 P',
-  defaultDate: '16:00'
-});
+// $('.form_time').datetimepicker({
+//   autoclose: 1,
+//   startView: 1,
+//   minView: 1,
+//   maxView: 0,
+//   showMeridian: 1,
+//   format: 'HH:00 P',
+//   defaultDate: '16:00'
+// });
 $(".readonly").on('keydown paste', function(e) {
   e.preventDefault();
 });
