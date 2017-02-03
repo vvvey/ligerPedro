@@ -1,12 +1,9 @@
-'use strict';
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var alert_message;
-var SparkPost = require('sparkpost'); 
-var sparky = new SparkPost('39c7e079b09af0a4e513ec4457d0a217c80f2020');
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -14,26 +11,9 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
-function emailTo(subject, body, recipients){
-  sparky.transmissions.send({
-    content: {
-      from: 'testing@sparkpostbox.com',
-      subject: subject,
-      html: body
-    },
-    recipients: [
-      {address: recipients}
-    ]
-  })
-  .then(data => {
-    console.log("Success!");
-    console.log(data);
-  })
-  .catch(err => {
-    console.log("There's some mistakes!");
-    console.log(err);
-  })
-};
+router.get('/apartment', function(request, response){
+  response.render('apartment', {user: request.user});
+});
 
 router.get('/login',
   function(req, res){
@@ -121,7 +101,7 @@ router.get('/db', ensureLoggedIn, function (request, response) {
 router.get('/history', ensureLoggedIn,function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("PREPARE history_query1 (TEXT) AS\
-    SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1;\
+    SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1 ORDER BY date DESC;\
     EXECUTE history_query1 ('"+ request.user.emails[0].value +"');\
     DEALLOCATE PREPARE history_query1", function(err1, result1) {
       done();
@@ -130,7 +110,7 @@ router.get('/history', ensureLoggedIn,function(request, response){
         response.send("Error " + err1);
       } else {
         client.query("PREPARE history_query2 (TEXT) AS\
-        SELECT * FROM exchange_list WHERE email = $1;\
+        SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;\
         EXECUTE history_query2 ('"+ request.user.emails[0].value +"');\
         DEALLOCATE PREPARE history_query2", function(err2, result2) {
           done();
@@ -279,7 +259,7 @@ router.get('/exchange_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
-              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields,  user: req.user, data: result.rows});
+              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
             }
           })
         } else {
@@ -292,7 +272,7 @@ router.get('/exchange_list', function(req,res){
 
 router.get('/keeper_list', function(req,res){
   var email = req.user.emails[0].value;
-  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = true\
+  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = 'true'\
   ORDER BY timecreated DESC;";
 
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
@@ -307,7 +287,17 @@ router.get('/keeper_list', function(req,res){
             if (err2) {
               console.log(err2)
             } else {
-              res.render('keeper_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
+              var fug = 'SELECT SUM(budget) FROM account;';
+              client.query(fug, function(err3, result3){
+                if(err3){
+                  console.log(err3);
+                }else{
+                  console.log("this is my result: " + Object.keys(result3.rows[0]));
+                  console.log("rows: " + result3.rows[0].sum)
+                  res.render('keeper_list', {totalBudget: result3.rows[0].sum,requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
+
+                }
+              });
             }
           })
         } else {
@@ -335,31 +325,52 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
           if(err2){
             console.log(err2);
           }else {
-            if (result2.rows[0].exchanged === false) {
+            if (result2.rows[0].exchanged === 'false') {
               response.redirect('/keeper_list');
               console.log("false");
             } else{
               client.query("SELECT budget FROM account WHERE email = '" + result2.rows[0].email + "';", function(err3, result3){
                 if(err3){
                   console.log(err3);
-                }else{
+                }else{              
 
-                  var after_change = parseInt(result3.rows[0].budget) + parseInt(result2.rows[0].result);
-                  console.log(result3.rows[0].budget); //problem NaN
-                  console.log(result2.rows[0].email);
-                  console.log(result2.rows[0].result);// in $
-                  console.log(after_change);
-                  var update_budget = "UPDATE account SET budget = '" + after_change + "' WHERE \
-                  email = '" + result2.rows[0].email + "';";
+                  if(result2.rows[0].type == 'Dollar to Pedro'){
+                    //Exchange in
+                    var after_change_in = parseInt(result3.rows[0].budget) + parseInt(result2.rows[0].result);
+                    console.log('Exhcange in email: ' + result2.rows[0].email);
+                    console.log('Exhcange in account budget: ' + result3.rows[0].budget); 
+                    console.log('Exhcange in value: ' + result2.rows[0].result);
+                    console.log('Exhcange in calculated: ' + after_change_in);
 
-                  client.query(update_budget, function(err4){
-                    console.log("Success!");
-                    if(err4){
-                      console.log(err4);
-                    }else{
-                      response.redirect('/keeper_list');
-                    }
-                  });
+                    var update_budget_exchange_in = "UPDATE account SET budget = '" + after_change_in + "' WHERE \
+                    email = '" + result2.rows[0].email + "';";
+                    client.query(update_budget_exchange_in, function(err4){
+                      console.log("Success! (IN)");
+                      if(err4){
+                        console.log(err4);
+                      }else{
+                        response.redirect('/keeper_list');
+                      }
+                    });
+                  }else {
+                    //Exchagne out
+                    var after_change_out = parseInt(result3.rows[0].budget) - parseInt(result2.rows[0].result);
+                    console.log('Exhcange out email: ' + result2.rows[0].email);
+                    console.log('Exhcange out account budget: ' + result3.rows[0].budget); 
+                    console.log('Exhcange out value: ' + result2.rows[0].result);
+                    console.log('Exhcange out calculated: ' + after_change_out);
+
+                    var update_budget_exchange_out = "UPDATE account SET budget = '" + after_change_out + "' WHERE \
+                    email = '" + result2.rows[0].email + "';"
+                    client.query(update_budget_exchange_out, function(err5){
+                      console.log("Success! (OUT)");
+                      if(err5){
+                        console.log(err5);
+                      }else{
+                        response.redirect('/keeper_list');
+                      }
+                    });
+                  }
                 }
               });
             }
@@ -369,7 +380,6 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
     });
   });
 });
-
 
 router.get('/settings', ensureLoggedIn, function(req, res){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
@@ -406,7 +416,7 @@ router.post('/transfer_confirmation', function(req, res) {
           }
         else 
         { 
-          res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount}); 
+          res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount, reason: req.body.reason}); 
         }
       })
     }) 
@@ -415,6 +425,8 @@ router.post('/transfer_confirmation', function(req, res) {
 router.post('/transfer_success', function(req, res) {
   var senderEmail = req.user.emails[0].value;
   var recipientEmail = req.body.recipient;
+  var reason = req.body.reason;
+  console.log("The reason is: " + reason);
 
   pg.connect(process.env.PEDRO_db_URL, function (err,client, done) { 
     client.query("SELECT budget FROM account where email = '" + senderEmail + "'", function(err,sender) { 
@@ -458,26 +470,24 @@ router.post('/transfer_success', function(req, res) {
                     console.error(rUpdateErr);
                     res.send("Error " + rUpdateErr);
                   } else {
-                    var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric AS\
-                    INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget)\
-                    VALUES ($1, $2, $3, $4, $5, $6);\
-                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"');"
+                    var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric, TEXT) AS\
+                    INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget, reason)\
+                    VALUES ($1, $2, $3, $4, $5, $6, $7);\
+                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"', '" + reason + "');"
 
-                    var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP) AS\
-                    INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
-                    VALUES ($1, $2, $3, $4, $5, $6);\
+                    var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP, TEXT) AS\
+                    INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason) \
+                    VALUES ($1, $2, $3, $4, $5, $6, $7);\
                     EXECUTE newTransfer(" + transferBudget + ", '" + senderEmail + "', '" + recipientEmail + "', \
-                    '" + senderNewBudget + "', '" + recipientNewBudget + "', CURRENT_TIMESTAMP(2)); DEALLOCATE PREPARE newTransfer";
+                    '" + senderNewBudget + "', '" + recipientNewBudget + "', CURRENT_TIMESTAMP(2), '" + reason + "'); DEALLOCATE PREPARE newTransfer";
                     
                     client.query(x, function (transferErr, transferResult) {
                       if (transferErr) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transfered P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
-                        var body2 = '<h1>Hey,</br></h1><h2>You just recive P '+ transferBudget +' from '+ senderEmail +'!</h2>';
-                        emailTo('Success Transfer!', body1, senderEmail);
-                        emailTo('Transfer in!', body2, recipientEmail);
+                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transferred P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
+                        var body2 = '<h1>Hey,</br></h1><h2>You just received P '+ transferBudget +' from '+ senderEmail +'!</h2>';
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
@@ -487,56 +497,6 @@ router.post('/transfer_success', function(req, res) {
             })           
           }
         })
-          
-        // var sender_new_budget = result.rows[0].budget - req.body.amount; 
-        // client.query("PREPARE update_account_sender(DECIMAL) AS\
-        //   UPDATE account SET budget = $1\
-        //   WHERE email = '" + req.user.emails[0].value + "';\
-        //   EXECUTE update_account_sender(" + sender_new_budget + ");\
-        //   DEALLOCATE PREPARE update_account_sender", function(err,result) { 
-        //   done();
-        //   if (err){ 
-        //     console.error(err); res.send("Error" + err); 
-        //   }else { 
-        //     client.query("select * from account where email = '" + req.body.recipient + "'", function(err2,result2) {
-        //       done();
-        //       if (err2) { 
-        //           console.error(err2); res.send("Error" + err2); 
-        //       } else {
-        //         console.log(result2.rows[0].budget);
-        //         var recipient_new_budget = parseInt(result2.rows[0].budget) + parseInt(req.body.amount);
-        //         console.log("add these: " + req.body.amount, result2.rows[0].budget);
-        //         console.log("equals: " + recipient_new_budget);
-        //         console.log("recip email: " + req.body.recipient);
-
-        //         client.query("PREPARE update_account_recipient(DECIMAL) AS\
-        //           UPDATE account SET budget = $1 \
-        //           WHERE email = '" + req.body.recipient + "';\
-        //           EXECUTE update_account_recipient(" + recipient_new_budget + ");", function (err3,result3) {
-        //           done();
-        //           if (err3){ 
-        //              console.error(err3); res.send("Error" + err); 
-        //           }else {
-        //             client.query("PREPARE insert_account(numeric, TEXT, TEXT, TEXT, TIMESTAMP) AS\
-        //               INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date) \
-        //               VALUES ($1, $2, $3, $4, $5);\
-        //               EXECUTE insert_account(" + req.body.amount + ", '" + req.user.emails[0].value + "', '" + req.body.recipient + "', \
-        //               '" + sender_new_budget + "', '" + recipient_new_budget + "', CURRENT_TIMESTAMP(0)); DEALOLCATE PREPARE insert_account", function(err,result) { 
-        //                 done(); {
-        //                 if (err3){ 
-        //                   console.error(err3); res.send("Error" + err3); 
-        //                 }else{
-        //                   console.log("Success!")
-        //                   res.render('transfer_success', {recipient: req.body.recipient, amount: req.body.amount});
-        //                 }
-        //                 };
-        //             });                       
-        //           }
-        //         });
-        //       }
-        //     });
-        //   }
-        // });
       }
     });
   });
@@ -546,11 +506,6 @@ router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
 
-
-
-router.post('/exchange_confirmation', function(req, res) {
-  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
-});
 
 router.get('/transfer-test', function (request, response) {
   response.render('transfer-test');

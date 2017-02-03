@@ -1,6 +1,9 @@
 <body id="page-top">
 	{{> navigation}}
 	<div id="center-body">
+
+		Total Money: {{totalBudget}}
+
 		<div class="win-history tab-pane fade in active" id="transfer_his">
 			<div class="table-responsive">
 				<table class="table">
@@ -25,11 +28,11 @@
 								<td>{{this.reason}}</td>
 								<td>
 								{{#ifCond this.exchanged null}}
-								<form method="post" action="/keeper_list/approve/{{this.id}}">
-									<button type="submit" name="status" value="true">Accept</button>
-									<button type="submit" name="status" value="false">Deny</button>
-								</form>
-								{{else ifCond this.exchanged true}}
+									<form method="post" action="/keeper_list/approve/{{this.id}}">
+										<button type="submit" name="status" value="true">Accept</button>
+										<button type="submit" name="status" value="false">Deny</button>
+									</form>
+								{{else ifCond this.exchanged "true"}}
 									Exhanged by keeper
 								{{else}}
 									Dennie by keeper
