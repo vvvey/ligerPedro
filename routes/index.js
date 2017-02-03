@@ -273,7 +273,7 @@ router.get('/exchange_list', function(req,res){
 router.get('/keeper_list', function(req,res){
   var email = req.user.emails[0].value;
   var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = 'true'\
-  ORDER BY timecreated DESC;";
+  ORDER BY apptdate DESC;";
 
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM account WHERE email = '"+ email +"'", function(err, result) {
