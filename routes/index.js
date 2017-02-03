@@ -490,9 +490,6 @@ router.post('/exchange_confirmation', function(req, res) {
   res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 });
 
-router.post('/exchange_confirmation', function(req, res) {
-  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
-});
 
 router.get('/transfer-test', function (request, response) {
   response.render('transfer-test');
