@@ -195,14 +195,26 @@ router.post('/exchange_approving', function(req,res){
     approved: null,
     timeApproved: null,
     exchanged: null,
-    timeExchanged:null      
+    timeExchanged:null,
+    apptDate: req.body.apptDate      
   }
 
-  var query = "PREPARE newExchange (TEXT, numeric, numeric, TEXT) AS \
-  INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason)\
+  var apptDate = exchangeLog.apptDate;
+
+    apptDate = new Date(apptDate);
+    apptDate = apptDate.getUTCFullYear() + '-' +
+            ('00' + (apptDate.getUTCMonth() + 1)).slice(-2) + '-' +
+            ('00' + apptDate.getUTCDate()).slice(-2) + ' ' +
+            ('00' + apptDate.getUTCHours()).slice(-2) + ':' +
+            ('00' + apptDate.getUTCMinutes()).slice(-2) + ':' +
+            ('00' + apptDate.getUTCSeconds()).slice(-2); 
+  console.log("SQL DAte is: " + apptDate);
+  
+  var query = "PREPARE newExchange (TEXT, numeric, numeric, TEXT, TIMESTAMP) AS \
+  INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
   VALUES (CURRENT_TIMESTAMP(2), '" + exchangeLog.person +"', '" + exchangeLog.email +"',\
-  $1, $2::float8::numeric::money, $3::float8::numeric::money, $4);\
-  EXECUTE newExchange('"+ exchangeLog.type+"', '"+ exchangeLog.amount+"', '"+ exchangeLog.result+"', '"+ exchangeLog.reason+"'); \
+  $1, $2::float8::numeric::money, $3::float8::numeric::money, $4, $5);\
+  EXECUTE newExchange('"+ exchangeLog.type+"', '"+ exchangeLog.amount+"', '"+ exchangeLog.result+"', '"+ exchangeLog.reason+"', '" + apptDate+"'); \
   DEALLOCATE PREPARE newExchange;"
 
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
