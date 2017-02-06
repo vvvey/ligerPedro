@@ -12,7 +12,49 @@ var env = {
 };
 
 router.get('/apartment', function(request, response){
-  response.render('apartment', {user: request.user});
+  pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
+    client.query("SELECT * FROM account WHERE \
+      email = '"+ request.user.emails[0].value +"';", function(err, result){
+      done();
+      if(err) {
+        console.error(err); response.send("Error " + err);
+      }else{
+        var x = result.rows[0].apartment;
+        var apartment = x.toLowerCase();
+
+        var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
+        client.query(apart_quer, function(err2, result2){
+          if(err2){
+            console.log(err2);
+          }else{
+            response.render('apartment', {user: request.user, data1: result.rows, apartment: result2.rows});
+          }
+        });
+      }
+    });
+  });
+});
+
+router.get('/trans_comfirmation_apartment', function(request, response){
+  response.render('trans_apart_comfirm', {user: request.user});
+});
+
+router.post('/trans_comfirmation_apartment', function(request, response){
+  var amount = request.body.amountTrans;
+  var email = request.body.recipientTrans;
+  var reason = request.body.reasonTrans;
+  response.render('trans_apart_comfirm', {amount: amount, email: email, reason: reason});
+});
+
+router.get('/trans_success_apartment', function(request, response){
+  response.render('trans_apart_success', {user: request.user});
+});
+
+router.post('/trans_success_apartment', function(request, response){
+  var amount = request.body.amountTrans;
+  var email = request.body.recipientTrans;
+  var reason = request.body.reasonTrans;
+  response.render('trans_apart_success', {amount: amount, email: email, reason: reason});
 });
 
 router.get('/login',

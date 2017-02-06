@@ -1,0 +1,9 @@
+<form class="form-inline" method=post action="/trans_success_apartment">
+      <h5> Are you sure that you want to transfer <input type="text" value={{amount}} name="amountTrans" readonly="true" size={{amount.length}}> to <input type ="badge" value={{email}} name="recipientTrans" readonly="true" size={{recipient.length}}>??</span></h5>
+      </br>
+      <br>
+      
+      <input type="submit" value="Send" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2">
+
+      <textarea readonly name="reasonTrans">{{reason}}</textarea>
+</form> 
