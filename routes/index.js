@@ -83,7 +83,7 @@ router.get('/exchange_approving', ensureLoggedIn, function(req,res){
 });
 
 router.get('/contact_us', ensureLoggedIn, function(req,res){
-  res.render('contact_us');
+  res.render('contact_us', {user:req.user});
 });
 
 router.get('/db', ensureLoggedIn, function (request, response) {
