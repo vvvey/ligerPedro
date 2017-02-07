@@ -3,15 +3,21 @@
   {{> navigation}}
   <!--Body-->
   <div id="center-body">
+
     <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
       <div class="container text-center" id="win-exchange">
         <h1 class="h1" style="margin-bottom: 20px">Exchanging Money</h1>
+        <p class="btn btn-primary">Your Current Budget <span class="badge" style="color: black"> P {{budget}}</span></p>
+        <br>
+        <br>
+        <br>
+        <br>
         <div class="form-group">
-          <div class="col-sm-12 col-md-12">
+          <div class="col-sm-12 col-lg-12">
             <div class="input-group">
               <div id="radioBtn" class="btn-group">
                 <label class="btn btn-primary btn-lg active" data-toggle="exchangeType" data-title="Dollar to Pedro"><span class="btn-lg">$ </span>Dollar-Pedro<span class="btn-lg"> P</span>
-              <input type="radio" name="exchangeType" value="Dollar to Pedro" checked></label>
+              <input type="radio" id="exchangeType" name="exchangeType" value="Dollar to Pedro" checked></label>
               <label class="btn btn-primary btn-lg notActive" data-toggle="exchangeType" data-title="Pedro to Dollar"><span class="btn-lg">P </span>Pedro-Dollar<span class="btn-lg"> $</span>
               <input type="radio" id="exchangeType" name="exchangeType" value="Pedro to Dollar">
             </label>
@@ -22,18 +28,18 @@
     <br/>
     <br/>
     <div class="input-group">
-      <div class="input-group-addon">P</div>
-      <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
+      <div class="input-group-addon" id="span1">$</div>
+      <input type="number" class="form-control" size="10" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" max="100" required>
     </div>
     <div class="input-group">
-      <div class="input-group-addon">$</div>
-      <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
+      <div class="input-group-addon" id="span2">P</div>
+      <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result" step="0.01" min="0.25" max="100">
     </div>
     <br>
-    <h4>Appointment Date</h4>
+    <br>
     <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
       <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-      <input class="form-control readonly" size="16" type="text" value="" id="apptDate" placeholder="Choose a date" required> 
+      <input class="form-control readonly" size="16" type="text" value="" id="apptDate" placeholder="Appointment date" required> 
       <input type="hidden" id="dtp_input2" value="" name="apptDate" /><br/>
     </div>
     
@@ -157,6 +163,27 @@ $(document).ready(function() {
       }
     }
   }, false);
+
+
+var span1 = document.getElementById("span1");
+var span2 = document.getElementById("span2");
+var radio = document.getElementsByName('')
+$('input[name="exchangeType"]').click(function() {
+  console.log('Change');
+  console.log(radio.value)
+  if($("input[name='exchangeType']:checked").val() == 'Dollar to Pedro') {
+    span1.innerHTML = '$';
+    span2.innerHTML = 'P';
+    $("#amount").prop('max',100);
+    $("#result").prop('max',100);
+  } else {
+    span1.innerHTML = 'P';
+    span2.innerHTML = '$';
+    $("#amount").prop('max','{{budget}}');
+    $("#result").prop('max','{{budget}}');
+  }
+});
+
 });
 $(document).on("click", "#checkValidate", function() {
   var typeExchange = $('input[name="exchangeType"]:checked', '#exchangeForm').val();
@@ -206,6 +233,8 @@ $('.form_date').datetimepicker({
 $(".readonly").on('keydown paste', function(e) {
   e.preventDefault();
 });
+
+
 </script>
 <!-- Modal Script -->
 <script type="text/javascript" src="/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>

@@ -156,7 +156,7 @@ router.get('/exchange', ensureLoggedIn, function(request,response){
       if(err){
         console.error(err);
       }else{
-        response.render('exchange', {user: request.user, data: result.rows});
+        response.render('exchange', {user: request.user, title: 'Exchange', budget: result.rows[0].budget});
       }
     });
   });
