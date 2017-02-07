@@ -234,7 +234,7 @@ router.get('/exchange_approving', ensureLoggedIn, function(req,res){
 });
 
 router.get('/contact_us', ensureLoggedIn, function(req,res){
-  res.render('contact_us');
+  res.render('contact_us', {user: req.user});
 });
 
 router.get('/db', ensureLoggedIn, function (request, response) {
@@ -307,7 +307,7 @@ router.get('/exchange', ensureLoggedIn, function(request,response){
       if(err){
         console.error(err);
       }else{
-        response.render('exchange', {user: request.user, data: result.rows});
+        response.render('exchange', {user: request.user, title: 'Exchange', budget: result.rows[0].budget});
       }
     });
   });
