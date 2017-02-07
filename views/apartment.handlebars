@@ -20,16 +20,16 @@
 				<!-- SIDEBAR USER TITLE -->
 				<div class="profile-usertitle">
 					<div class="profile-usertitle-name">
-						{{user.displayName}}
+						{{#each data1}} {{this.username}} {{/each}}
 					</div>
 					<div class="profile-usertitle-job">
-						Apartment: C5
+						Apartment: {{#each data1}} {{this.apartment}} {{/each}}
 					</div>
 				</div>
 				<!-- END SIDEBAR USER TITLE -->
 				<!-- SIDEBAR BUTTONS -->
 				<div class="profile-userbuttons">
-					<button type="button" class="btn btn-success btn-sm" onclick="">Personal Page</button>
+					<button type="button" class="btn btn-success btn-sm" id="moveBack">Personal Page</button>
 				</div>
 				<!-- END SIDEBAR BUTTONS -->
 				<!-- SIDEBAR MENU -->	
@@ -60,18 +60,83 @@
 				<!-- END MENU -->
 			</div>
 		</div>
+
 		<div class="col-md-9">
             <div class="profile-content">
-			   <div class="bg-danger budget text-center">
-			   		Budget: P 1000.00
-			   </div>
+            	<div class="bg-danger budget text-center fixed-top">
+			   		Budget: {{#each apartment}}{{this.budget}}{{/each}}
+			   	</div>
+
+			   	<div class=	"body-apartment text-center">
+				   	<h1 class="h2">Transfer</h1>
+				  	<form class="form-inline" method=post action="/trans_comfirmation_apartment">
+                <div class="form-group">
+
+                 <div class="input-group">
+                 {{#each apartment}} 
+                    <div class="input-group-addon">P</div>
+                    <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amountTrans" placeholder="Amount" data-validation="required" min="0" max="{{this.budget}}"  step="any" required>
+                  {{/each}}
+                 </div>
+
+                 <div class="input-group">
+                    <div class="input-group-addon">@</div>
+                    <input type="email" class="form-control awesomplete" name="recipientTrans" id="userInput" data-validation="email" placeholder="Account" list="liger_email" required>
+                 </div>
+
+                </div>
+              </br>
+              </br>
+              <div class="input-group">
+                <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
+                <div class="wrap">
+                  <textarea onKeyUp="count_it()" name="reasonTrans" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style="
+                  -webkit-box-sizing: border-box;
+                  -moz-box-sizing: border-box;
+                  box-sizing: border-box;
+                  width: 100%;}" required></textarea>
+                  <span id="count" class="counter"></span>
+                </div>
+              </div>
+              </br>
+              </br>
+              <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" style="background-color: #ee4b28">
+            </form>  	
+				</div>
             </div>
 		</div>
 	</div>
 </div>
 </br>	
 {{> footer}}
+<script>
+$('#moveBack').on('click', function(event){
+    location.href = '/transfer';
+});
 
+$(document).ready(function() {
+var amount = document.getElementById('amount');
+var email = document.getElementById('userInput');
+var submit_btn = document.getElementById('submit-btn')
+
+submit_btn.addEventListener("click", function(event) {
+  console.log("Click")
+  if(amount.validity.rangeOverflow) {
+    amount.setCustomValidity("Not enough money to transfer!")
+  } else {
+    amount.setCustomValidity("");
+  } 
+  
+  if (email.validity.valueMissing){
+    email.setCustomValidity("Please enter your recipient's email!")
+  } else if (email.validity.patternMismatch){
+    email.setCustomValidity("This email is not in the list!")
+  } else {
+    email.setCustomValidity("")
+  }
+});
+});
+</script>
 <style type="text/css">
 	/***
 User Profile Sidebar by @keenthemes
@@ -186,5 +251,9 @@ body {
   padding: 0px;
   background: #fff;
   min-height: 460px;
+}
+
+.body-apartment{
+	padding: 8% 0%;
 }
 </style>

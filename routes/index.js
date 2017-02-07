@@ -12,7 +12,49 @@ var env = {
 };
 
 router.get('/apartment', function(request, response){
-  response.render('apartment', {user: request.user});
+  pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
+    client.query("SELECT * FROM account WHERE \
+      email = '"+ request.user.emails[0].value +"';", function(err, result){
+      done();
+      if(err) {
+        console.error(err); response.send("Error " + err);
+      }else{
+        var x = result.rows[0].apartment;
+        var apartment = x.toLowerCase();
+
+        var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
+        client.query(apart_quer, function(err2, result2){
+          if(err2){
+            console.log(err2);
+          }else{
+            response.render('apartment', {user: request.user, data1: result.rows, apartment: result2.rows});
+          }
+        });
+      }
+    });
+  });
+});
+
+router.get('/trans_comfirmation_apartment', function(request, response){
+  response.render('trans_apart_comfirm', {user: request.user});
+});
+
+router.post('/trans_comfirmation_apartment', function(request, response){
+  var amount = request.body.amountTrans;
+  var email = request.body.recipientTrans;
+  var reason = request.body.reasonTrans;
+  response.render('trans_apart_comfirm', {amount: amount, email: email, reason: reason});
+});
+
+router.get('/trans_success_apartment', function(request, response){
+  response.render('trans_apart_success', {user: request.user});
+});
+
+router.post('/trans_success_apartment', function(request, response){
+  var amount = request.body.amountTrans;
+  var email = request.body.recipientTrans;
+  var reason = request.body.reasonTrans;
+  response.render('trans_apart_success', {amount: amount, email: email, reason: reason});
 });
 
 router.get('/login',
@@ -470,11 +512,12 @@ router.post('/transfer_success', function(req, res) {
                     console.error(rUpdateErr);
                     res.send("Error " + rUpdateErr);
                   } else {
+                    /*
                     var newTranferLogQuery = "PREPARE newTransfer(TIMESTAMP, TEXT, TEXT, numeric, numeric, numeric, TEXT) AS\
                     INSERT into transfer_logs (date, sender, recipient, amount, sender_resulting_budget, recipient_resulting_budget, reason)\
                     VALUES ($1, $2, $3, $4, $5, $6, $7);\
-                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"', '" + reason + "');"
-
+                    EXECUTE PREPARE newTransfer(CURRENT_TIMESTAMP(0), "+ senderEmail +", "+ recipientEmail+", '"+ transferBudget +"', '"+ senderNewBudget+"', '" + recipientNewBudget+"', '" + reason + "');"*/
+                    
                     var x = "PREPARE newTransfer(numeric(2), TEXT, TEXT, numeric(2), numeric(2), TIMESTAMP, TEXT) AS\
                     INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason) \
                     VALUES ($1, $2, $3, $4, $5, $6, $7);\
@@ -486,8 +529,6 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
-                        var body1 = '<h1>Hey,</br></h1><h2>You successfully transferred P '+ transferBudget +' to '+ recipientEmail +'!</h2>';
-                        var body2 = '<h1>Hey,</br></h1><h2>You just received P '+ transferBudget +' from '+ senderEmail +'!</h2>';
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });

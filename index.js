@@ -91,7 +91,7 @@ var routes = require('./routes/index');
 var user = require('./routes/user');
 
 
-//app.use(fake_account);
+app.use(fake_account);
 // This can be used to keep a smaller payload
 passport.serializeUser(function(user, done) {
   done(null, user);
