@@ -10,15 +10,14 @@
           <button button="button" class="btn btn-primary">Your Current Budget <span class="badge" style="color: black"> P {{budget}}</span></button>
             </br>
             </br>
-            <form class="form-inline" method=post action="/transfer_confirmation" action="/trying">
             </br> 
-            <form class="form-inline" method=post action="/transfer_confirmation">
+            <form class="form-inline" method=post action="/transfer_success">
               <!-- method=post action="/transfer_confirmation" -->
                 <div class="form-group">
                      <div class="input-group">
                         {{#each data}} 
                           <div class="input-group-addon">P</div>
-                          <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" placeholder="Amount" data-validation="required" min="0" max="{{this.budget}}"  step="any" required>
+                          <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="required" min="0" max="{{this.budget}}"  step="any" required>
                         {{/each}}
 
                      </div>
@@ -87,7 +86,42 @@
                 </div>
               </br>
               </br>
-              <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" style="background-color: #ee4b28">
+              <div class="input-group">
+                <div class="boxed"  style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
+                <div class="wrap">
+                  <textarea onKeyUp="count_it()" name="reason" id="reason" rows="4" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style="
+                  -webkit-box-sizing: border-box;
+                  -moz-box-sizing: border-box;
+                  box-sizing: border-box;
+                  width: 100%;}"></textarea>
+                  <span id="count" class="counter"></span>
+                </div>
+              </div>
+              </br>
+              </br>
+              
+              <!-- Button trigger modal -->
+    <button id="checkValidate" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5">
+    Transfer
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Transfer Confirmation</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to transfer <span id="transferAmount" class="label label label-primary"></span> Pedro<span id="plural"></span> to <span id="recipientName" class="label label label-primary"></span>?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+              <button type="submit" class="btn btn-primary">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
             </form>
               
         </div>
@@ -95,7 +129,29 @@
     
     <!--Tail-->
     {{> footer}}
-
+<style type="text/css">
+.wrap {
+position: relative;
+display: inline-block;
+}
+.wrap span {
+position: absolute;
+bottom: 5px;
+right: 0px;
+}
+.counter{
+background-color: #5dc991;
+color: #fff;
+font-size: 10px;
+padding: 2px 5px;
+line-height: 12px;
+height: 14px;
+text-align: center;
+border-top-right-radius: 4px;
+border-bottom-left-radius: 4px;
+font-weight: 400;
+}
+</style>
 </body>
 <!-- <script src="js/jquery.min.js"></script>
 <script src="js/form-validator/jquery.form-vsalidator.min.js"></script>
@@ -116,25 +172,31 @@
 $(document).ready(function() {
 var amount = document.getElementById('amount');
 var email = document.getElementById('userInput');
-var submit_btn = document.getElementById('submit-btn')
+var submit_btn = document.getElementById('checkValidate');
+var transferAmount = document.getElementById('transferAmount'); 
+var recipientName = document.getElementById('recipientName');
+var plural = document.getElementById('plural');
 
 submit_btn.addEventListener("click", function(event) {
-  console.log("Click")
-  if(amount.validity.rangeOverflow) {
-    amount.setCustomValidity("Not enough money to transfer!")
-  } else {
-    amount.setCustomValidity("");
-  } 
-  
-  if (email.validity.valueMissing){
-    email.setCustomValidity("Please enter your recipient's email!")
-  } else if (email.validity.patternMismatch){
-    email.setCustomValidity("This email is not in the list!")
-  } else {
-    email.setCustomValidity("")
+  if(amount.validity.valid && email.validity.valid) {
+    transferAmount.innerHTML = amount.value;
+    recipientName.innerHTML = email.value;
+    plural.innerHTML = (amount.value > 1)? 's': '';
+    event.preventDefault();
+    $('#myModal').modal('toggle')
+    $("#myModal").modal("show");
   }
+  
 });
 });
+
+var reasonInput = document.getElementById('reason');
+var length = reasonInput.getAttribute("maxlength");
+var allowWords = document.getElementById('count');
+allowWords.innerHTML = length;
+reasonInput.onkeyup = function() {
+  document.getElementById('count').innerHTML = (length - this.value.length);
+};
 
 
 </script>   
