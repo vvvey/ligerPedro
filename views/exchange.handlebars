@@ -138,8 +138,6 @@ $(document).ready(function() {
     result.value = amount.value * 1.00;
   });
   amount_btn.addEventListener("click", function(event) {
-    console.log(date.validity.valid);
-
     if (amount.validity.valueMissing) {
       amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
     } else if (amount.validity.rangeUnderflow) {
@@ -171,8 +169,6 @@ var span1 = document.getElementById("span1");
 var span2 = document.getElementById("span2");
 var radio = document.getElementsByName('')
 $('input[name="exchangeType"]').click(function() {
-  console.log('Change');
-  console.log(radio.value)
   if($("input[name='exchangeType']:checked").val() == 'Dollar to Pedro') {
     span1.innerHTML = '$';
     span2.innerHTML = 'P';
