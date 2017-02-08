@@ -82,13 +82,8 @@ router.get('/exchange_approving', ensureLoggedIn, function(req,res){
   res.render('exchange');
 });
 
-<<<<<<< HEAD
 router.get('/contact_us', function(req,res){
   res.render('contact_us', {user:req.user, env: env});
-=======
-router.get('/contact_us', ensureLoggedIn, function(req,res){
-  res.render('contact_us', {user: req.user});
->>>>>>> d4d7b5444f3718d190c5f4c0a979487fde29e01c
 });
 
 router.get('/db', ensureLoggedIn, function (request, response) {
