@@ -35,7 +35,11 @@
                     <td>{{this.sender}}</td>
                     <td>{{this.recipient}}</td>
                     <td>{{this.amount}}</td>
-                    <td>{{this.sender_resulting_budget}}</td> 
+                    {{#ifCond this.sender user._json.email}}
+                      <td>{{this.sender_resulting_budget}}</td>
+                    {{else}}
+                     <td>{{this.recipient_resulting_budget}}</td>
+                    {{/ifCond}}
                   </tr>
                 {{/each}} 
               </thead>
