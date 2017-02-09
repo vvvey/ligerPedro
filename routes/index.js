@@ -42,7 +42,7 @@ router.get('/trans_comfirmation_apartment', function(request, response){
 router.post('/trans_comfirmation_apartment', function(request, response){
   var amount = request.body.amountTrans;
   var email = request.body.recipientTrans;
-  var reason = request.body.reasonTrans;
+  var reason = sqlEscape(request.body.reasonTrans);
   response.render('trans_apart_comfirm', {amount: amount, email: email, reason: reason});
 });
 
@@ -53,7 +53,7 @@ router.get('/trans_success_apartment', function(request, response){
 router.post('/trans_success_apartment', function(request, response){
   var amount = request.body.amountTrans;
   var email = request.body.recipientTrans;
-  var reason = request.body.reasonTrans;
+  var reason = sqlEscape(request.body.reasonTrans);
   response.render('trans_apart_success', {amount: amount, email: email, reason: reason});
 });
 
@@ -207,7 +207,7 @@ router.post('/exchange_approving', function(req,res){
     type: req.body.exchangeType,
     amount: req.body.amount ,
     result: req.body.result,
-    reason: req.body.reason,
+    reason: sqlEscape(req.body.reason),
     re: null,
     approved: null,
     timeApproved: null,
@@ -453,7 +453,12 @@ router.post('/transfer_confirmation', function(req, res) {
           }
         else 
         { 
-          res.render('transfer_confirmation', {budget: result.rows, recipient: req.body.recipient, amount: req.body.amount, reason: req.body.reason}); 
+          res.render('transfer_confirmation', {
+            budget: result.rows, 
+            recipient: req.body.recipient, 
+            amount: req.body.amount, 
+            reason: sqlEscape(req.body.reason)
+          }); 
         }
       })
     }) 
@@ -462,8 +467,7 @@ router.post('/transfer_confirmation', function(req, res) {
 router.post('/transfer_success', function(req, res) {
   var senderEmail = req.user.emails[0].value;
   var recipientEmail = req.body.recipient;
-  var reason = req.body.reason;
-  console.log("The reason is: " + reason);
+  var reason = sqlEscape(req.body.reason);
 
   pg.connect(process.env.PEDRO_db_URL, function (err,client, done) { 
     client.query("SELECT budget FROM account where email = '" + senderEmail + "'", function(err,sender) { 
@@ -539,7 +543,7 @@ router.post('/transfer_success', function(req, res) {
 });
 
 router.post('/exchange_confirmation', function(req, res) {
-  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
+  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: sqlEscape(req.body.reason)});
 });
 
 
@@ -552,7 +556,9 @@ router.post('/db', function(request, response){
   response.render('db', {transfer:text});
 });
 
-
+function sqlEscape(text){
+  return text.replace(/'/g , "''");
+}
 
 
 module.exports = router;
