@@ -124,8 +124,8 @@ router.get('/exchange_approving', ensureLoggedIn, function(req,res){
   res.render('exchange');
 });
 
-router.get('/contact_us', ensureLoggedIn, function(req,res){
-  res.render('contact_us', {user: req.user});
+router.get('/contact_us', function(req,res){
+  res.render('contact_us', {user:req.user, env: env});
 });
 
 router.get('/db', ensureLoggedIn, function (request, response) {
@@ -181,11 +181,6 @@ router.get('/history', ensureLoggedIn,function(request, response){
     });
   });
 });
-
-router.get('/exchanging_system', function(req,res){
-    res.render('exchanging_system');
-});
-
 router.get('/about_us', function(req,res){
   res.render('about_us', {user: req.user, env: env});
 });
