@@ -141,32 +141,38 @@ router.get('/db', ensureLoggedIn, function (request, response) {
 });
 
 router.get('/history', ensureLoggedIn,function(request, response){
+  var userEmail = request.user._json.email;
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("PREPARE history_query1 (TEXT) AS\
     SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1 ORDER BY date DESC;\
-    EXECUTE history_query1 ('"+ request.user.emails[0].value +"');\
-    DEALLOCATE PREPARE history_query1", function(err1, result1) {
+    EXECUTE history_query1 ('"+ userEmail +"');\
+    DEALLOCATE PREPARE history_query1", function(transferErr, transferHis) {
       done();
-      if(err1){
-        console.error(err1); 
-        response.send("Error " + err1);
+      if(transferErr){
+        console.error(transferErr); 
+        response.send("Error " + transferErr);
       } else {
         client.query("PREPARE history_query2 (TEXT) AS\
         SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;\
-        EXECUTE history_query2 ('"+ request.user.emails[0].value +"');\
-        DEALLOCATE PREPARE history_query2", function(err2, result2) {
+        EXECUTE history_query2 ('"+ userEmail +"');\
+        DEALLOCATE PREPARE history_query2", function(exchangeErr, exchangeHis) {
           done();
-          if(err2) {
-            console.error(err2);
-            response.send("Error " + err2);
+          if(exchangeErr) {
+            console.error(exchangeErr);
+            response.send("Error " + exchangeErr);
           } else {
-            client.query("SELECT * FROM account WHERE email = ('" + request.user.emails[0].value + "')", function(err3, result3){
+            client.query("SELECT * FROM account WHERE email = ('" + userEmail + "')", function(accountErr, accountResult){
               done();
-              if(err3){
-                console.error(err3); 
-                response.send("Error " + err3);
+              if(accountErr){
+                console.error(accountErr); 
+                response.send("Error " + accountErr);
               }else{
-                response.render('history', {columns1: result1.fields, data1: result1.rows, columns2: result2.fields, data2: result2.rows, user:request.user, data: result3.rows});
+                for(var count = 0; count < transferHis.rows.length; count++){
+                  transferHis.rows[count].userEmail = userEmail;
+                  transferHis.rows[count]
+                }
+                //console.log(transferHis);
+                response.render('history', {transferHis: transferHis.rows, exchangeHis: exchangeHis.rows, accountInfo: accountResult.rows, user:request.user, userEmail:request.user.emails[0].value});
               }
             });
           }

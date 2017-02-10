@@ -207,16 +207,23 @@ allowWords.innerHTML = length;
 reasonInput.onkeyup = function() {
   document.getElementById('count').innerHTML = (length - this.value.length);
 };
+
+var today = new Date();
+var tomorrow = new Date();
+tomorrow.setDate(today.getDate()+1);
+console.log(tomorrow.getDate());   
+
 $('.form_date').datetimepicker({
   weekStart: 1,
-  startDate: '2017-2-02',
+  startDate: tomorrow,
   todayBtn: 1,
   autoclose: 1,
   todayHighlight: 1,
   startView: 2,
   minView: 2,
   forceParse: 0,
-  minDate: Date.now()
+  minDate: Date.now(),
+  daysOfWeekDisabled: [0, 6]
 });
 // $('.form_time').datetimepicker({
 //   autoclose: 1,

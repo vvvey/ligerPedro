@@ -29,16 +29,16 @@
                   <th class="text-center">Total Budget</th>
                 </tr>
                
-                {{#each data1}}
+                {{#each transferHis}}
                   <tr>
                     <td>{{dateFormat this.date}}</td>
                     <td>{{this.sender}}</td>
                     <td>{{this.recipient}}</td>
-                    <td>{{this.amount}}</td>
-                    {{#ifCond this.sender user._json.email}}
-                      <td>{{this.sender_resulting_budget}}</td>
+                    <td><b>P</b> {{this.amount}}</td>
+                    {{#ifCond this.sender this.userEmail}}
+                      <td><b>P</b> {{this.sender_resulting_budget}}</td>
                     {{else}}
-                     <td>{{this.recipient_resulting_budget}}</td>
+                     <td><b>P</b> {{this.recipient_resulting_budget}}</td>
                     {{/ifCond}}
                   </tr>
                 {{/each}} 
@@ -67,7 +67,7 @@
                   <th class="text-center">Time</th>
                 </tr>
                
-                {{#each data2}}
+                {{#each exchangeHis}}
                   <tr>
                     <td>{{dateFormat this.timecreated}}</td>
                     <td>{{this.person}}</td>
@@ -91,12 +91,12 @@
                     <td></td>  
                     <td>{{#ifCond this.exchanged "true"}}
                           Finished
-                        {{else ifCond this.approved undefine}}
+                        {{else ifCond this.approved null}}
                           Not arrive
                         {{else ifCond this.approved "more_info"}}
-                          Cancled
+                          Cancelled
                         {{else ifCond this.approved "false"}}
-                          Cancled
+                          Cancelled
                         {{else}}
                           Pending
                         {{/ifCond}}
