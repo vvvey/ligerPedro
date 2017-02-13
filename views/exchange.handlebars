@@ -138,7 +138,14 @@ $(document).ready(function() {
     result.value = amount.value * 1.00;
   });
   amount_btn.addEventListener("click", function(event) {
-    console.log(date.validity.valid);
+    if($('input[name="exchangeType"]:checked') == 'Dollar to Pedro') {
+      $('#amount').attr({'min': 0,
+                        'max': ''})
+    } else {
+      $('#amount').attr({'min': 0,
+                        'max': '{{budget}}'});
+    }
+    
     if (amount.validity.valueMissing) {
       amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
     } else if (amount.validity.rangeUnderflow) {
@@ -167,18 +174,20 @@ var span1 = document.getElementById("span1");
 var span2 = document.getElementById("span2");
 var radio = document.getElementsByName('')
 $('input[name="exchangeType"]').click(function() {
-  console.log('Change');
-  console.log(radio.value)
   if($("input[name='exchangeType']:checked").val() == 'Dollar to Pedro') {
     span1.innerHTML = '$';
     span2.innerHTML = 'P';
     $("#amount").prop('max',100);
     $("#result").prop('max',100);
+    $("#amount").prop('min',0);
+    $("#result").prop('min',0);
   } else {
     span1.innerHTML = 'P';
     span2.innerHTML = '$';
     $("#amount").prop('max','{{budget}}');
     $("#result").prop('max','{{budget}}');
+    $("#amount").prop('min',0);
+    $("#result").prop('min',0);
   }
 });
 });
@@ -207,16 +216,23 @@ allowWords.innerHTML = length;
 reasonInput.onkeyup = function() {
   document.getElementById('count').innerHTML = (length - this.value.length);
 };
+
+var today = new Date();
+var tomorrow = new Date();
+tomorrow.setDate(today.getDate()+1);
+console.log(tomorrow.getDate());   
+
 $('.form_date').datetimepicker({
   weekStart: 1,
-  startDate: '2017-2-02',
+  startDate: tomorrow,
   todayBtn: 1,
   autoclose: 1,
   todayHighlight: 1,
   startView: 2,
   minView: 2,
   forceParse: 0,
-  minDate: Date.now()
+  minDate: Date.now(),
+  daysOfWeekDisabled: [0, 6]
 });
 // $('.form_time').datetimepicker({
 //   autoclose: 1,
