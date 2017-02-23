@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
+var fn = require('fn');
 
 var hbs = exphbs.create({
   defaultLayout: 'main',
@@ -14,9 +15,50 @@ var hbs = exphbs.create({
     ifCond: function(v1, v2, options) {
       if (v1 == v2) {
         return options.fn(this);
-      }
+      } 
       return options.inverse(this);
     },
+
+    forCond: function(x, y, z){
+
+      for(var i = 1; i < x; i++){
+        if (z[i] == y) {
+          return options.fn(this);
+        } 
+        return options.inverse(this)
+      }
+    },
+//select array_upper ( column_name, 1 ) from table_name_here;
+    ifCondA: function(v1, operator, v2, options){
+      switch (operator) {
+        case '==':
+              return (v1 == v2) ? options.fn(this) : options.inverse(this);
+        case '===':
+            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+        case '!=':
+            return (v1 != v2) ? options.fn(this) : options.inverse(this);
+        case '!==':
+            return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+        case '<':
+            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+        case '<=':
+            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+        case '>':
+            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+        case '>=':
+            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+        case '&&':
+            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+        case '||':
+            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+        default:
+            return options.inverse(this);
+      }
+    },
+    upperCase: function(options) {
+      return options.fn(this).toUpperCase();
+    },
+    
     dateFormat: function(date) {
       if (date == null) {
         return;

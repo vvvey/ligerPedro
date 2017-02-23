@@ -1,6 +1,8 @@
 //var email = 'meas.v@ligercambodia.org';
 //var email = 'dalin.l@ligercambodia.org';
 var email = 'visal.s@ligercambodia.org';
+//var email = 'sovannou.p@ligercambodia.org';
+//var email = 'hongly.p@ligercambodia.org';
 var fake_account = function(req, res, next) {
   req.user = { provider: 'google-oauth2',
  displayName: 'Visal',

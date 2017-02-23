@@ -11,7 +11,7 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
 };
 
-router.get('/apartment', ensureLoggedIn, function(request, response){
+router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
     client.query("SELECT * FROM account WHERE \
       email = '"+ request.user.emails[0].value +"';", function(err, result){
@@ -20,8 +20,7 @@ router.get('/apartment', ensureLoggedIn, function(request, response){
         console.error(err); response.send("Error " + err);
       }else{
         if(result.rows[0].role == 'senior_student'){
-          var x = result.rows[0].apartment;
-          var apartment = x.toLowerCase();
+          var apartment = result.rows[0].apartment;
 
           var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
           client.query(apart_quer, function(err2, result2){
@@ -39,7 +38,7 @@ router.get('/apartment', ensureLoggedIn, function(request, response){
   });
 });
 
-router.get('/trans_comfirmation_apartment', ensureLoggedIn, function(request, response){
+/*router.get('/trans_comfirmation_apartment', ensureLoggedIn, function(request, response){
   response.render('trans_apart_comfirm', {user: request.user});
 });
 
@@ -48,7 +47,7 @@ router.post('/trans_comfirmation_apartment', function(request, response){
   var email = request.body.recipientTrans;
   var reason = request.body.reasonTrans;
   response.render('trans_apart_comfirm', {amount: amount, email: email, reason: reason});
-});
+});*/
 
 router.get('/trans_success_apartment', ensureLoggedIn, function(request, response){
   response.render('trans_apart_success');
@@ -62,17 +61,26 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
         console.log(err);
       }else{
         if(result.rows[0].role == 'senior_student'){
-          var x = result.rows[0].apartment;
-          var apartment = x.toLowerCase();
+          var apartment = result.rows[0].apartment;
 
           var tranferListQuery = "SELECT * FROM transfer_apartment WHERE apartment = '"+ apartment +"'\
           ORDER BY time DESC;";
+
+          var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
 
           client.query(tranferListQuery, function(err2, result2){
             if(err2){
               console.log(err2);
             }else{
-              response.render('apartment_list', {user: request.user, data1: result.rows, apartment: result2.rows});
+              client.query(apart_quer, function(err3, result3){
+                if(err3){
+                  console.log(err3);
+                }else{
+                  console.log(result3.rows[0].email_logs);
+                  var emailArr = ['visal.s@ligercambodia.org', 'vuthy.v@ligercambodia.org', 'sovannou.p@ligercambodia.org'];
+                  response.render('apartment_approve', {user: request.user, data1: result.rows, trans_apart: result2.rows, array: emailArr, apartment: result3.rows});
+                }
+              });
             }
           });
         }else{
@@ -82,12 +90,20 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
     });
   });
 });
+                /*{{#ifCond this 'visal.s@ligercambodia.org'}}
+                  Submited
+                {{else}}
+                  <form method="post" action="/apartment_list/approve/{{this.id}}">
+                    <button type="submit" name="status" value="1">Accept</button>
+                    <button type="submit" name="status" value="1">Deny</button>
+                  </form>
+                {{/ifCond}}*/
 //////////////////////////////////////////////////////////////////////////////////////////////////
 router.post('/apartment_list/approve/:id',function(request, response) {
   var id = request.params.id; 
   console.log(id);
   if(id === undefined){
-    response.redirect('/exchange_list');
+    response.redirect('/apartment_list');
   }
   var status = request.body.status;
   var userName = request.user._json.given_name;
@@ -98,28 +114,31 @@ router.post('/apartment_list/approve/:id',function(request, response) {
       if(err){
         console.log(err);
       }else{
-
-        var x = result.rows[0].apartment;
-        var apartment = x.toLowerCase();
+        var apartment = result.rows[0].apartment;
         console.log("Your apartment name: " + apartment);
         client.query("SELECT * FROM transfer_apartment WHERE id = '"+ id +"';", function(err2, result2){
           if (err2) {
             console.log(err2);
           } else {
+
             console.log('id: ' + id);
             console.log('num_approve: '+ result2.rows[0].num_approve);
             console.log('Reason: '+ result2.rows[0].reason);
             console.log('Status: ' + status);
-            var approve = parseInt(result2.rows[0].num_approve) + parseInt(status); 
-            console.log("Approve: " + approve);
+            //neagtive
+            //Positive
+            var num_approve = parseInt(result2.rows[0].num_approve) + parseInt(status); 
+            console.log("Approve: " + num_approve);
+            
             client.query("UPDATE transfer_apartment SET \
-              num_approve = '"+ approve +"' WHERE id = '"+ id +"';", function(err3, result3){
+              num_approve = '"+ num_approve +"' WHERE id = '"+ id +"';", function(err3, result3){
               if(err3){
                 console.log(err3);
               }else{
                 response.redirect('/apartment_list');
               }
             });
+
           }
         });
       
@@ -139,19 +158,18 @@ router.post('/trans_success_apartment', function(request, response){
       if(err1){
         console.log(err1);
       }else{
-        var x = result1.rows[0].apartment;
-        var apartment = x.toLowerCase();
+        var apartment = result1.rows[0].apartment;
 
         var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
         client.query(apart_quer, function(err2, result2){
           if(err2){
             console.log(err2);
           }else{
-            var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, time)\
+            var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, time)\
             VALUES('" + request.user._json.name +"', '"+ request.user.emails[0].value +"', \
-            '"+ amount +"', '"+ result2.rows[0].budget +"', '"+ email +"', '"+ reason +"', '"+ apartment +"', 0, CURRENT_TIMESTAMP(2));"; 
+            '"+ amount +"', '"+ result2.rows[0].budget +"', '"+ email +"', '"+ reason +"', '"+ apartment +"', 0, 0, CURRENT_TIMESTAMP(2));"; 
             client.query(insert, function(err3, result3){
-              if(err2){
+              if(err3){
                 console.log(err3);
               }else{
                 console.log("Success!");
