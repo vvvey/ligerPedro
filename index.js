@@ -28,6 +28,14 @@ var hbs = exphbs.create({
         return options.inverse(this)
       }
     },
+    findOne: function(array, searchFor) {
+      for(var i = 0; i < array.length; i++) {
+        if(array[i] == searchFor) {
+          return 'Approved'
+        }
+      }
+      return 'No'
+    },
 //select array_upper ( column_name, 1 ) from table_name_here;
     ifCondA: function(v1, operator, v2, options){
       switch (operator) {

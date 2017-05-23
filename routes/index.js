@@ -54,8 +54,9 @@ router.get('/trans_success_apartment', ensureLoggedIn, function(request, respons
 });
 //////////////////////////////////////////////////////////////////
 router.get('/apartment_list', ensureLoggedIn, function(request, response){
+  var email = request.user.emails[0].value;
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM account WHERE email = '"+ request.user.emails[0].value +"';", function(err, result){
+    client.query("SELECT * FROM account WHERE email = '"+ email +"';", function(err, result){
       done();
       if (err) {
         console.log(err);
@@ -64,9 +65,9 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
           var apartment = result.rows[0].apartment;
 
           var tranferListQuery = "SELECT * FROM transfer_apartment WHERE apartment = '"+ apartment +"'\
-          ORDER BY time DESC;";
+          ORDER BY time DESC;"; //Taking all the data that, that person's apartment did 
 
-          var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
+          var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
 
           client.query(tranferListQuery, function(err2, result2){
             if(err2){
@@ -76,7 +77,8 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                 if(err3){
                   console.log(err3);
                 }else{
-                  console.log(result3.rows[0].email_logs);
+                  var email_test = result3.rows[0].email_logs;
+                  console.log(email_test);
                   var emailArr = ['visal.s@ligercambodia.org', 'vuthy.v@ligercambodia.org', 'sovannou.p@ligercambodia.org'];
                   response.render('apartment_approve', {user: request.user, data1: result.rows, trans_apart: result2.rows, array: emailArr, apartment: result3.rows});
                 }

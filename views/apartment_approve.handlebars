@@ -12,73 +12,68 @@
 
 		   		<h2 class="h2 text-center"><b>Approving</b></h2>
 		   		<div class="win-history tab-pane fade in active" id="transfer_his" style="padding: 10px;">
-					<div class="table-responsive">
-						<table class="table">
-							<thead class="thead-inverse">
-								<tr>
-									<th class="text-center">Date/Time</th>
-									<th class="text-center">Person</th>
-									<th class="text-center">Amount</th>
-									<th class="text-center">Reason</th>
-									<th class="text-center">Recipient</th>
-									<th class="text-center">Dis/Approve</th>
-									<th class="text-center">Approve</th>
+					
+					<table class="table table-striped table-inverse">
+						<thead>
+							<tr>
+								<th class="text-center">Date/Time</th>
+								<th class="text-center">Person</th>
+								<th class="text-center">Amount</th>
+								<th class="text-center">Reason</th>
+								<th class="text-center">Recipient</th>
+								<th class="text-center">Dis/Approve</th>
+								<th class="text-center">Approve</th>
+							</tr>
+						</thead>
+						<thead>
+							{{#each trans_apart}}
+								<tr class="text-center">
+									<td scope="row">{{dateFormat this.time}}</td>
+									<td>{{this.person}}</td>	
+									<td>{{this.amount}}</td>
+									<td>{{this.reason}}</td>
+									<td>{{this.recipient}}</td>
+									<td>{{this.num_disapprove}}/{{this.num_approve}}</td>
+
+									<td>
+									
+									<!-- ifCond this.num_disapprove 2 -->
+										<!-- show as completed, not approved -->
+									<!-- else ifCond this.num_approve 3 -->
+										<!-- show as completed, approved -->
+									<!-- else -->
+										<!-- ifInList user.email approveList -->
+										<!-- else ifInList user.email denyList -->
+										<!-- else -->
+
+
+									<!--
+									LOOP
+										filter each element is there any name equal to me
+										XXXXXXX
+										if there's not just move away 
+									/LOOP
+									* After every element in that array didn't have my name after it filtered show the out come
+									-->
+									{{#ifCondA this.num_approve '>=' 3}} <!-- total approve -->
+										Success!
+									{{else ifCondA this.num_disapprove '>=' 2}}
+										Fail
+									{{else}}
+										Nothing
+									
+										<!--For loop for the email_logs-->
+										
+									{{/ifCondA}}
+									</td>
 								</tr>
 								
-								{{#each trans_apart}}
-									<tr class="text-center">
-										<td>{{dateFormat this.time}}</td>
-										<td>{{this.person}}</td>	
-										<td>{{this.amount}}</td>
-										<td>{{this.reason}}</td>
-										<td>{{this.recipient}}</td>
-										<td>{{this.num_disapprove}}/{{this.num_approve}}</td>
-
-										<td>
-										
-										<!-- ifCond this.num_disapprove 2 -->
-											<!-- show as completed, not approved -->
-										<!-- else ifCond this.num_approve 3 -->
-											<!-- show as completed, approved -->
-										<!-- else -->
-											<!-- ifInList user.email approveList -->
-											<!-- else ifInList user.email denyList -->
-											<!-- else -->
-
-
-										<!--
-										LOOP
-											filter each element is there any name equal to me
-											XXXXXXX
-											if there's not just move away 
-										/LOOP
-										* After every element in that array didn't have my name after it filtered show the out come
-										-->
-										{{#ifCondA this.num_approve '>=' 3}} <!-- total approve -->
-											Success!
-										{{else ifCondA this.num_disapprove '>=' 2}}
-											Fail
-										{{else}}
-											
-											{{#each this.email_logs}}
-												{{#ifCond this 'visal.s@ligercambodia.org'}}
-													2HAHA!
-												{{else}}
-													FAIL!
-												{{/ifCond}}
-											{{/each}}
-											<!--For loop for the email_logs-->
-											
-										{{/ifCondA}}
-										</td>
-									</tr>
-									
-								{{/each}}
-								<!--{{this.email_logs}}
-								</br></br> {{user._json.email}}-->
-							</thead>
-						</table>
-					</div>
+							{{/each}}
+							<!--{{this.email_logs}}
+							</br></br> {{user._json.email}}-->
+						</thead>
+					</table>
+					
 				</div>
 		   	</div>
 		</div>
