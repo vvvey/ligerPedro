@@ -74,7 +74,7 @@ router.get('/callback',
     failureRedirect: '/logout'
   }),
   function(req, res) {
-    res.redirect(req.session.returnTo || '/transfer');
+    res.redirect(req.session.returnTo || '/');
 });
 
 router.get('*', function (req, res, next) {
@@ -344,7 +344,7 @@ router.post('/exchange_list/approve/:id',function(req, res, next) {
   })
 });
   
-router.get('/exchange_list', function(req,res){
+router.get('/exchange_list', ensureLoggedIn, function(req,res){
   var email = req.user.emails[0].value;
   var userName = req.user._json.name;
   var exchangeListQuery = "SELECT * FROM exchange_list \
