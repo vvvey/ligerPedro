@@ -83,8 +83,27 @@ router.get('*', function (req, res, next) {
   next();
 });
 
-router.get('/', function(request, response){
-  response.render('home', {user: request.user, env: env});
+router.get('/', function(req, res){
+  // necessary to get the role of the user to find out what the menu should disp
+  // if we store the user's role in cookies, no longer necessary to query the database
+  if(req.user){
+    pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+      client.query("PREPARE account_table(TEXT) AS \
+       SELECT * FROM account WHERE email = $1;\
+        EXECUTE account_table('" + req.user.emails[0].value + "');\
+        DEALLOCATE PREPARE account_table", function(err, result){
+        done();
+        if(err){
+          console.error(err);
+        }else{
+          res.render('home', {user: req.user, data: result.rows, env:env});
+        }
+      });
+    });
+  }
+  else{
+    res.render('home', {user: req.user, env: env});
+  }
 });
 
 
@@ -172,7 +191,7 @@ router.get('/history', ensureLoggedIn,function(request, response){
                   transferHis.rows[count]
                 }
                 //console.log(transferHis);
-                response.render('history', {transferHis: transferHis.rows, exchangeHis: exchangeHis.rows, accountInfo: accountResult.rows, user:request.user, userEmail:request.user.emails[0].value});
+                response.render('history', {data: accountResult.rows, transferHis: transferHis.rows, exchangeHis: exchangeHis.rows, accountInfo: accountResult.rows, user:request.user, userEmail:request.user.emails[0].value});
               }
             });
           }
@@ -182,12 +201,52 @@ router.get('/history', ensureLoggedIn,function(request, response){
   });
 });
 router.get('/about_us', function(req,res){
-  res.render('about_us', {user: req.user, env: env});
+  // necessary to get the role of the user to find out what the menu should disp
+  // if we store the user's role in cookies, no longer necessary to query the database
+  if(req.user){
+    pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+      client.query("PREPARE account_table(TEXT) AS \
+       SELECT * FROM account WHERE email = $1;\
+        EXECUTE account_table('" + req.user.emails[0].value + "');\
+        DEALLOCATE PREPARE account_table", function(err, result){
+        done();
+        if(err){
+          console.error(err);
+        }else{
+          res.render('about_us', {user: req.user, data: result.rows, env:env});
+        }
+      });
+    });
+  }
+  else{
+    res.render('about_us', {user: req.user, env: env});
+  }
 });
 
 router.get('/tutorial', function(req,res){
-  res.render('tutorial', {user: req.user, env: env});
+  // necessary to get the role of the user to find out what the menu should disp
+  // if we store the user's role in cookies, no longer necessary to query the database
+  if(req.user){
+    pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
+      client.query("PREPARE account_table(TEXT) AS \
+       SELECT * FROM account WHERE email = $1;\
+        EXECUTE account_table('" + req.user.emails[0].value + "');\
+        DEALLOCATE PREPARE account_table", function(err, result){
+        done();
+        if(err){
+          console.error(err);
+        }else{
+          res.render('tutorial', {user: req.user, data: result.rows, env:env});
+        }
+      });
+    });
+  }
+  else{
+    res.render('tutorial', {user: req.user, env: env});
+  }
 });
+
+
 
 router.get('/exchange', ensureLoggedIn, function(request,response){
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
