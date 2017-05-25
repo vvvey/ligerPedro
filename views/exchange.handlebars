@@ -7,8 +7,11 @@
     <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
       <div class="container text-center" id="win-exchange">
         <h1 class="h1" style="margin-bottom: 20px">Exchanging Money</h1>
-        <p class="btn btn-primary">Your Current Budget <span class="badge" style="color: black"> P {{budget}}</span></p>
-        <br>
+        <p class="btn btn-primary">Your Current Budget <span class="badge" style="color: black">P {{budget}}</span></p>
+
+        <p class="btn btn-primary">Your Pending Budget <span class="badge" style="color: black">{{pending_budget}}</span></p>
+
+        You only able to exchange {{valid_exchange_budget}}
         <br>
         <br>
         <br>
@@ -30,11 +33,11 @@
     <br/>
 
      <div class="input-group">
-        <div class="input-group-addon">$</div>
+        <div class="input-group-addon"><span id="span1">$</span></div>
         <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
       </div>
       <div class="input-group">
-        <div class="input-group-addon">P</div>
+        <div class="input-group-addon"><span id="span2">P</span></div>
         <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
       </div>
       <br>
@@ -181,8 +184,8 @@ $('input[name="exchangeType"]').click(function() {
   } else {
     span1.innerHTML = 'P';
     span2.innerHTML = '$';
-    $("#amount").prop('max','{{budget}}');
-    $("#result").prop('max','{{budget}}');
+    $("#amount").prop('max','{{valid_exchange_budget}}');
+    $("#result").prop('max','{{valid_exchange_budget}}');
   }
 });
 

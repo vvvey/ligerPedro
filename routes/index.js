@@ -236,8 +236,26 @@ router.get('/transfer', ensureLoggedIn, function(request, response) {
       if(err) {
         console.error(err); response.send("Error " + err);
       }else{
+        client.query("PREPARE get_pending_budget(TEXT) AS \
+        SELECT * FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';\
+        EXECUTE get_pending_budget('" + request.user.emails[0].value + "');\
+        DEALLOCATE PREPARE get_pending_budget", function(err1, result1){
+          if(err1) {
+            console.error(err);
+          } else {
+            var pending_budget = 0;
+            for(var i = 0; i < result1.rows.length; i++) {
+              pending_budget += parseFloat(result1.rows[i].amount);
+            }
+            console.log(pending_budget)
+            console.log(result.rows[0].budget)
+            console.log(result.rows[0].budget - pending_budget)
+            response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows[0].budget, data: result.rows, valid_transfer_budget:  result.rows[0].budget - pending_budget});
+          }
+        }
+        );
         //console.log(request.user);
-        response.render('transfer', {user: request.user, title: 'Transfer', budget: result.rows[0].budget, data: result.rows});
+        
       }
     });
   });
@@ -328,18 +346,39 @@ router.get('/tutorial', function(req,res){
 });
 
 router.get('/exchange', ensureLoggedIn, function(request,response){
+  var user;
+  var current_budget;
+  var pending_budget = 0;
+  var valid_budget;
+
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
      SELECT * FROM account WHERE email = $1;\
       EXECUTE account_table('" + request.user.emails[0].value + "');\
       DEALLOCATE PREPARE account_table", function(err, result){
-      done();
+      
       if(err){
         console.error(err);
       }else{
-        response.render('exchange', {user: request.user, title: 'Exchange', budget: result.rows[0].budget});
+        user = request.user;
+        current_budget = result.rows[0].budget; 
+        //console.log(current_budget)
+        client.query("PREPARE get_pending_budget(TEXT) AS \
+        SELECT * FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';\
+        EXECUTE get_pending_budget('" + request.user.emails[0].value + "');\
+        DEALLOCATE PREPARE get_pending_budget", function(err1, result1){
+          if(err1) {
+            console.error(err);
+          } else {
+
+            for(var i = 0; i < result1.rows.length; i++) {
+              pending_budget += parseFloat(result1.rows[i].amount);
+            }
+            response.render('exchange', {user: user, title: 'Exchange', budget: current_budget, pending_budget: pending_budget, valid_exchange_budget: current_budget  - pending_budget});
+          }
+        });
       }
-    });
+    });   
   });
 });
 
@@ -669,6 +708,8 @@ router.post('/transfer_success', function(req, res) {
                         console.error(transferErr);
                         res.send("Error " + transferErr);
                       } else {
+
+
                         res.render('transfer_success', {recipient: recipientEmail, amount: transferBudget});
                       }
                     });
