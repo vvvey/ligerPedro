@@ -77,10 +77,20 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                 if(err3){
                   console.log(err3);
                 }else{
-                  var email_test = result3.rows[0].email_logs;
+                  var email_test = result2.rows[0].email_logs;
                   console.log(email_test);
-                  var emailArr = ['visal.s@ligercambodia.org', 'vuthy.v@ligercambodia.org', 'sovannou.p@ligercambodia.org'];
-                  response.render('apartment_approve', {user: request.user, data1: result.rows, trans_apart: result2.rows, array: emailArr, apartment: result3.rows});
+                  /*
+                  var num = 0;
+                  for (var i = 0; i < email_test.length; i++) {
+                    if(email_test[i] == 'visal.s@ligercambodia.org'){
+                      num = 1;
+                      break;
+                    }else{
+                      num = 0;
+                    }
+                  }
+                  console.log(num);*/
+                  response.render('apartment_approve', {user: request.user, data1: result.rows, trans_apart: result2.rows, array: email_test, apartment: result3.rows});
                 }
               });
             }

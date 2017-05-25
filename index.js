@@ -28,14 +28,17 @@ var hbs = exphbs.create({
         return options.inverse(this)
       }
     },
-    findOne: function(array, searchFor) {
-      for(var i = 0; i < array.length; i++) {
-        if(array[i] == searchFor) {
-          return 'Approved'
+
+    finding: function(arr, val, options){
+      var email_test = arr;
+      for (var i = 0; i < email_test.length; i++) {
+        if(email_test[i] == val){
+          return options.fn(this);
         }
       }
-      return 'No'
+      return options.inverse(this);
     },
+
 //select array_upper ( column_name, 1 ) from table_name_here;
     ifCondA: function(v1, operator, v2, options){
       switch (operator) {

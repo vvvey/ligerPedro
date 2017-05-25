@@ -37,38 +37,26 @@
 
 									<td>
 									
-									<!-- ifCond this.num_disapprove 2 -->
-										<!-- show as completed, not approved -->
-									<!-- else ifCond this.num_approve 3 -->
-										<!-- show as completed, approved -->
-									<!-- else -->
-										<!-- ifInList user.email approveList -->
-										<!-- else ifInList user.email denyList -->
-										<!-- else -->
-
-
-									<!--
-									LOOP
-										filter each element is there any name equal to me
-										XXXXXXX
-										if there's not just move away 
-									/LOOP
-									* After every element in that array didn't have my name after it filtered show the out come
-									-->
-									{{#ifCondA this.num_approve '>=' 3}} <!-- total approve -->
+									{{#ifCondA this.num_approve '>=' 3}} 
 										Success!
 									{{else ifCondA this.num_disapprove '>=' 2}}
 										Fail
 									{{else}}
-										Nothing
-									
-										<!--For loop for the email_logs-->
-										
+										{{#finding this.email_logs 'visal.s@ligercambodia.org'}}
+											{{this.email_logs}}
+										{{else}}
+											<form method="post" action="/exchange_list/approve/{{this.id}}">
+												<button type="submit" name="status" value="true">Accept</button>
+												<button type="submit" name="status" value="false">Deny</button>
+												<button type="submit" name="status" value="more_info">More Info</button>
+											</form>
+										{{/finding}}
 									{{/ifCondA}}
 									</td>
 								</tr>
 								
 							{{/each}}
+							
 							<!--{{this.email_logs}}
 							</br></br> {{user._json.email}}-->
 						</thead>
@@ -81,6 +69,8 @@
 </div>
 </br>	
 {{> footer}}
+
+
 <script>
 $('#moveBack').on('click', function(event){
     location.href = '/transfer';
@@ -109,6 +99,7 @@ submit_btn.addEventListener("click", function(event) {
 });
 });
 </script>
+
 <style type="text/css">
 	/***
 User Profile Sidebar by @keenthemes
