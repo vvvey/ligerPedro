@@ -16,7 +16,7 @@
 					<table class="table table-striped table-inverse">
 						<thead>
 							<tr>
-								<th class="text-center">Date/Time</th>
+								<th class="text-center">Date/Time </th>
 								<th class="text-center">Person</th>
 								<th class="text-center">Amount</th>
 								<th class="text-center">Reason</th>
@@ -42,13 +42,13 @@
 									{{else ifCondA this.num_disapprove '>=' 2}}
 										Fail
 									{{else}}
-										{{#finding this.email_logs 'visal.s@ligercambodia.org'}}
+										{{#finding this.email_logs ../user_email }}
+
 											{{this.email_logs}}
 										{{else}}
-											<form method="post" action="/exchange_list/approve/{{this.id}}">
-												<button type="submit" name="status" value="true">Accept</button>
-												<button type="submit" name="status" value="false">Deny</button>
-												<button type="submit" name="status" value="more_info">More Info</button>
+											<form method="post" action="/apartment_list/approve/{{this.id}}">
+												<button type="submit" name="status" value="accept">Accept</button>
+												<button type="submit" name="status" value="deny">Deny</button>
 											</form>
 										{{/finding}}
 									{{/ifCondA}}

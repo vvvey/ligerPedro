@@ -79,18 +79,9 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                 }else{
                   var email_test = result2.rows[0].email_logs;
                   console.log(email_test);
-                  /*
-                  var num = 0;
-                  for (var i = 0; i < email_test.length; i++) {
-                    if(email_test[i] == 'visal.s@ligercambodia.org'){
-                      num = 1;
-                      break;
-                    }else{
-                      num = 0;
-                    }
-                  }
-                  console.log(num);*/
-                  response.render('apartment_approve', {user: request.user, data1: result.rows, trans_apart: result2.rows, array: email_test, apartment: result3.rows});
+                  
+                  console.log(request.user.emails[0].value);
+                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, data1: result.rows, trans_apart: result2.rows, array: email_test, apartment: result3.rows});
                 }
               });
             }
@@ -102,27 +93,23 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
     });
   });
 });
-                /*{{#ifCond this 'visal.s@ligercambodia.org'}}
-                  Submited
-                {{else}}
-                  <form method="post" action="/apartment_list/approve/{{this.id}}">
-                    <button type="submit" name="status" value="1">Accept</button>
-                    <button type="submit" name="status" value="1">Deny</button>
-                  </form>
-                {{/ifCond}}*/
-//////////////////////////////////////////////////////////////////////////////////////////////////
+                
 router.post('/apartment_list/approve/:id',function(request, response) {
   var id = request.params.id; 
+  
   console.log(id);
   if(id === undefined){
     response.redirect('/apartment_list');
   }
-  var status = request.body.status;
-  var userName = request.user._json.given_name;
-//id = '"+ id +"';
-
+  var fromUser = {
+    status: request.body.status,
+    userName: request.user._json.given_name,
+    userEmail: request.user.emails[0].value
+  }
+  //id = '"+ id +"';
+  console.log(fromUser.userEmail);
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-    client.query("SELECT * FROM account WHERE email = '"+ request.user.emails[0].value +"';", function(err, result){
+    client.query("SELECT * FROM account WHERE email = '"+ fromUser.userEmail +"';", function(err, result){
       if(err){
         console.log(err);
       }else{
@@ -132,25 +119,48 @@ router.post('/apartment_list/approve/:id',function(request, response) {
           if (err2) {
             console.log(err2);
           } else {
+            var requestInfo = {
+              name: result2.rows[0].person,
+              email: result2.rows[0].email,
+              amount: result2.rows[0].amount,
+              resulting_budget: result2.rows[0].resulting_budget,
+              recipient: result2.rows[0].recipient,
+              num_approve: result2.rows[0].num_approve,
+              num_disapprove: result2.rows[0].num_disapprove,
+              apartment: result2.rows[0].apartment,
+              email_logs: result2.rows[0].email_logs
 
-            console.log('id: ' + id);
-            console.log('num_approve: '+ result2.rows[0].num_approve);
-            console.log('Reason: '+ result2.rows[0].reason);
-            console.log('Status: ' + status);
-            //neagtive
-            //Positive
-            var num_approve = parseInt(result2.rows[0].num_approve) + parseInt(status); 
-            console.log("Approve: " + num_approve);
-            
+            }
+
+            var appr;
+            var disappr;
+            if(fromUser.status == 'accept'){
+              appr = parseInt(requestInfo.num_approve) + 1;
+              console.log(requestInfo.num_approve);
+              console.log(appr);
+
+            }else{
+              disappr = parseInt(requestInfo.num_disapprove) + 1; 
+              console.log(disappr);
+            }
+
+            /*if(requestInfo.num_approve => 3) {
+              //The sender apartment - their money
+              //The reciver + their money
+              //Show approve in the handlebars
+            }else if(requestInfo.num_disapprove => 2){
+              //Show fail in the handlebars
+            }else{
+              //Still show the optoin
+            }  */          
             client.query("UPDATE transfer_apartment SET \
-              num_approve = '"+ num_approve +"' WHERE id = '"+ id +"';", function(err3, result3){
+              num_approve = $1, num_disapprove = $2, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[appr, disappr], function(err3, result3) {
               if(err3){
                 console.log(err3);
               }else{
                 response.redirect('/apartment_list');
               }
             });
-
           }
         });
       
@@ -177,9 +187,9 @@ router.post('/trans_success_apartment', function(request, response){
           if(err2){
             console.log(err2);
           }else{
-            var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, time)\
+            var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, email_logs, time)\
             VALUES('" + request.user._json.name +"', '"+ request.user.emails[0].value +"', \
-            '"+ amount +"', '"+ result2.rows[0].budget +"', '"+ email +"', '"+ reason +"', '"+ apartment +"', 0, 0, CURRENT_TIMESTAMP(2));"; 
+            '"+ amount +"', '"+ result2.rows[0].budget +"', '"+ email +"', '"+ reason +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; 
             client.query(insert, function(err3, result3){
               if(err3){
                 console.log(err3);
