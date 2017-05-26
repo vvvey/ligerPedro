@@ -67,7 +67,6 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
           ORDER BY time DESC;"; //Taking all the data that, that person's apartment did 
 
           var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
-
           client.query(tranferListQuery, function(err2, result2){
             if(err2){
               console.log(err2);
@@ -76,11 +75,10 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                 if(err3){
                   console.log(err3);
                 }else{
-                  var email_test = result2.rows[0].email_logs;
-                  console.log(email_test);
+                  console.log("Appartment: " + apartment + ".ligercambodia||");
                   
                   console.log(request.user.emails[0].value);
-                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, data1: result.rows, trans_apart: result2.rows, array: email_test, apartment: result3.rows});
+                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, data1: result.rows, trans_apart: result2.rows, apartment: result3.rows});
                 }
               });
             }
@@ -120,49 +118,81 @@ router.post('/apartment_list/approve/:id',function(request, response) {
           } else {
             var requestInfo = {
               name: result2.rows[0].person,
-              email: result2.rows[0].email,
+              email: result2.rows[0].email, //sender email
               amount: result2.rows[0].amount,
               resulting_budget: result2.rows[0].resulting_budget,
-              recipient: result2.rows[0].recipient,
+              recipient: result2.rows[0].recipient, // reciver email
               num_approve: result2.rows[0].num_approve,
               num_disapprove: result2.rows[0].num_disapprove,
               apartment: result2.rows[0].apartment,
               email_logs: result2.rows[0].email_logs
 
             }
-
-            var appr;
-            var disappr;
-            if(fromUser.status == 'accept'){
-              appr = parseInt(requestInfo.num_approve) + 1;
-              console.log(requestInfo.num_approve);
-              console.log(appr);
-
-            }else{
-              disappr = parseInt(requestInfo.num_disapprove) + 1; 
-              console.log(disappr);
-            }
-
-            /*if(requestInfo.num_approve => 3) {
-              //The sender apartment - their money
-              //The reciver + their money
-              //Show approve in the handlebars
-            }else if(requestInfo.num_disapprove => 2){
-              //Show fail in the handlebars
-            }else{
-              //Still show the optoin
-            }  */          
-            client.query("UPDATE transfer_apartment SET \
-              num_approve = $1, num_disapprove = $2, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[appr, disappr], function(err3, result3) {
+            client.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org';", function(err3, result3){
               if(err3){
                 console.log(err3);
               }else{
-                response.redirect('/apartment_list');
+                client.query("SELECT * FROM account WHERE email = '"+ requestInfo.recipient +"';", function(err4, result4){
+                  if(err4){
+                    console.log(err4);
+                  }else{
+                    if(fromUser.status == 'accept'){
+                      requestInfo.num_approve = parseInt(requestInfo.num_approve) + 1;
+                    }else{
+                      requestInfo.num_disapprove = parseInt(requestInfo.num_disapprove) + 1; 
+                    }
+                    var monSender = 0;
+                    var monRecipient = 0;
+
+                    if(parseInt(requestInfo.num_approve) >= 3) {
+                      //The sender apartment - their money
+                      monSender = parseInt(result3.rows[0].budget) - parseInt(requestInfo.amount); 
+                      console.log("Sender: " + result3.rows[0].budget);
+                      console.log("amuntSend: " + requestInfo.amount);
+                      console.log(monSender);
+                      //The reciver + their money
+                      monRecipient = parseInt(result4.rows[0].budget) + parseInt(requestInfo.amount);
+                      console.log("Reciver: " + result4.rows[0].budget);
+                      console.log("amuntGet: " + requestInfo.amount);
+                      console.log(monRecipient);
+
+                      client.query("UPDATE transfer_apartment SET \
+                        num_approve = $1, num_disapprove = $2, resulting_budget = $3, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[requestInfo.num_approve, requestInfo.num_disapprove, monSender], function(err3, result3) {
+                        if(err3){
+                          console.log(err3);
+                        }else{
+                          client.query("UPDATE account SET budget = $1 WHERE email = '"+ apartment +".ligercambodia.org';", [monSender], function(mistakeSend, outcomeSend) {
+                            if(mistakeSend){
+                              console.log(mistakeSend);
+                            }else{
+                              client.query("UPDATE account SET budget = $1 WHERE email = '"+ requestInfo.recipient +"';", [monRecipient], function(mistakeRev, outcomeRev){
+                                if(mistakeRev){
+                                  console.log(mistakeRev);
+                                }else{
+                                  response.redirect('/apartment_list');
+                                }
+                              });
+                            }
+                          });
+                        }
+                      });
+                      //Show approve in the handlebars
+                    }else{
+                      client.query("UPDATE transfer_apartment SET \
+                        num_approve = $1, num_disapprove = $2, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[requestInfo.num_approve, requestInfo.num_disapprove], function(err3, result3) {
+                        if(err3){
+                          console.log(err3);
+                        }else{
+                          response.redirect('/apartment_list');
+                        }
+                      });
+                    }        
+                  }
+                });
               }
             });
           }
         });
-      
       }
     });
   });
