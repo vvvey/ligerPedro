@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
-var fn = require('fn');
+//var fn = require('fn');
 
 var hbs = exphbs.create({
   defaultLayout: 'main',
