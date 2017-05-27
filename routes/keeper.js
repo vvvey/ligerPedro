@@ -4,7 +4,7 @@ var pg = require('pg');
 module.exports.set = function(router) {
 
   router.get('/keeper_list', function(req,res){
-  var email = req.user.emails[0].value;
+  var email = req.user.email;
   var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = 'true'\
   ORDER BY apptdate DESC;";
 

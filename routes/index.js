@@ -6,14 +6,6 @@ var pg = require('pg');
 const Pool = require('pg-pool');
 const url = require('url')
 
-var alert_message;
-
-var env = {
-  AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
-  AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-  AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:5000/callback'
-};
-
 const params = url.parse(process.env.PEDRO_db_URL);
 const auth = params.auth.split(':');
 
@@ -37,58 +29,35 @@ exchange.set(router, pool);
 transfer.set(router, pool);
 keeper.set(router, pool);
 
+router.get('/', function(req, res){
+  // necessary to get the role of the user to find out what the menu should disp
+  // if we store the user's role in cookies, no longer necessary to query the database
+
+  if(req.user){
+      pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result){
+        if(err){
+          console.error(err);
+        }else{
+          res.render('home', {user: req.user, data: result.rows});
+        }
+      });
+  }
+  else{
+    res.render('home', {user: req.user});
+  }
+});
+
 router.get('/login',
   function(req, res){
     if(req.user){
     res.render('notFound', {user:req.user});
     } else {
       if(req.session.returnTo) {
-        alert_message = 'You need to login before you can access!'
+        var alert_message = 'You need to login before you can access!'
       }
-      res.render('login', {env: env, title: 'Login', message: alert_message});
+    res.render('login', {title: 'Login', message: alert_message});
    }
 });
-
-router.get('/callback',
-  passport.authenticate('auth0', {
-    failureRedirect: '/logout'
-  }),
-  function(req, res) {
-    res.redirect(req.session.returnTo || '/');
-});
-
-router.get('*', function (req, res, next) {
-  alert_message = null;
-  req.session.returnTo = null;
-  next();
-});
-
-router.get('/', function(req, res){
-  // necessary to get the role of the user to find out what the menu should disp
-  // if we store the user's role in cookies, no longer necessary to query the database
-  if(req.user){
-    pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-      client.query("PREPARE account_table(TEXT) AS \
-       SELECT * FROM account WHERE email = $1;\
-        EXECUTE account_table('" + req.user.emails[0].value + "');\
-        DEALLOCATE PREPARE account_table", function(err, result){
-        done();
-        if(err){
-          console.error(err);
-        }else{
-          res.render('home', {user: req.user, data: result.rows, env:env});
-        }
-      });
-    });
-  }
-  else{
-    res.render('home', {user: req.user, env: env});
-  }
-});
-
-
-
-
 
 router.get('/test', function(req, res) {
   res.render('module', {
@@ -104,18 +73,6 @@ router.get('/tutorials', ensureLoggedIn, function(req,res) {
 
 router.get('/contact_us', function(req,res){
   res.render('contact_us', {user:req.user, env: env});
-});
-
-router.get('/db', ensureLoggedIn, function (request, response) {
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-    client.query('SELECT * FROM account', function(err, result) {
-      done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.render('db', {columns: result.fields, results: result.rows}); }
-    });
-  });
 });
 
 router.get('/history', ensureLoggedIn,function(request, response){
@@ -222,10 +179,6 @@ router.get('/settings', ensureLoggedIn, function(req, res){
   });
 });
 
-router.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
-});
 
 router.post('/db', function(request, response){
   var text = request.body.transfer;

@@ -6,7 +6,7 @@ module.exports.set = function(router) {
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
     client.query("PREPARE account_table(TEXT) AS \
      SELECT * FROM account WHERE email = $1;\
-      EXECUTE account_table('" + request.user.emails[0].value + "');\
+      EXECUTE account_table('" + request.user.email + "');\
       DEALLOCATE PREPARE account_table", function(err, result){
       done();
       if(err) {
@@ -14,7 +14,7 @@ module.exports.set = function(router) {
       }else{
         client.query("PREPARE get_pending_budget(TEXT) AS \
         SELECT * FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';\
-        EXECUTE get_pending_budget('" + request.user.emails[0].value + "');\
+        EXECUTE get_pending_budget('" + request.user.email + "');\
         DEALLOCATE PREPARE get_pending_budget", function(err1, result1){
           if(err1) {
             console.error(err);
@@ -43,7 +43,7 @@ router.get('/transfer_success', function(req, res){
 
 router.post('/transfer_confirmation', function(req, res) {
     pg.connect(process.env.PEDRO_db_URL, function (err,client,done) {
-      client.query("SELECT budget FROM account where email = '" + req.user.emails[0].value + "'", function(err,result) { 
+      client.query("SELECT budget FROM account where email = '" + req.user.email + "'", function(err,result) { 
         done();
         if (err)
           { 
@@ -58,7 +58,7 @@ router.post('/transfer_confirmation', function(req, res) {
 });
 
 router.post('/transfer_success', function(req, res) {
-  var senderEmail = req.user.emails[0].value;
+  var senderEmail = req.user.email;
   var recipientEmail = req.body.recipient;
   var reason = req.body.reason;
   console.log("The reason is: " + reason);

@@ -24,7 +24,7 @@ module.exports.set = function(router) {
 	  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
 	    client.query("PREPARE account_table(TEXT) AS \
 	     SELECT * FROM account WHERE email = $1;\
-	      EXECUTE account_table('" + request.user.emails[0].value + "');\
+	      EXECUTE account_table('" + request.user.email + "');\
 	      DEALLOCATE PREPARE account_table", function(err, result){
 	      
 	      if(err){
@@ -35,7 +35,7 @@ module.exports.set = function(router) {
 	        //console.log(current_budget)
 	        client.query("PREPARE get_pending_budget(TEXT) AS \
 	        SELECT * FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';\
-	        EXECUTE get_pending_budget('" + request.user.emails[0].value + "');\
+	        EXECUTE get_pending_budget('" + request.user.email + "');\
 	        DEALLOCATE PREPARE get_pending_budget", function(err1, result1){
 	          if(err1) {
 	            console.error(err);
@@ -96,7 +96,7 @@ module.exports.set = function(router) {
 	      if(err) {
 	        console.log(err);
 	      } else {
-	        client.query("SELECT * FROM account WHERE email = ('" + req.user.emails[0].value + "')", function(err, result1){
+	        client.query("SELECT * FROM account WHERE email = ('" + req.user.email + "')", function(err, result1){
 	          done();
 	          if(err){
 	            console.log('Error: ' + err);
@@ -134,7 +134,7 @@ module.exports.set = function(router) {
 	});
 	  
 	router.get('/exchange_list', function(req,res){
-	  var email = req.user.emails[0].value;
+	  var email = req.user.email;
 	  var userName = req.user._json.name;
 	  var exchangeListQuery = "SELECT * FROM exchange_list \
 	  ORDER BY timecreated DESC;";
