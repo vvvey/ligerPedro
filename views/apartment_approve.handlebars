@@ -2,56 +2,75 @@
 
 <div class="container-fluid">
     <div class="row profile">
-		{{> apart_side}}
+    {{> apart_side}}
 
 		<div class="col-md-9">
-      <div class="profile-content">
-        <div class="bg-danger budget text-center fixed-top">
+            <div class="profile-content">
+        		<div class="bg-danger budget text-center fixed-top">
 		   		Budget: {{#each apartment}} {{this.budget}} {{/each}}
+		   		</div>
+
+		   		<h2 class="h2 text-center"><b>Approving</b></h2>
+		   		<div class="win-history tab-pane fade in active" id="transfer_his" style="padding: 10px;">
+					
+					<table class="table table-striped table-inverse">
+						<thead>
+							<tr>
+								<th class="text-center">Date/Time </th>
+								<th class="text-center">Person</th>
+								<th class="text-center">Amount</th>
+								<th class="text-center">Reason</th>
+								<th class="text-center">Recipient</th>
+								<th class="text-center">Dis/Approve</th>
+								<th class="text-center">Approve</th>
+							</tr>
+						</thead>
+						<thead>
+							{{#each trans_apart}}
+								<tr class="text-center">
+									<td scope="row">{{dateFormat this.time}}</td>
+									<td>{{this.person}}</td>	
+									<td>{{this.amount}}</td>
+									<td>{{this.reason}}</td>
+									<td>{{this.recipient}}</td>
+									<td>{{this.num_disapprove}}/{{this.num_approve}}</td>
+
+									<td>
+									
+									{{#ifCondA this.num_approve '>=' 3}} 
+										Success!
+									{{else ifCondA this.num_disapprove '>=' 2}}
+										Fail
+									{{else}}
+										{{#finding this.email_logs ../user_email }}
+
+											{{this.email_logs}}
+										{{else}}
+											<form method="post" action="/apartment_list/approve/{{this.id}}">
+												<button type="submit" name="status" value="accept">Accept</button>
+												<button type="submit" name="status" value="deny">Deny</button>
+											</form>
+										{{/finding}}
+									{{/ifCondA}}
+									</td>
+								</tr>
+								
+							{{/each}}
+							
+							<!--{{this.email_logs}}
+							</br></br> {{user._json.email}}-->
+						</thead>
+					</table>
+					
+				</div>
 		   	</div>
-
-		   	<div class=	"body-apartment text-center">
-			   	<h1 class="h2">Transfer</h1>
-			  	<form class="form-inline" method=post action="/trans_success_apartment">
-              <div class="form-group">
-
-               <div class="input-group">
-               {{#each apartment}} 
-                  <div class="input-group-addon">P</div>
-                  <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amountTrans" placeholder="Amount" data-validation="required" min="0" max="{{this.budget}}"  step="any" required>
-                {{/each}}
-               </div>
-
-               <div class="input-group">
-                  <div class="input-group-addon">@</div>
-                  <input type="email" class="form-control awesomplete" name="recipientTrans" id="userInput" data-validation="email" placeholder="Account" list="liger_email" required>
-               </div>
-
-              </div>
-            </br>
-            </br>
-            <div class="input-group">
-              <div class="boxed" style="background-color:#c6e2ff; border-radius: 5px;">Reasons</div>
-              <div class="wrap">
-                <textarea onKeyUp="count_it()" name="reasonTrans" cols="50" maxlength="200" placeholder="Please tell us your reasons for exchanging money!" style="
-                -webkit-box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                box-sizing: border-box;
-                width: 100%;}" required></textarea>
-                <span id="count" class="counter"></span>
-              </div>
-            </div>
-            </br>
-            </br>
-            <input type="submit" value="Submit" class="btn btn-info col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-2 col-lg-offset-5" style="background-color: #ee4b28">
-          </form>  	
-			  </div>
-      </div>
 		</div>
 	</div>
 </div>
 </br>	
 {{> footer}}
+
+
 <script>
 $('#moveBack').on('click', function(event){
     location.href = '/transfer';
@@ -80,6 +99,7 @@ submit_btn.addEventListener("click", function(event) {
 });
 });
 </script>
+
 <style type="text/css">
 	/***
 User Profile Sidebar by @keenthemes
