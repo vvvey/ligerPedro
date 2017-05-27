@@ -19,9 +19,8 @@
     "express": "4.13.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.14.2",
-    "jquery-form-validator": "^2.3.54",
     "passport": "^0.3.2",
-    "passport-auth0": "^0.6.0",
+    "passport-google-oauth20": "^1.0.0",
     "pg": "^4.5.6",
     "pg-pool": "^1.7.1"
   },

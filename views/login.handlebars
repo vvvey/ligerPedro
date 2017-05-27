@@ -10,7 +10,7 @@
             <br/>
             <br/>
             <br/>
-            <a class="btn btn-block btn-social btn-google" style="text-align: center" onclick="signinGoogle()">
+            <a class="btn btn-block btn-social btn-google" style="text-align: center" href="/auth/google/login">
             <span class="fa fa-google"></span> Login with Google
           </a> 
           <br/>
@@ -24,18 +24,4 @@
         
 </div>
 
-<script>
-    var auth0 = new Auth0({
-        domain: '{{env.AUTH0_DOMAIN}}',
-        clientID: '{{env.AUTH0_CLIENT_ID}}',
-        callbackURL: '{{env.AUTH0_CALLBACK_URL}}'
-    });
-
-    function signinGoogle(){
-        console.log("hello")
-        auth0.signin({
-            connection: 'google-oauth2',
-        });
-    }
-</script>
 
