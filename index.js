@@ -1,3 +1,4 @@
+var useFake = false;
 var express = require('express');
 var exphbs = require('express-handlebars');
 var app = express();
@@ -143,8 +144,9 @@ var fake_account = require('./fake')
 var routes = require('./routes/index');
 var user = require('./routes/user');
 
-
-app.use(fake_account);
+if(useFake){
+  app.use(fake_account);
+}
 // This can be used to keep a smaller payload
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -164,7 +166,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: {
-    maxAge: 1000 * 60 * 60
+    maxAge: 1000 * 60 * 60 * 24 * 7
   }
 
 }));

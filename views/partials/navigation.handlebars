@@ -6,7 +6,8 @@
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" style="background-color: white">
           <span class="sr-only" style="font-color: white">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
           </button>
-          <a class="navbar-brand animate" href="/" style="color: white">LIGER DIGITAL CURRENCY</a>
+          <a class="navbar-brand animate hidden-sm hidden-xs" href="/" style="color: white">LIGER DIGITAL CURRENCY</a>
+          <a class="navbar-brand animate visible-sm visible-xs hidden-md hidden-lg" href="/" style="color: white">LDC</a>
         </div>
       </div>
 
@@ -35,17 +36,24 @@
                     <span class="glyphicon glyphicon-th" style="transform:scale(1.5,1.5);"></span>
                   </a>
                   <ul class="dropdown-menu" style="color: white">
-                    <li><a href="/transfer" style="color: orange">Transfer</a></li>
-                    <li><a href="/exchange" style="color: orange">Exchange</a></li>
-                    <li><a href="/history" style="color: orange">History</a></li>
-                    <li><a href="/settings" style="color: orange"id="nav-settings">Settings</a></li>
-
                     {{#if user}}
                       {{#each data}}
+                        <!-- Menu for RE -->
                         {{#ifCond this.role 're'}}                    
                           <li><a href="/exchange_list" style="color: orange">Request</a></li>
+                        <!-- Menu for Bookkeeper -->
+                        {{else ifCond this.role 'keeper'}}
+                          <li><a href="/keeper_list" style="color: orange">Approve Exchanges</a></li>
+                        <!-- Menu for normal user -->
+                        {{else}}
+                          <li><a href="/transfer" style="color: orange">Transfer</a></li>
+                          <li><a href="/exchange" style="color: orange">Exchange</a></li>
+                          <li><a href="/history" style="color: orange">History</a></li>
+                          <li><a href="/settings" style="color: orange"id="nav-settings">Settings</a></li>
                         {{/ifCond}}
                       {{/each}}
+                    {{else}}
+                      <li> <p style="color: orange"> Please Login! </p> </li>
                     {{/if}}
                   </ul>
           </li>
