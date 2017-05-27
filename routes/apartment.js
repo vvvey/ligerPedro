@@ -11,10 +11,9 @@ module.exports.set = function(router, pool) {
 	});
 
    router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
-  pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
-    client.query("SELECT * FROM account WHERE \
+  
+    pool.query("SELECT * FROM account WHERE \
       email = '"+ request.user.emails[0].value +"';", function(err, result){
-      done();
       if(err) {
         console.error(err); response.send("Error " + err);
       }else{
@@ -22,7 +21,7 @@ module.exports.set = function(router, pool) {
           var apartment = result.rows[0].apartment;
 
           var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
-          client.query(apart_quer, function(err2, result2){
+          pool.query(apart_quer, function(err2, result2){
             if(err2){
               console.log(err2);
             }else{
@@ -35,7 +34,7 @@ module.exports.set = function(router, pool) {
       }
     });
   });
-});
+
 
 /*router.get('/trans_comfirmation_apartment', ensureLoggedIn, function(request, response){
   response.render('trans_apart_comfirm', {user: request.user});
@@ -54,9 +53,7 @@ router.get('/trans_success_apartment', ensureLoggedIn, function(request, respons
 //////////////////////////////////////////////////////////////////
 router.get('/apartment_list', ensureLoggedIn, function(request, response){
   var email = request.user.emails[0].value;
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM account WHERE email = '"+ email +"';", function(err, result){
-      done();
+  pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(err, result){ 
       if (err) {
         console.log(err);
       }else{
@@ -67,11 +64,11 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
           ORDER BY time DESC;"; //Taking all the data that, that person's apartment did 
 
           var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
-          client.query(tranferListQuery, function(err2, result2){
+          pool.query(tranferListQuery, function(err2, result2){
             if(err2){
               console.log(err2);
             }else{
-              client.query(apart_quer, function(err3, result3){
+              pool.query(apart_quer, function(err3, result3){
                 if(err3){
                   console.log(err3);
                 }else{
@@ -88,7 +85,6 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
         }     
       }
     });
-  });
 });
                 
 router.post('/apartment_list/approve/:id',function(request, response) {
@@ -105,14 +101,13 @@ router.post('/apartment_list/approve/:id',function(request, response) {
   }
   //id = '"+ id +"';
   console.log(fromUser.userEmail);
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done) {
-    client.query("SELECT * FROM account WHERE email = '"+ fromUser.userEmail +"';", function(err, result){
+  pool.query("SELECT * FROM account WHERE email = '"+ fromUser.userEmail +"';", function(err, result){
       if(err){
         console.log(err);
       }else{
         var apartment = result.rows[0].apartment;
         console.log("Your apartment name: " + apartment);
-        client.query("SELECT * FROM transfer_apartment WHERE id = '"+ id +"';", function(err2, result2){
+        pool.query("SELECT * FROM transfer_apartment WHERE id = '"+ id +"';", function(err2, result2){
           if (err2) {
             console.log(err2);
           } else {
@@ -128,11 +123,11 @@ router.post('/apartment_list/approve/:id',function(request, response) {
               email_logs: result2.rows[0].email_logs
 
             }
-            client.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org';", function(err3, result3){
+            pool.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org';", function(err3, result3){
               if(err3){
                 console.log(err3);
               }else{
-                client.query("SELECT * FROM account WHERE email = '"+ requestInfo.recipient +"';", function(err4, result4){
+                pool.query("SELECT * FROM account WHERE email = '"+ requestInfo.recipient +"';", function(err4, result4){
                   if(err4){
                     console.log(err4);
                   }else{
@@ -156,16 +151,16 @@ router.post('/apartment_list/approve/:id',function(request, response) {
                       console.log("amuntGet: " + requestInfo.amount);
                       console.log(monRecipient);
 
-                      client.query("UPDATE transfer_apartment SET \
+                      pool.query("UPDATE transfer_apartment SET \
                         num_approve = $1, num_disapprove = $2, resulting_budget = $3, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[requestInfo.num_approve, requestInfo.num_disapprove, monSender], function(err3, result3) {
                         if(err3){
                           console.log(err3);
                         }else{
-                          client.query("UPDATE account SET budget = $1 WHERE email = '"+ apartment +".ligercambodia.org';", [monSender], function(mistakeSend, outcomeSend) {
+                          pool.query("UPDATE account SET budget = $1 WHERE email = '"+ apartment +".ligercambodia.org';", [monSender], function(mistakeSend, outcomeSend) {
                             if(mistakeSend){
                               console.log(mistakeSend);
                             }else{
-                              client.query("UPDATE account SET budget = $1 WHERE email = '"+ requestInfo.recipient +"';", [monRecipient], function(mistakeRev, outcomeRev){
+                              pool.query("UPDATE account SET budget = $1 WHERE email = '"+ requestInfo.recipient +"';", [monRecipient], function(mistakeRev, outcomeRev){
                                 if(mistakeRev){
                                   console.log(mistakeRev);
                                 }else{
@@ -178,7 +173,7 @@ router.post('/apartment_list/approve/:id',function(request, response) {
                       });
                       //Show approve in the handlebars
                     }else{
-                      client.query("UPDATE transfer_apartment SET \
+                      pool.query("UPDATE transfer_apartment SET \
                         num_approve = $1, num_disapprove = $2, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[requestInfo.num_approve, requestInfo.num_disapprove], function(err3, result3) {
                         if(err3){
                           console.log(err3);
@@ -194,7 +189,6 @@ router.post('/apartment_list/approve/:id',function(request, response) {
           }
         });
       }
-    });
   });
 });
 //////////////////////////////////////////////////////////////////

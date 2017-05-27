@@ -1,7 +1,7 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 
-module.exports.set = function(router) {
+module.exports.set = function(router, pool) {
 
   router.get('/keeper_list', function(req,res){
   var email = req.user.emails[0].value;
