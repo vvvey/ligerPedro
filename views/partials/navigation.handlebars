@@ -37,12 +37,11 @@
                   </a>
                   <ul class="dropdown-menu" style="color: white">
                     {{#if user}}
-                      {{#each data}}
                         <!-- Menu for RE -->
-                        {{#ifCond this.role 're'}}                    
+                        {{#ifCond user.role 're'}}                    
                           <li><a href="/exchange_list" style="color: orange">Request</a></li>
                         <!-- Menu for Bookkeeper -->
-                        {{else ifCond this.role 'keeper'}}
+                        {{else ifCond role 'keeper'}}
                           <li><a href="/keeper_list" style="color: orange">Approve Exchanges</a></li>
                         <!-- Menu for normal user -->
                         {{else}}
@@ -51,7 +50,6 @@
                           <li><a href="/history" style="color: orange">History</a></li>
                           <li><a href="/settings" style="color: orange"id="nav-settings">Settings</a></li>
                         {{/ifCond}}
-                      {{/each}}
                     {{else}}
                       <li> <p style="color: orange"> Please Login! </p> </li>
                     {{/if}}
@@ -70,9 +68,9 @@
                 <img src="{{user.image}}" class="img-text-center img-circle" width="90px"/>
                 </br>
                 </br>
-                {{user.displayName}}
-                <!--I don't know how to add the email of user, so this is just an example-->
-                <h6>{{user.emails}}</h6>
+                {{user.fullName}}
+                <!-- Done -->
+                <h6>{{user.email}}</h6>
                 </a></h5>
               </ul>
 
