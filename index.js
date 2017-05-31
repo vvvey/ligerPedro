@@ -1,10 +1,10 @@
-var useFake = false;
-var express = require('express');
-var app = express();
+var useFake      = false;
+var express      = require('express');
+var app          = express();
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var passport = require('passport');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
+var passport     = require('passport');
 //var fn = require('fn');
 
 var hbs = require('./lib/handlebar-helpers')
@@ -15,8 +15,7 @@ app.set('port', (process.env.PORT || 5000));
 
 
 var fake_account = require('./fake')
-var routes = require('./routes/index');
-var user = require('./routes/user');
+var routes       = require('./routes/index');
 
 if(useFake){
   app.use(fake_account);
@@ -55,3 +54,4 @@ app.use(function(req, res) {
     user: req.user
   })
 })
+

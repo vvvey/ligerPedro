@@ -1,27 +1,24 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 
-module.exports.set = function(router) {
+module.exports.set = function(router, pool) {
 
   router.get('/keeper_list', function(req,res){
   var email = req.user.email;
-  var exchangeListQuery = "SELECT * FROM exchange_list WHERE approved = 'true'\
-  ORDER BY apptdate DESC;";
 
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM account WHERE email = '"+ email +"'", function(err, result) {
+    pool.query("SELECT * FROM account WHERE email = $1;",  [email], function(err, result) {
       if(err){
         console.error(err); 
         res.send("Error " + err);
       }else {
         if(result.rows[0].role == 'keeper'){
-          client.query(exchangeListQuery, function(err2, result2) {
-            done();
+          pool.query("SELECT * FROM exchange_list WHERE approved = 'true'\
+                    ORDER BY apptdate DESC;", function(err2, result2) {
             if (err2) {
               console.log(err2)
             } else {
               var fug = 'SELECT SUM(budget) FROM account;';
-              client.query(fug, function(err3, result3){
+              pool.query(fug, function(err3, result3){
                 if(err3){
                   console.log(err3);
                 }else{
@@ -38,8 +35,7 @@ module.exports.set = function(router) {
         }
       }
     });
-  })
-});
+  });
 
 router.post('/keeper_list/approve/:id', function(request, response, next){
   var id = request.params.id;
@@ -47,14 +43,13 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
     response.redirect('/keeper_list');
   }
   var status = request.body.status;
-  var upadte_keeper = "UPDATE exchange_list SET exchanged = '"+ status +"', timeexchanged = CURRENT_TIMESTAMP(2)\
-   WHERE id = '"+ id +"';"
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query(upadte_keeper, function (err) {
+  var upadte_keeper = 
+    pool.query("UPDATE exchange_list SET exchanged = $1, timeexchanged = CURRENT_TIMESTAMP(2)\
+   WHERE id = $2", [status, id], function (err) {
       if (err) {
         console.log(err);
       }else{
-        client.query("SELECT * FROM exchange_list WHERE id = '"+ id +"';", function(err2, result2){
+        pool.query("SELECT * FROM exchange_list WHERE id =  $1;", [id] , function(err2, result2){
           if(err2){
             console.log(err2);
           }else {
@@ -62,7 +57,7 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
               response.redirect('/keeper_list');
               console.log("false");
             } else{
-              client.query("SELECT budget FROM account WHERE email = '" + result2.rows[0].email + "';", function(err3, result3){
+              pool.query("SELECT budget FROM account WHERE email = $1;", [result2.rows[0].email], function(err3, result3){
                 if(err3){
                   console.log(err3);
                 }else{              
@@ -75,9 +70,8 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
                     console.log('Exhcange in value: ' + result2.rows[0].result);
                     console.log('Exhcange in calculated: ' + after_change_in);
 
-                    var update_budget_exchange_in = "UPDATE account SET budget = '" + after_change_in + "' WHERE \
-                    email = '" + result2.rows[0].email + "';";
-                    client.query(update_budget_exchange_in, function(err4){
+              
+                    pool.query("UPDATE account SET budget = $1 WHERE email=$2;", [after_change_in, result2.rows[0].email], function(err4){
                       console.log("Success! (IN)");
                       if(err4){
                         console.log(err4);
@@ -93,9 +87,7 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
                     console.log('Exhcange out value: ' + result2.rows[0].result);
                     console.log('Exhcange out calculated: ' + after_change_out);
 
-                    var update_budget_exchange_out = "UPDATE account SET budget = '" + after_change_out + "' WHERE \
-                    email = '" + result2.rows[0].email + "';"
-                    client.query(update_budget_exchange_out, function(err5){
+                    pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [after_change_out, result2.rows[0].email], function(err5){
                       console.log("Success! (OUT)");
                       if(err5){
                         console.log(err5);
@@ -112,6 +104,4 @@ router.post('/keeper_list/approve/:id', function(request, response, next){
       }
     });
   });
-});
-
 }
