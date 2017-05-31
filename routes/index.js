@@ -13,19 +13,10 @@ exchange.set(router, pool);
 transfer.set(router, pool);
 keeper.set(router, pool);
 
-// Query for user role and add to session
-router.get('*', function(req, res, next) {
-  if (req.user && !req.session.role) {
-    pool.query('SELECT * from account where email = $1', [req.user.email], function(err, result) {
-      req.session.role = result.rows[0].role;
-    })
-  }
-  next();
-});
-
 router.get('/', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp
   // if we store the user's role in cookies, no longer necessary to query the database
+  console.log(req.session)
   if (req.user) {
     pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result) {
       if (err) {
