@@ -11,7 +11,6 @@ module.exports.set = function(router, pool) {
 	});
 
    router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
-  
     pool.query("SELECT * FROM account WHERE \
       email = '"+ request.user.emails[0].value +"';", function(accountErr, accountResult){
       if(accountErr) {
@@ -42,7 +41,8 @@ router.get('/trans_success_apartment', ensureLoggedIn, function(request, respons
 });
 
 router.get('/apartment_list', ensureLoggedIn, function(request, response){
-  var email = request.user.emails[0].value;
+
+  var email = request.user.email;
   pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(accountErr, accountResult){ 
       if (accountErr) {
         console.log(accountErr);
@@ -63,9 +63,8 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                   console.log(apartmentErr);
                 }else{
                   console.log("Appartment: " + apartment + ".ligercambodia||");
-                  
-                  console.log(request.user.emails[0].value);
-                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, accountData: accountResult.rows, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
+                  console.log(request.user.email);
+                  response.render('apartment_approve', {user: request.user, user_email: request.user.email, data1: result.rows, trans_apart: result2.rows, apartment: result3.rows});
                 }
               });
             }
@@ -87,7 +86,7 @@ router.post('/apartment_list/approve/:id',function(request, response) {
   var fromUser = {
     status: request.body.status,
     userName: request.user._json.given_name,
-    userEmail: request.user.emails[0].value
+    userEmail: request.user.email
   }
   //id = '"+ id +"';
   console.log(fromUser.userEmail);
@@ -181,6 +180,7 @@ router.post('/apartment_list/approve/:id',function(request, response) {
   });
 });
 
+
 router.post('/trans_success_apartment', ensureLoggedIn, function(request, response){
 
   var fromUser = {
@@ -188,11 +188,11 @@ router.post('/trans_success_apartment', ensureLoggedIn, function(request, respon
     emailSend: request.body.recipientTrans,
     reasonSend: request.body.reasonTrans,
     userName: request.user._json.name,
-    email: request.user.emails[0].value
+    email: request.user.email
   };
 
 
-  pool.query("SELECT * FROM account WHERE email = '" + request.user.emails[0].value + "'", function (accountErr, accountResult) {
+  pool.query("SELECT * FROM account WHERE email = '" + request.user.email + "'", function (accountErr, accountResult) {
     if(accountErr){
       console.log(accountErr);
     } else {

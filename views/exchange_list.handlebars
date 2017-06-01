@@ -22,8 +22,20 @@
 								<td>{{dateFormat this.timecreated}}</td>
 								<td>{{this.person}}</td>
 								<td>{{this.type}}</td>
-								<td>{{this.amount}}</td>
-								<td>{{this.result}}</td>
+								<td>
+									{{#ifCondA this.type '==' 'Dollar to Pedro'}}
+										${{this.amount}}
+									{{else}}
+										P{{this.amount}}
+									{{/ifCondA}}
+								</td>
+								<td>
+									{{#ifCondA this.type '==' 'Dollar to Pedro'}}
+										P{{this.result}}
+									{{else}}
+										${{this.result}}
+									{{/ifCondA}}
+								</td>
 								<td>{{dateFormat this.apptdate}}</td>
 								<td>{{this.reason}}</td>
 								<td>
@@ -34,13 +46,10 @@
 									{{else ifCond this.approved null}}
 										<form method="post" action="/exchange_list/approve/{{this.id}}">
 											<button type="submit" name="status" value="true">Accept</button>
-											<button type="submit" name="status" value="false">Deny</button>
-											<button type="submit" name="status" value="more_info">More Info</button>
+											<button type="submit" name="status" value="false">Cancel</button>
 										</form>
-									{{else ifCond this.approved "more_info"}}
-										Need more inforation by {{this.re}}
 									{{else}}
-										Denied by {{this.re}}
+										Cancel by {{this.re}}
 									{{/ifCond}}
 								</td>
 							</tr>

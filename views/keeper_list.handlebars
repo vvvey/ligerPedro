@@ -23,19 +23,37 @@
 								<td>{{dateFormat this.apptdate}}</td>
 								<td>{{this.person}}</td>
 								<td>{{this.type}}</td>
-								<td>{{this.amount}}</td>
-								<td>{{this.result}}</td>
-								<td>Approved by {{this.re}}</td>
+								<td>
+									{{#ifCondA this.type '==' 'Dollar to Pedro'}}
+										${{this.amount}}
+									{{else}}
+										P{{this.amount}}
+									{{/ifCondA}}
+								</td>
+								<td>
+									{{#ifCondA this.type '==' 'Dollar to Pedro'}}
+										P{{this.result}}
+									{{else}}
+										${{this.result}}
+									{{/ifCondA}}
+								</td>
+								<td>{{#ifCondA this.type '==' 'Dollar to Pedro'}}
+										Approved Automatically
+									{{else}}
+										Approved by {{this.re}}
+									{{/ifCondA}}
+
+								</td>
 								<td>
 								{{#ifCond this.exchanged null}}
 									<form method="post" action="/keeper_list/approve/{{this.id}}">
-										<button type="submit" name="status" value="true">Accept</button>
-										<button type="submit" name="status" value="false">Deny</button>
+										<button type="submit" name="status" value="true">Done</button>
+										<button type="submit" name="status" value="false">Cancel</button>
 									</form>
 								{{else ifCond this.exchanged "true"}}
-									Exhanged by keeper
+									Exchanged
 								{{else}}
-									Dennie by keeper
+									Canceled
 								{{/ifCond}}
 								</td>
 							</tr>
