@@ -12,7 +12,7 @@ module.exports.set = function(router, pool) {
         res.send("Error " + err);
       }else {
         if(result.rows[0].role == 'keeper'){
-          pool.query("SELECT * FROM exchange_list WHERE approved = 'true'\
+          pool.query("SELECT * FROM exchange_list WHERE (approved = 'true' AND type = 'Pedro to Dollar') OR type = 'Dollar to Pedro'  \
                     ORDER BY apptdate DESC;", function(err2, result2) {
             if (err2) {
               console.log(err2)
