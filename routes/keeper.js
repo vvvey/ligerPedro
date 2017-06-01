@@ -33,7 +33,7 @@ module.exports.set = function(router, pool) {
               });
             }
           })
-        } else {
+        } else {//heroku addons:open adminium
           res.render('notFound');
         }
       }

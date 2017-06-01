@@ -13,19 +13,20 @@ module.exports.set = function(router, pool) {
    router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
   
     pool.query("SELECT * FROM account WHERE \
-      email = '"+ request.user.emails[0].value +"';", function(err, result){
-      if(err) {
-        console.error(err); response.send("Error " + err);
+      email = '"+ request.user.emails[0].value +"';", function(accountErr, accountResult){
+      if(accountErr) {
+        console.error(accountErr); 
+        response.send("Error " + accountErr);
       }else{
-        if(result.rows[0].role == 'senior_student'){
-          var apartment = result.rows[0].apartment;
+        if(accountResult.rows[0].role == 'senior_student'){
+          var apartment = accountResult.rows[0].apartment;
 
           var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
-          pool.query(apart_quer, function(err2, result2){
-            if(err2){
-              console.log(err2);
+          pool.query(apart_quer, function(apartmentErr, apartmentResult){
+            if(apartmentErr){
+              console.log(apartmentErr);
             }else{
-              response.render('apartment', {user: request.user, data1: result.rows, apartment: result2.rows});
+              response.render('apartment', {user: request.user, accountData: accountResult.rows, apartmentData: apartmentResult.rows});
             }
           });
         }else{
@@ -36,46 +37,35 @@ module.exports.set = function(router, pool) {
   });
 
 
-/*router.get('/trans_comfirmation_apartment', ensureLoggedIn, function(request, response){
-  response.render('trans_apart_comfirm', {user: request.user});
-});
-
-router.post('/trans_comfirmation_apartment', function(request, response){
-  var amount = request.body.amountTrans;
-  var email = request.body.recipientTrans;
-  var reason = request.body.reasonTrans;
-  response.render('trans_apart_comfirm', {amount: amount, email: email, reason: reason});
-});*/
-
 router.get('/trans_success_apartment', ensureLoggedIn, function(request, response){
   response.render('trans_apart_success');
 });
-//////////////////////////////////////////////////////////////////
+
 router.get('/apartment_list', ensureLoggedIn, function(request, response){
   var email = request.user.emails[0].value;
-  pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(err, result){ 
-      if (err) {
-        console.log(err);
+  pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(accountErr, accountResult){ 
+      if (accountErr) {
+        console.log(accountErr);
       }else{
-        if(result.rows[0].role == 'senior_student'){
-          var apartment = result.rows[0].apartment;
+        if(accountResult.rows[0].role == 'senior_student'){
+          var apartment = accountResult.rows[0].apartment;
 
           var tranferListQuery = "SELECT * FROM transfer_apartment WHERE apartment = '"+ apartment +"'\
           ORDER BY time DESC;"; //Taking all the data that, that person's apartment did 
 
           var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
-          pool.query(tranferListQuery, function(err2, result2){
-            if(err2){
-              console.log(err2);
+          pool.query(tranferListQuery, function(tranApartmentErr, tranApartmentResult){
+            if(tranApartmentErr){
+              console.log(tranApartmentErr);
             }else{
-              pool.query(apart_quer, function(err3, result3){
-                if(err3){
-                  console.log(err3);
+              pool.query(apart_quer, function(apartmentErr, apartmentResult){
+                if(apartmentErr){
+                  console.log(apartmentErr);
                 }else{
                   console.log("Appartment: " + apartment + ".ligercambodia||");
                   
                   console.log(request.user.emails[0].value);
-                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, data1: result.rows, trans_apart: result2.rows, apartment: result3.rows});
+                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, accountData: accountResult.rows, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
                 }
               });
             }
@@ -121,7 +111,6 @@ router.post('/apartment_list/approve/:id',function(request, response) {
               num_disapprove: result2.rows[0].num_disapprove,
               apartment: result2.rows[0].apartment,
               email_logs: result2.rows[0].email_logs
-
             }
             pool.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org';", function(err3, result3){
               if(err3){
@@ -191,40 +180,46 @@ router.post('/apartment_list/approve/:id',function(request, response) {
       }
   });
 });
-//////////////////////////////////////////////////////////////////
 
-router.post('/trans_success_apartment', function(request, response){
-  var amount = request.body.amountTrans;
-  var email = request.body.recipientTrans;
-  var reason = request.body.reasonTrans;
-  pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM account WHERE email = '" + request.user.emails[0].value + "'", function (err1, result1) {
-      done();
-      if(err1){
-        console.log(err1);
-      }else{
-        var apartment = result1.rows[0].apartment;
+router.post('/trans_success_apartment', ensureLoggedIn, function(request, response){
 
-        var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
-        client.query(apart_quer, function(err2, result2){
-          if(err2){
-            console.log(err2);
-          }else{
-            var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, email_logs, time)\
-            VALUES('" + request.user._json.name +"', '"+ request.user.emails[0].value +"', \
-            '"+ amount +"', '"+ result2.rows[0].budget +"', '"+ email +"', '"+ reason +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; 
-            client.query(insert, function(err3, result3){
-              if(err3){
-                console.log(err3);
-              }else{
-                console.log("Success!");
-                response.render('trans_apart_success', {user: request.user, data1: result1.rows, apartment: result2.rows});
-              }
-            });
-          }
-        });
-      }
-    });
+  var fromUser = {
+    amountSend: request.body.amountTrans,
+    emailSend: request.body.recipientTrans,
+    reasonSend: request.body.reasonTrans,
+    userName: request.user._json.name,
+    email: request.user.emails[0].value
+  };
+
+
+  pool.query("SELECT * FROM account WHERE email = '" + request.user.emails[0].value + "'", function (accountErr, accountResult) {
+    if(accountErr){
+      console.log(accountErr);
+    } else {
+      var apartment = accountResult.rows[0].apartment;
+
+      var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
+
+      pool.query(apart_quer, function(apartmentErr, apartmentResult) {
+        if(apartmentErr){
+          console.log(apartmentErr);
+        } else {
+
+          var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, email_logs, time)\
+          VALUES('" + fromUser.userName +"', '"+ fromUser.email +"', \
+          '"+ fromUser.amountSend +"', '"+ apartmentResult.rows[0].budget +"', '"+ fromUser.emailSend +"', '"+ fromUser.reasonSend +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; 
+          
+          pool.query(insert, function(inApartmentErr, inApartmentResult){
+            if(inApartmentErr){
+              console.log(inApartmentErr);
+            }else{
+              console.log("Success!");
+              response.redirect('/apartment_transfer');              
+            }
+          });
+        }
+      });
+    }
   });
 });
 }
