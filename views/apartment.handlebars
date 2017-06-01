@@ -7,7 +7,7 @@
 		<div class="col-md-9">
       <div class="profile-content">
         <div class="bg-danger budget text-center fixed-top">
-		   		Budget: {{#each apartment}} {{this.budget}} {{/each}}
+		   		Budget: {{#each apartmentData}} {{this.budget}} {{/each}}
 		   	</div>
 
 		   	<div class=	"body-apartment text-center">
@@ -16,7 +16,7 @@
               <div class="form-group">
 
                <div class="input-group">
-               {{#each apartment}} 
+               {{#each apartmentData}} 
                   <div class="input-group-addon">P</div>
                   <input data-validation="number" type="number" data-validation-allowing="float" class="form-control" name="amountTrans" placeholder="Amount" data-validation="required" min="0" max="{{this.budget}}"  step="any" required>
                 {{/each}}

@@ -8,10 +8,10 @@
 		<!-- SIDEBAR USER TITLE -->
 		<div class="profile-usertitle">
 			<div class="profile-usertitle-name">
-				{{#each data1}} {{this.username}} {{/each}}
+				{{#each accountData}} {{this.username}} {{/each}}
 			</div>
 			<div class="profile-usertitle-job">
-				Apartment: {{#each data1}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}
+				Apartment: {{#each accountData}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}
 			</div>
 		</div>
 		<!-- END SIDEBAR USER TITLE -->
@@ -27,25 +27,25 @@
 				<li>
 					<a href="/apartment_transfer">
 					<i class="glyphicon glyphicon-home"></i>
-					{{#each data1}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: Transfer</a>
+					{{#each accountData}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: Transfer</a>
 				</li>
 
 				<li>
 					<a href="#">
 					<i class="glyphicon glyphicon-user"></i>
-					{{#each data1}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: Exchange </a>
+					{{#each accountData}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: Exchange </a>
 				</li>
 
 				<li>
 					<a href="/apartment_list">
 					<i class="glyphicon glyphicon-ok"></i>
-					{{#each data1}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: Approve </a>
+					{{#each accountData}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: Approve </a>
 				</li>
 
 				<li>
 					<a href="#">
 					<i class="glyphicon glyphicon-flag"></i>
-					{{#each data1}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: History </a>
+					{{#each accountData}} {{#upperCase}} {{this.apartment}} {{/upperCase}} {{/each}}: History </a>
 				</li>
 
 			</ul>
