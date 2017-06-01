@@ -104,7 +104,7 @@ module.exports.set = function(router, pool) {
 	  var status = req.body.status;
 	  var re = req.user.displayName;
 
-	   pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", 
+	  pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", 
 	   	[re, status, exchangeReq_id ], function(err, result){
 	      if (err) {
 	        console.log(err)
@@ -118,13 +118,13 @@ module.exports.set = function(router, pool) {
 	  var email = req.user.email;
 	  var userName = req.user.fullName;
 
-	    pool.query("SELECT * FROM account WHERE email = $1", [email] , function(err, result) {
+	    pool.query("SELECT * FROM account WHERE email = $1;", [email] , function(err, result) {
 	      if(err){
 	        console.error(err); 
 	        res.send("Error " + err);
 	      }else{
 	        if(result.rows[0].role == 're'){
-	          pool.query("SELECT * FROM exchange_list \
+	          pool.query("SELECT * FROM exchange_list WHERE type = 'Pedro to Dollar'\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
 	            if (err2) {
 	              console.log(err2)
