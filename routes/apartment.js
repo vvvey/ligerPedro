@@ -13,7 +13,7 @@ module.exports.set = function(router, pool) {
    router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
   pg.connect(process.env.PEDRO_db_URL, function (err, client, done) {
     client.query("SELECT * FROM account WHERE \
-      email = '"+ request.user.emails[0].value +"';", function(err, result){
+      email = '"+ request.user.email +"';", function(err, result){
       done();
       if(err) {
         console.error(err); response.send("Error " + err);
@@ -53,7 +53,7 @@ router.get('/trans_success_apartment', ensureLoggedIn, function(request, respons
 });
 //////////////////////////////////////////////////////////////////
 router.get('/apartment_list', ensureLoggedIn, function(request, response){
-  var email = request.user.emails[0].value;
+  var email = request.user.email;
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
     client.query("SELECT * FROM account WHERE email = '"+ email +"';", function(err, result){
       done();
@@ -77,8 +77,8 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                 }else{
                   console.log("Appartment: " + apartment + ".ligercambodia||");
                   
-                  console.log(request.user.emails[0].value);
-                  response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, data1: result.rows, trans_apart: result2.rows, apartment: result3.rows});
+                  console.log(request.user.email);
+                  response.render('apartment_approve', {user: request.user, user_email: request.user.email, data1: result.rows, trans_apart: result2.rows, apartment: result3.rows});
                 }
               });
             }
@@ -101,7 +101,7 @@ router.post('/apartment_list/approve/:id',function(request, response) {
   var fromUser = {
     status: request.body.status,
     userName: request.user._json.given_name,
-    userEmail: request.user.emails[0].value
+    userEmail: request.user.email
   }
   //id = '"+ id +"';
   console.log(fromUser.userEmail);
@@ -204,7 +204,7 @@ router.post('/trans_success_apartment', function(request, response){
   var email = request.body.recipientTrans;
   var reason = request.body.reasonTrans;
   pg.connect(process.env.PEDRO_db_URL, function(err, client, done){
-    client.query("SELECT * FROM account WHERE email = '" + request.user.emails[0].value + "'", function (err1, result1) {
+    client.query("SELECT * FROM account WHERE email = '" + request.user.email + "'", function (err1, result1) {
       done();
       if(err1){
         console.log(err1);
@@ -217,7 +217,7 @@ router.post('/trans_success_apartment', function(request, response){
             console.log(err2);
           }else{
             var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, email_logs, time)\
-            VALUES('" + request.user._json.name +"', '"+ request.user.emails[0].value +"', \
+            VALUES('" + request.user._json.name +"', '"+ request.user.email +"', \
             '"+ amount +"', '"+ result2.rows[0].budget +"', '"+ email +"', '"+ reason +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; 
             client.query(insert, function(err3, result3){
               if(err3){

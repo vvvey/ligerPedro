@@ -7,11 +7,12 @@
     <form class="form-inline" id="exchangeForm" method="post" action="/exchange_approving">
       <div class="container text-center" id="win-exchange">
         <h1 class="h1" style="margin-bottom: 20px">Exchanging Money</h1>
-        <p class="btn btn-primary">Your Current Budget <span class="badge" style="color: black">P {{budget}}</span></p>
-
-        <p class="btn btn-primary">Your Pending Budget <span class="badge" style="color: black">{{pending_budget}}</span></p>
-
-        You only able to exchange {{valid_exchange_budget}}
+        <p class="btn btn-primary">Your Current Budget <span class="badge" style="color: black">P {{valid_exchange_budget}}</span>
+       </p>
+        {{#ifCondA pending_budget ">" 0}}
+        <p class="btn btn-primary">Your Exchanging Budget <span class="badge" style="color: black">P {{pending_budget}}</span></p>
+        {{/ifCondA}}
+        
         <br>
         <br>
         <br>
@@ -40,14 +41,9 @@
         <div class="input-group-addon"><span id="span2">P</span></div>
         <input type="number" class="form-control" id="result" name="result" readonly placeholder="Result">
       </div>
-      <br>
-      <h4>Appointment Date</h4>
-      
-      <br>
-      <br>
-
+<br>
+<br>
     </div>
-    <br>
     <br>
     <div class="input-group date form_date" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
       <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>

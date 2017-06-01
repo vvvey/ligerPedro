@@ -27,7 +27,7 @@
             {{#if user}}
             <a href="/logout" style="color: white">Logout</a>
             {{else}}
-            <a href="#" onclick="signinGoogle()" style="color: white">Login via Google</a>
+            <a href="/auth/google/login" style="color: white">Login via Google</a>
             {{/if}}
           </li>
 
@@ -37,12 +37,11 @@
                   </a>
                   <ul class="dropdown-menu" style="color: white">
                     {{#if user}}
-                      {{#each data}}
                         <!-- Menu for RE -->
-                        {{#ifCond this.role 're'}}                    
+                        {{#ifCond user.role 're'}}                    
                           <li><a href="/exchange_list" style="color: orange">Request</a></li>
                         <!-- Menu for Bookkeeper -->
-                        {{else ifCond this.role 'keeper'}}
+                        {{else ifCond role 'keeper'}}
                           <li><a href="/keeper_list" style="color: orange">Approve Exchanges</a></li>
                         <!-- Menu for normal user -->
                         {{else}}
@@ -51,7 +50,6 @@
                           <li><a href="/history" style="color: orange">History</a></li>
                           <li><a href="/settings" style="color: orange"id="nav-settings">Settings</a></li>
                         {{/ifCond}}
-                      {{/each}}
                     {{else}}
                       <li> <p style="color: orange"> Please Login! </p> </li>
                     {{/if}}
@@ -62,17 +60,17 @@
             <li class="dropdown">
 
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px">
-                <img src='{{user.picture}}' class="img-circle" style="transform:scale(1.5,1.5);" width="30px"/>
+                <img src='{{user.image}}' class="img-circle" style="transform:scale(1.5,1.5);" width="30px"/>
               </a>
 
               <ul class="dropdown-menu profile-drop">
-                <h5 class="text-center"><a href="/transfer">
-                <img src="{{user.picture}}" class="img-text-center img-circle" width="90px"/>
+                <h5 class="text-center"><a href="/settings">
+                <img src="{{user.image}}" class="img-text-center img-circle" width="90px"/>
                 </br>
                 </br>
-                {{user.displayName}}
-                <!--I don't know how to add the email of user, so this is just an example-->
-                <h6>{{user._json.email}}</h6>
+                {{user.fullName}}
+                <!-- Done -->
+                <h6>{{user.email}}</h6>
                 </a></h5>
               </ul>
 
