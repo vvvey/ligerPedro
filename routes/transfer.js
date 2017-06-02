@@ -24,6 +24,7 @@ module.exports.set = function(router, pool) {
               title: 'Transfer',
               budget: result.rows[0].budget,
               data: result.rows,
+              pending_budget: pending_budget,
               valid_transfer_budget: result.rows[0].budget - pending_budget
             });
           }

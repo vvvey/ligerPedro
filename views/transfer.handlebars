@@ -8,6 +8,10 @@
           <h1 class="h1" style="margin-top: 50px; margin-bottom: 20px;">Transferring Money</h1>
           </br>
           <button button="button" class="btn btn-primary">Your Current Budget <span class="badge" style="color: black">P {{budget}}</span></button>
+          {{#ifCondA pending_budget ">" 0}}
+        <p class="btn btn-primary">Your Exchanging Budget <span class="badge" style="color: black">P {{pending_budget}}</span></p>
+        {{/ifCondA}}
+        
             </br>
             </br>
             </br> 
