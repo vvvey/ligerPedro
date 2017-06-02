@@ -64,7 +64,7 @@ router.get('/apartment_list', ensureLoggedIn, function(request, response){
                 }else{
                   console.log("Appartment: " + apartment + ".ligercambodia||");
                   console.log(request.user.email);
-                 response.render('apartment_approve', {user: request.user, user_email: request.user.emails[0].value, accountData: accountResult.rows, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
+                 response.render('apartment_approve', {user: request.user, user_email: request.user.email, accountData: accountResult.rows, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
                 }
               });
             }
