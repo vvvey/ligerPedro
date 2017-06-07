@@ -1,0 +1,204 @@
+{{> header_apartment}}
+
+<div class="container-fluid">
+    <div class="row profile">
+		{{> apart_side}}
+
+		<div class="col-md-9">
+      <div class="profile-content">
+        <div class="bg-danger budget text-center fixed-top">
+		   		Budget: {{#each apartmentData}} {{this.budget}} {{/each}}
+		   	</div>
+
+		   	<div class=	"body-apartment text-center">
+			   	<h1 class="h2">History of Transfering</h1>
+ 	        <div class="win-history tab-pane fade in active" id="transfer_his" style="padding: 10px;">
+          
+          <table class="table table-striped table-inverse">
+            <thead>
+              <tr>
+                <th class="text-center">Date/Time</th>
+                <th class="text-center">Person</th>
+                <th class="text-center">Amount</th>
+                <th class="text-center">Reason</th>
+                <th class="text-center">Recipient</th>
+                <th class="text-center">Resulting Budget</th>
+              </tr>
+            </thead>
+            <thead>
+              {{#each trans_apart}}
+               
+                <tr class="text-center">
+                  <td scope="row">{{dateFormat this.date}}</td>
+                  <td>{{this.person}}</td>  
+                  <td>{{this.amount}}</td>
+                  <td>{{this.reason}}</td>
+                  <td>{{this.recipient}}</td>
+                  <td>{{this.sender_resulting_budget}}</td>
+                </tr>
+                
+              {{/each}}
+              
+              <!--{{this.email_logs}}
+              </br></br> {{user._json.email}}-->
+            </thead>
+          </table>
+          
+        </div>
+        </div>
+			  </div>
+      </div>
+		</div>
+	</div>
+</div>
+</br>	
+
+{{> footer}}
+<script>
+$('#moveBack').on('click', function(event){
+    location.href = '/transfer';
+});
+
+$(document).ready(function() {
+var amount = document.getElementById('amount');
+var email = document.getElementById('userInput');
+var submit_btn = document.getElementById('submit-btn')
+
+submit_btn.addEventListener("click", function(event) {
+  console.log("Click")
+  if(amount.validity.rangeOverflow) {
+    amount.setCustomValidity("Not enough money to transfer!")
+  } else {
+    amount.setCustomValidity("");
+  } 
+  
+  if (email.validity.valueMissing){
+    email.setCustomValidity("Please enter your recipient's email!")
+  } else if (email.validity.patternMismatch){
+    email.setCustomValidity("This email is not in the list!")
+  } else {
+    email.setCustomValidity("")
+  }
+});
+});
+</script>
+<style type="text/css">
+	/***
+User Profile Sidebar by @keenthemes
+A component of Metronic Theme - #1 Selling Bootstrap 3 Admin Theme in Themeforest: http://j.mp/metronictheme
+Licensed under MIT
+***/
+.budget{
+	padding: 10px;
+}
+body {
+  background: #F1F3FA;
+}
+
+/* Profile container */
+.profile {
+  margin: 20px 0;
+}
+
+/* Profile sidebar */
+.profile-sidebar {
+  padding: 20px 0 10px 0;
+  background: #fff;
+}
+
+.profile-userpic img {
+  float: none;
+  margin: 0 auto;
+  width: 45%;
+  height: 45%;
+  -webkit-border-radius: 50% !important;
+  -moz-border-radius: 50% !important;
+  border-radius: 50% !important;
+}
+
+.profile-usertitle {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.profile-usertitle-name {
+  color: #5a7391;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.profile-usertitle-job {
+  color: #5b9bd1;
+  font-size: 12px;
+  font-weight: 100;
+  margin-bottom: 15px;
+}
+
+.profile-userbuttons {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.profile-userbuttons .btn {
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 15px;
+  margin-right: 5px;
+}
+
+.profile-userbuttons .btn:last-child {
+  margin-right: 0px;
+}
+    
+.profile-usermenu {
+  margin-top: 30px;
+}
+
+.profile-usermenu ul li {
+  border-bottom: 1px solid #f0f4f7;
+}
+
+.profile-usermenu ul li:last-child {
+  border-bottom: none;
+}
+
+.profile-usermenu ul li a {
+  color: #93a3b5;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.profile-usermenu ul li a i {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.profile-usermenu ul li a:hover {
+  background-color: #fafcfd;
+  color: #5b9bd1;
+}
+
+.profile-usermenu ul li.active {
+  border-bottom: none;
+}
+
+.profile-usermenu ul li.active a {
+  color: #5b9bd1;
+  background-color: #f6f9fb;
+  border-left: 2px solid #5b9bd1;
+  margin-left: -2px;
+}
+
+/* Profile Content */
+.profile-content {
+  padding: 0px;
+  background: #fff;
+  min-height: 460px;
+}
+
+.body-apartment{
+	padding: 8% 0%;
+}
+</style>

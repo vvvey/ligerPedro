@@ -12,11 +12,12 @@ module.exports.set = function(router, pool) {
 
   router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
     pool.query("SELECT * FROM account WHERE \
-      email = '"+ request.user.emails[0].value +"';", function(accountErr, accountResult){
+      email = $1;", [request.user.email], function(accountErr, accountResult){
       if(accountErr) {
         console.error(accountErr); 
         response.send("Error " + accountErr);
       }else{
+        console.log(accountResult.rows)
         if(accountResult.rows[0].role == 'senior_student'){
           var apartment = accountResult.rows[0].apartment;
 
@@ -25,7 +26,7 @@ module.exports.set = function(router, pool) {
             if(apartmentErr){
               console.log(apartmentErr);
             }else{
-              response.render('apartment', {user: request.user, accountData: accountResult.rows, apartmentData: apartmentResult.rows});
+              response.render('apartment_transfer', {user: request.user, accountData: accountResult.rows, apartmentData: apartmentResult.rows});
             }
           });
         }else{
@@ -59,9 +60,48 @@ module.exports.set = function(router, pool) {
                   }else{
                     console.log("Appartment: " + apartment + ".ligercambodia||");
                     console.log(request.user.email);
-                    response.render('apartment_approve', {user: request.user, user_email: request.user.email, data1: result.rows, trans_apart: result2.rows, apartment: result3.rows});
+                    response.render('apartment_approve', {user: request.user, user_email: request.user.email, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
                   }
                 });
+              }
+            });
+          }else{  
+            response.redirect('notFound');
+          }     
+        }
+      });
+  });
+        
+  router.get('/apartment_history', ensureLoggedIn, function(request, response){
+
+    var email = request.user.email;
+    pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(accountErr, accountResult){ 
+        if (accountErr) {
+          console.log(accountErr);
+        }else{
+          if(accountResult.rows[0].role == 'senior_student'){
+            var apartment = accountResult.rows[0].apartment;
+
+            var tranferListQuery = "SELECT * FROM transfer_logs WHERE apartment = '"+ apartment +"'\
+            ORDER BY date DESC;"; //Taking all the data that, that person's apartment did 
+
+            var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
+
+            pool.query(tranferListQuery, function(tranApartmentErr, tranApartmentResult){
+              if(tranApartmentErr){
+                console.log(tranApartmentErr);
+              }else{
+                
+                pool.query(apart_quer, function(apartmentErr, apartmentResult){
+                  if(apartmentErr){
+                    console.log(apartmentErr);
+                  }else{
+                    console.log("Appartment: " + apartment + ".ligercambodia||");
+                    console.log(request.user.email);
+                    response.render('apartment_history', {user: request.user, user_email: request.user.email, trans_apart: tranApartmentResult.rows, apartmentData: apartmentResult.rows});
+                  }
+                });
+                
               }
             });
           }else{
@@ -70,7 +110,7 @@ module.exports.set = function(router, pool) {
         }
       });
   });
-                  
+
   router.post('/apartment_list/approve/:id',function(request, response) {
     var id = request.params.id; 
     
