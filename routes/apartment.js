@@ -21,8 +21,8 @@ module.exports.set = function(router, pool) {
         if(accountResult.rows[0].role == 'senior_student'){
           var apartment = accountResult.rows[0].apartment;
 
-          var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
-          pool.query(apart_quer, function(apartmentErr, apartmentResult){
+          var apart_quer = "SELECT * FROM account WHERE email = ";
+          pool.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'", function(apartmentErr, apartmentResult){
             if(apartmentErr){
               console.log(apartmentErr);
             }else{
@@ -60,7 +60,7 @@ module.exports.set = function(router, pool) {
                   }else{
                     console.log("Appartment: " + apartment + ".ligercambodia||");
                     console.log(request.user.email);
-                    response.render('apartment_approve', {user: request.user, user_email: request.user.email, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
+                    response.render('apartment_approve', {user: request.user, user_email: request.user.email, accountData: accountResult.rows, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
                   }
                 });
               }
@@ -98,10 +98,10 @@ module.exports.set = function(router, pool) {
                   }else{
                     console.log("Appartment: " + apartment + ".ligercambodia||");
                     console.log(request.user.email);
-                    response.render('apartment_history', {user: request.user, user_email: request.user.email, trans_apart: tranApartmentResult.rows, apartmentData: apartmentResult.rows});
+                    response.render('apartment_history', {user: request.user, user_email: request.user.email, trans_apart: tranApartmentResult.rows, apartmentData: apartmentResult.rows, accountData: accountResult.rows});
                   }
                 });
-                
+
               }
             });
           }else{
@@ -120,7 +120,7 @@ module.exports.set = function(router, pool) {
     }
     var fromUser = {
       status: request.body.status,
-      userName: request.user._json.given_name,
+      userName: request.user.displayName,
       userEmail: request.user.email
     }
     //id = '"+ id +"';
@@ -224,7 +224,7 @@ module.exports.set = function(router, pool) {
       amountSend: request.body.amountTrans,
       emailSend: request.body.recipientTrans,
       reasonSend: request.body.reasonTrans,
-      userName: request.user._json.name,
+      userName: request.user.displayName,
       email: request.user.email
     };
 
@@ -246,9 +246,9 @@ module.exports.set = function(router, pool) {
             VALUES('" + fromUser.userName +"', '"+ fromUser.email +"', \
             '"+ fromUser.amountSend +"', '"+ apartmentResult.rows[0].budget +"', '"+ fromUser.emailSend +"', '"+ fromUser.reasonSend +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; */
 
-            var insert = "INSERT INTO transfer_logs(sender, recipient, amount, sender_resulting_budget, reason, apartment, num_approve, num_disapprove, email_logs, date)\
+            var insert = "INSERT INTO transfer_logs(sender, recipient, amount, sender_resulting_budget, reason, apartment, num_approve, num_disapprove, date)\
             VALUES('" + fromUser.email +"', '"+ fromUser.emailSend +"', \
-            '"+ fromUser.amountSend +"', '"+ apartmentResult.rows[0].budget +"', '"+ fromUser.reasonSend +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; 
+            '"+ fromUser.amountSend +"', '"+ apartmentResult.rows[0].budget +"', '"+ fromUser.reasonSend +"', '"+ apartment +"', 0, 0, CURRENT_TIMESTAMP(2));"; 
             
             pool.query(insert, function(inApartmentErr, inApartmentResult){
               if(inApartmentErr){
