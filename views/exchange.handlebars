@@ -35,7 +35,7 @@
     <div class="input-group">
      <div class="input-group">
         <div class="input-group-addon"><span id="span1">$</span></div>
-        <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="0.01" min="0.25" required>
+        <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" data-validation="number" step="5" min="5" required>
       </div>
       <div class="input-group">
         <div class="input-group-addon"><span id="span2">P</span></div>
@@ -145,19 +145,21 @@ $(document).ready(function() {
   });
   amount_btn.addEventListener("click", function(event) {
     if($('input[name="exchangeType"]:checked') == 'Dollar to Pedro') {
-      $('#amount').attr({'min': 0,
-                        'max': ''})
+      $('#amount').attr({'min': 5,
+                        'step': 5,
+                        'max': null})
     } else {
-      $('#amount').attr({'min': 0,
-                        'max': '{{budget}}'});
+      $('#amount').attr({'min': 5,
+                        'max': '{{valid_exchange_budget}}',
+                        'step': 5});
     }
     
     if (amount.validity.valueMissing) {
-      amount.setCustomValidity("Please enter a number, {{user._json.given_name}}!");
+      amount.setCustomValidity("Please enter a number, {{user.fullName}}!");
     } else if (amount.validity.rangeUnderflow) {
       amount.setCustomValidity("You can't exchange money from " + amount.value + "!");
     } else if (amount.validity.stepMismatch) {
-      amount.setCustomValidity("Please enter your currency at second decimal place!");
+      amount.setCustomValidity("Please enter your currency of multiple of 5!");
     } else {
       amount.setCustomValidity("");
       if (date.validity.valueMissing) {
@@ -183,23 +185,29 @@ $('input[name="exchangeType"]').click(function() {
   if($("input[name='exchangeType']:checked").val() == 'Dollar to Pedro') {
     span1.innerHTML = '$';
     span2.innerHTML = 'P';
-    $("#amount").prop('max',100);
-    $("#result").prop('max',100);
-    $("#amount").prop('min',0);
-    $("#result").prop('min',0);
+    $("#amount").prop('min',5);
+    $("#result").prop('min',5);
+    $("#amount").prop('max', null);
+    $("#result").prop('max',null);
+    $("#amount").prop('step',5);
+    $("#result").prop('step',5);
   } else {
     span1.innerHTML = 'P';
     span2.innerHTML = '$';
+    console.log("Vuthh")
 
     $("#amount").prop('max','{{valid_exchange_budget}}');
     $("#result").prop('max','{{valid_exchange_budget}}');
-    $("#amount").prop('min',0);
-    $("#result").prop('min',0);
+    $("#amount").prop('min',5);
+    $("#result").prop('min',5);
+    $("#amount").prop('step',5);
+    $("#result").prop('step',5);
 
   }
 });
 });
 $(document).on("click", "#checkValidate", function() {
+  console.log("Hello World")
   var typeExchange = $('input[name="exchangeType"]:checked', '#exchangeForm').val();
   if (typeExchange == "Dollar to Pedro") {
     document.getElementById("typeExchangeExtract").innerHTML = "Dollar";
@@ -225,22 +233,35 @@ reasonInput.onkeyup = function() {
   document.getElementById('count').innerHTML = (length - this.value.length);
 };
 
-var today = new Date();
-var tomorrow = new Date();
-tomorrow.setDate(today.getDate()+1);
-console.log(tomorrow.getDate());   
+function giveValidDate(closeTime) {
+  var today = new Date();
+  var tomorrow = new Date(); 
+  tomorrow.setDate(today.getDate()+1);
+
+  var hour = parseInt(closeTime.split(':')[0])
+  var minute = parseInt(closeTime.split(':')[1])
+
+  if(today.getHours() <= hour) {
+    if(today.getHours() == hour && today.getMinutes() > minute) {
+      return tomorrow;
+    } else {
+      return today;
+    }
+  } else {
+    return tomorrow;
+  }
+}
 
 $('.form_date').datetimepicker({
   weekStart: 1,
-  startDate: tomorrow,
-  todayBtn: 1,
+  startDate: giveValidDate("15:30"),
   autoclose: 1,
   todayHighlight: 1,
   startView: 2,
   minView: 2,
   forceParse: 0,
   minDate: Date.now(),
-  daysOfWeekDisabled: [0, 6]
+  daysOfWeekDisabled: [0, 6, 5]
 });
 // $('.form_time').datetimepicker({
 //   autoclose: 1,
@@ -251,9 +272,11 @@ $('.form_date').datetimepicker({
 //   format: 'HH:00 P',
 //   defaultDate: '16:00'
 // });
+
 $(".readonly").on('keydown paste', function(e) {
   e.preventDefault();
 });
+
 </script>
 <!-- Modal Script -->
 <script type="text/javascript" src="/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
