@@ -144,7 +144,7 @@ $(document).ready(function() {
     result.value = amount.value * 1.00;
   });
   amount_btn.addEventListener("click", function(event) {
-    if($('input[name="exchangeType"]:checked') == 'Dollar to Pedro') {
+    if($('input[name="exchangeType"]:checked').val() == 'Dollar to Pedro') {
       $('#amount').attr({'min': 5,
                         'step': 5,
                         'max': null})
