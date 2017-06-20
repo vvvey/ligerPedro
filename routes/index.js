@@ -1,6 +1,7 @@
 var express        = require('express');
 var passport       = require('passport');
-var router         = express.Router();
+const Router = require('express-promise-router')
+const router = new Router()
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pool           = require('../lib/pool-config');
 var apartments     = require('./apartment');
