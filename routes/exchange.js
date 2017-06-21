@@ -2,7 +2,6 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 
 module.exports.set = function(router, pool) {
-
 	router.post('/exchange_confirmation', function(req, res) {
 	  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
 	});
@@ -16,11 +15,10 @@ module.exports.set = function(router, pool) {
 	});
 
 	router.get('/exchange', ensureLoggedIn, function(request,response){
-	  var user;
-	  var current_budget;
-	  var pending_budget = 0;
-	  var valid_budget;
-
+	  	var user;
+	  	var current_budget;
+	  	var pending_budget = 0;
+	  	var valid_budget;
 
 	    pool.query("SELECT * FROM account WHERE email = $1;",[request.user.email], function(err, result){
 	      if(err){
@@ -42,10 +40,10 @@ module.exports.set = function(router, pool) {
 	          }
 	        });
 	      }
-	    });   
-	  });
+		});
+	});
 
-	router.post('/exchange_approving', function(req,res){
+	router.post('/exchange_approving', function(req,res) {
 	  var exchangeLog = {
 	    timeCreated: Date.now(),
 	    person: req.user.fullName,
@@ -75,46 +73,51 @@ module.exports.set = function(router, pool) {
 	            ('00' + apptDate.getUTCMinutes()).slice(-2) + ':' +
 	            ('00' + apptDate.getUTCSeconds()).slice(-2); 
 	  console.log("SQL DAte is: " + apptDate);
+	  console.log("Email haha: " + exchangeLog.email);
+	  pool.query("SELECT * FROM account WHERE email='"+ exchangeLog.email +"';", function(accountErr, accountResult){
+	  	if(accountErr){
+	  		console.log(accountErr);
+	  	}else{
+	  		
+	  		console.log("apartment haha: " + accountResult.rows[0].apartment);
 
-	  
-	  pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
-	  VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7);", 
-	  [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate],function(err, result) {
-	      if(err) {
-	        console.log(err);
-	      } else {
-	        pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result1){
-	          if(err){
-	            console.log('Error: ' + err);
-	          }else{
-	            res.render('exchange_approving',   {user: req.user, data: result1.rows});
-	          }
-	        });
-	      }
-	    })
+	  		pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate, apartment)\
+			VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7, $8);", 
+			[exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate, accountResult.rows[0].apartment],function(err, result) {
+			    if(err) {
+			      console.log(err);
+			    } else {
+				    pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result1){
+				        if(err){
+				        	console.log('Error: ' + err);
+				        }else{
+				        	res.render('exchange_approving',   {user: req.user, data: result1.rows});
+				        }
+				    });
+			    }
+			});
+	  	}
 	  });
+	});
 
-	router.post('/exchange_list/approve/:id',function(req, res, next) {
+	router.post('/exchange_list/approve/:id',function(req, res) {
 	  var exchangeReq_id = req.params.id;
 	  console.log("Exhnage id: " + exchangeReq_id);
-	  if(exchangeReq_id === undefined){
-	    //console.log(exchangeReq_id)
-	    res.redirect('/exchange_list');
-	  }
+
 	  var status = req.body.status;
 	  var re = req.user.displayName;
-
-	  pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", 
-	   	[re, status, exchangeReq_id ], function(err, result){
-	      if (err) {
-	        console.log(err)
-	      } else {
-	        res.redirect('/exchange_list')
-	      }
-	    })
-	 })
+		
+		pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", 
+			[re, status, exchangeReq_id ], function(exchangeUpErr, exchangeUpResult) {
+		  if (exchangeUpErr) {
+		    console.log(exchangeUpErr);
+		  } else {
+		  	res.redirect('/exchange_list');							
+		  }
+		});
+	});
 	  
-	router.get('/exchange_list', function(req,res){
+	router.get('/exchange_list', function(req,res) {
 	  var email = req.user.email;
 	  var userName = req.user.fullName;
 
@@ -124,19 +127,18 @@ module.exports.set = function(router, pool) {
 	        res.send("Error " + err);
 	      }else{
 	        if(result.rows[0].role == 're'){
-	          pool.query("SELECT * FROM exchange_list WHERE type = 'Pedro to Dollar'\
+	          pool.query("SELECT * FROM exchange_list WHERE type = 'pedro-dollar'\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
 	            if (err2) {
 	              console.log(err2)
 	            } else {
 	              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
 	            }
-	          })
+	          });
 	        } else {
 	          res.render('notFound');
 	        }
 	      }
 	    });
-	  })
+	});
 }
-

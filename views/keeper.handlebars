@@ -1,0 +1,371 @@
+{{> dashboard-nav}}
+<div class="row">
+    <div class="col s12 l9 offset-l3">
+      <div class="card circle z-depth-2">
+        <div class="card-content black-text center">
+          <div class="row">
+            <span class="card-title center"><h4>Exchange Request Pedro-Dollar</h4></span>
+          </div>
+          <div class="row">
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment A1<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudA1}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'a1'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+                {{#if BudA1}}
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneA1">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelA1">Cancel</button>
+                      </form>
+                    </div>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at A1!</span>
+                  </div>
+                {{/if}} 
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment A2<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudA2}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'a2'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                
+                {{#if BudA2}}
+                  <div class="card-action">
+                    <a href="/exchange_list">Done</a>
+                    <a href="/exchange_list">Cancel</a>
+                  </div>
+                {{else}}
+                <div class="row">
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at A2!</span>
+                  </div>
+                </div>
+                {{/if}}               
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment B3<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudB3}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'b3'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                {{#if BudB3}}
+                  <div class="card-action">
+                  <form method="post" action="/keeper/{{ranVal}}">
+                    <button class="transparent black-text" type="submit" name="status" value="doneB3">Done</button>
+                    
+                    <button class="transparent black-text" type="submit" name="status" value="cancelB3">Cancel</button>
+                  </form>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at B3!</span>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment B4<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudB4}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'b4'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                {{#if BudB4}}
+                  <div class="card-action">
+                    <a href="/exchange_list">Done</a>
+                    <a href="/exchange_list">Cancel</a>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at B4!</span>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              {{#if BudTotal}}
+              <div class="card cardE red lighten-1 z-depth-4 white-text">
+              {{else}}
+              <div class="card cardE green z-depth-4 white-text">
+              {{/if}}
+
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Totoal Cost</span>
+                  <div>
+                    <h1>P{{BudTotal}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-action">
+                  <span class="white-text">This week exchange!</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment C5<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudC5}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'c5'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                {{#if BudC5}}
+                  <div class="card-action">
+                    <a href="/exchange_list">Done</a>
+                    <a href="/exchange_list">Cancel</a>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at C5!</span>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment C6<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudC6}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'c6'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                {{#if BudC6}}
+                  <div class="card-action">
+                    <a href="/exchange_list">Done</a>
+                    <a href="/exchange_list">Cancel</a>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at C6!</span>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment D7<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudD7}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'd7'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                {{#if BudD7}}
+                  <div class="card-action">
+                    <a href="/exchange_list">Done</a>
+                    <a href="/exchange_list">Cancel</a>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at D7!</span>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-4">Apartment D8<i class="material-icons right">more_vert</i></span>
+                  <div>
+                    <h1>P{{BudD8}}</h1>
+                  </div>
+                </div>
+
+                <div class="card-reveal">
+                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <table class="black-text">
+                  {{#each approvedDate}}
+                    {{#ifCondA this.apartment '==' 'd8'}}
+                      <tr>
+                        <td>{{this.person}}</td>
+                        <td>P{{this.amount}}</td>
+                      </tr>
+                    {{/ifCondA}}
+                  {{/each}}
+                  </table>
+                </div>
+
+                {{#if BudD8}}
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneD8">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelD8">Cancel</button>
+                      </form>
+                    </div>
+                  </div>
+                {{else}}
+                  <div class="card-action white center"> 
+                    <span class="red-text">No exchange at D8!</span>
+                  </div>
+                {{/if}}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".button-collapse").sideNav();
+
+  $(".clicker").on("click", function(){
+    if($(this).next().hasClass("down")){
+        $(this).next().slideUp("normal").removeClass("down");
+    }
+    else{
+       $(this).next().slideDown("normal").addClass("down");
+    }
+  });
+
+});
+
+
+
+</script>
+
+<style type="text/css">
+.cardE {
+  position: relative;
+  overflow: hidden;
+  margin: 0.5rem 0.1rem 0.5rem 0.1rem;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.no-magin{
+  padding: 0px;
+}
+</style>

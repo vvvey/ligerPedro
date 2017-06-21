@@ -1,5 +1,5 @@
-//var email = 'meas.v@ligercambodia.org';
-var email = 'dalin.l@ligercambodia.org';
+var email = 'meas.v@ligercambodia.org';
+//var email = 'dalin.l@ligercambodia.org';
 //var email = 'visal.s@ligercambodia.org';
 //var email = 'somphors.y@ligercambodia.org';
 //var email = 'vuthy.v@ligercambodia.org';
