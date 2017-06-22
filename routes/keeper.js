@@ -1,6 +1,7 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var uuidv4 = require('uuid/v4');
 var pg = require('pg');
+var _ = require('underscore');
 
 module.exports.set = function(router, pool) {
 
@@ -168,71 +169,73 @@ module.exports.set = function(router, pool) {
     });
   });
 
+
+
+
   router.post('/keeper/:id', ensureLoggedIn,function(request, response) {
     var email = request.user.email;
     pool.query("SELECT * FROM account WHERE email = $1;", [email], function(accountErr, accountResult){
       if(accountErr){
         console.log(accountErr);
       } else {
-        if(accountResult.rows[0].role == 'keeper') {
+        //if(accountResult.rows[0].role == 'keeper') {
           var status = request.body.status;
           var apartmentDone = ['doneA1', 'doneA2', 'doneB3', 'doneB4', 'doneC5', 'doneC6', 'doneD7', 'doneD8'];
           var apartmentCancel = ['cancelA1', 'cancelA2', 'cancelB3', 'cancelB4', 'cancelC5', 'cancelC6', 'cancelD7', 'cancelD8'];
           var apartment = ['a1', 'a2', 'b3', 'b4', 'c5', 'c6', 'd7', 'd8'];
-          
-          for(var i = 0; i < apartmentDone.length; i++){
-            if(status == apartmentDone[i]){
-          
+
+          _.each(apartmentDone, function (thatAparmtent) {
+            if(status == thatAparmtent){
+              console.log("it work, the apartment is: " + thatAparmtent);
+////////////FIXED//////////////
+              var numForApartment = _.indexOf(apartmentDone, thatAparmtent);
+              console.log("indexOf: " + numForApartment);
               pool.query("SELECT * FROM exchange_list WHERE approved = 'true'\
-               AND pending = 'true' AND apartment = $1;", [apartment[i]], function (i, firSelectErr, firSelectResult) {
+               AND pending = 'true' AND apartment = $1;", [apartment[numForApartment]], function (firSelectErr, firSelectResult) {
                 if(firSelectErr){
                     console.log(firSelectErr);
                 } else {
+                  console.log("it worked!");
+                  console.log("Apartment is: " + thatAparmtent);
 
-                  for(var y = 0; y < firSelectResult.rows.length; y++){
-                    console.log("Y: " + y);
-                    pool.query("SELECT * FROM account WHERE email = $1", [firSelectResult.rows[y].email], function (y, accountErr, accountResult) {
+                  _.each(firSelectResult.rows, function(exchanger) {
+                    console.log("-----------------: " + exchanger.result);
+                    pool.query("SELECT * FROM account WHERE email = $1", [exchanger.email], function (accountErr, accountResult) {
                       if(accountErr){
                         console.log(accountErr);
                       } else {
+                        console.log("Apartment is (Second loop): " + thatAparmtent);
+                        console.log("Budget: " + accountResult.rows[0].budget);
 
                         var totalBudget = parseInt(accountResult.rows[0].budget);
                         console.log("total budget: " + accountResult.rows[0].budget);
-                        var exchangeAmount = parseInt(firSelectResult.rows[y].result);
-                        console.log("exchanged amount: " + firSelectResult.rows[y].result);
+
+                        var exchangeAmount = parseInt(exchanger.result);
+                        console.log("exchanged amount: " + exchanger.result);
+
                         var resultingBudget = totalBudget - exchangeAmount;
-
                         console.log("Resulting budget: " + resultingBudget);
-
-                        pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingBudget, firSelectResult.rows[y].email], function(upAccountErr, upAccountResult) {
+                        process.nextTick(pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingBudget, exchanger.email], function(upAccountErr, upAccountResult) {
                           if(upAccountErr){
                             console.log(upAccountErr);
-                          } //else {
-
-                            /*pool.query("UPDATE exchange_list SET pending = 'false' WHERE id = $1", [firSelectResult.rows[y].id], function(y, exchangeUpErr, exchangeUpResult){
-                              if(exchangeUpErr){
-                                console.log(exchangeUpErr);
-                              }
-                            }.bind(pool, y));*/
-
-                          //}
-                          console.log("Updated");
-                        });
-                        console.log("Fy: " + y);
+                          } else {
+                            console.log("++++++++++++++++++++++++++++++: Updated to the account BUDGET!");
+                          }
+                        }));
                       }
-                    }.bind(pool, y));
-                    console.log("Sy: " + y);
-                  }
+                    });
+                  });
                 }
-              }.bind(pool, i));
+              });
+
             }
-          }
+          });
           
           console.log("Status: " + status);
           response.redirect('/keeper');
-        } else {
-          response.redirect('/notFound');
-        }
+        //} else {
+          //response.redirect('/notFound');
+        //}
       }
     });
   });
