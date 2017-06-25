@@ -73,58 +73,52 @@ module.exports.set = function(router, pool) {
       return res.status(400).send("Bad request!");
     }
 
-    // Checking if it is right with valid exchanging type
     if (exchangeType != 'Pedro to Dollar' && exchangeType != 'Dollar to Pedro') {
       return res.status(400).send("Unsure what the exchange type is!");
     }
-    // Bigger than 5
     if (exchangeAmount < 5) {
       return res.status(400).send("Amount have to be greater or equal to 5");
     }
-    // Multiple of 5
     if (exchangeAmount % 5 != 0) {
       return res.status(400).send("Amount have to be mulitiple of 5");
     }
-    // Amount = Result for now
     if (exchangeAmount != exchangeResult) {
       return res.status(400).send("Result and amount aren't the same");
     }
 
-   
-    const apptDate = moment(exchangeApptDate).tz("Asia/Bangkok");  // Take the appointment date to +7:00 Bangkok time
-    const now = moment().tz("Asia/Bangkok") // Current time in Cambodia Timezone
-    const bankCloseTime = moment().tz("Asia/Bangkok").hours(15).minute(30) // Bank Closing Time 3:30pm
-    const nowDate = moment().tz("Asia/Bangkok").startOf("day") //Today start with 0:0:0
 
-    if (apptDate.day() == 0 || apptDate.day() > 4) { // If the appt day is on Fri, Sat and Sun
+    const apptDate = moment(exchangeApptDate).tz("Asia/Bangkok");
+    const now = moment().tz("Asia/Bangkok")
+    const bankCloseTime = moment().tz("Asia/Bangkok").hours(15).minute(30)
+    const nowDate = moment().tz("Asia/Bangkok").startOf("day")
+
+    if (apptDate.day() == 0 || apptDate.day() > 4) {
       return res.status(400).send("The appointment day is not valid on that day!");
-    } else if (apptDate.isBefore(nowDate)) { // if the appt day is PAST
+    } else if (apptDate.isBefore(nowDate)) {
       return res.status(400).send("Sorry! You can't exchange from the past");
-    } else if (now.isSame(apptDate, 'd')) { //if the appt day is today
-      if (now.isAfter(bankCloseTime)) {  //if so check if the bank is closed
+    } else if (now.isSame(apptDate, 'd')) {
+      if (now.isAfter(bankCloseTime)) {
         return res.status(400).send("Bank Closed! Exchange next open day!");
       }
     }
 
-    //Query for userBudget
     var userBudget = await pool.query("SELECT budget FROM account WHERE email = $1;", [req.user.email])
-    //Query for the total of user pending budget
     var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [req.user.email])
 
     const userCurrentBudget = parseFloat(userBudget.rows[0].budget);
-    if (pending_budget.rows[0].sum == null) {
-		const pendingBudget = 0
-    } else {
-    	const pendingBudget = parseFloat(pending_budget.rows[0].sum)
-    }
-    
-    //check if user have enough money to exchange
+    const pendingBudget = parseFloat(pending_budget.rows[0].sum)
     if (userCurrentBudget - pendingBudget < exchangeAmount) {
       return res.status(400).send("You don't have enough money to exchange! Check your pending budget!");
     }
+<<<<<<< HEAD
     console.log("testing")
 
+=======
+>>>>>>> exchange
     next()
+
+
+
   }
 
   router.post('/exchange_approving', exchangeValidation, function(req, res) {
@@ -148,13 +142,12 @@ module.exports.set = function(router, pool) {
     var apptDate = exchangeLog.apptDate;
     var apptTime = 16;
 
+    var apptDate = moment(apptDate).tz("Asia/Bangkok");
+    apptDate.hour(apptTime)
+    apptDate = moment.utc(apptDate);
+    apptDate = apptDate.format("YYYY-MM-DD HH:mm:ss");
 
-    var apptDate = moment(apptDate).tz("Asia/Bangkok"); // change the appointment date to Bangkok timezone
-    apptDate.hour(apptTime) // Add hour (4:00pm) to appointment date
-    apptDate = moment.utc(apptDate); // Change the date to UTC time
-    apptDate = apptDate.format("YYYY-MM-DD HH:mm:ss"); // Change format for SQL date
-
-    console.log("SQL Date is: " + apptDate);
+    console.log("SQL DAte is: " + apptDate);
 
 
     pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
