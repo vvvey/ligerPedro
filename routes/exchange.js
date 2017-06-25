@@ -26,7 +26,6 @@ module.exports.set = function(router, pool) {
     var pending_budget = 0;
     var valid_budget;
 
-
     pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
       if (err) {
         console.error(err);
@@ -38,7 +37,12 @@ module.exports.set = function(router, pool) {
           if (err1) {
             console.error(err);
           } else {
-            pending_budget = parseFloat(result1.rows[0].sum);
+          	console.log(result1)
+          	if(result1.rows.sum == null) {
+          		pending_budget = 0;
+          	} else {
+          		pending_budget = parseFloat(result1.rows[0].sum);
+          	}
 
             response.render('exchange', {
               user: user,
@@ -60,8 +64,6 @@ module.exports.set = function(router, pool) {
     const exchangeResult = req.body.result;
     const exchangeApptDate = req.body.apptDate;
     const exchangeApptTime = req.body.apptTime;
-
-
 
     if (exchangeEmail.length == 0 ||
       exchangeAmount.length == 0 ||
