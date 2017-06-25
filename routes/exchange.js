@@ -1,142 +1,213 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
+var moment = require('moment-timezone');
 
 module.exports.set = function(router, pool) {
 
-	router.post('/exchange_confirmation', function(req, res) {
-	  res.render('exchange_confirmation', {amount: req.body.amount, result: req.body.result, reason: req.body.reason});
-	});
+  router.post('/exchange_confirmation', function(req, res) {
+    res.render('exchange_confirmation', {
+      amount: req.body.amount,
+      result: req.body.result,
+      reason: req.body.reason
+    });
+  });
 
-	router.get('/exchange_approving', ensureLoggedIn, function(req,res){
-	  res.render('exchange');
-	});
+  router.get('/exchange_approving', ensureLoggedIn, function(req, res) {
+    res.render('exchange');
+  });
 
-	router.get('/exchanging_system', function(req,res){
-	    res.render('exchanging_system');
-	});
+  router.get('/exchanging_system', function(req, res) {
+    res.render('exchanging_system');
+  });
 
-	router.get('/exchange', ensureLoggedIn, function(request,response){
-	  var user;
-	  var current_budget;
-	  var pending_budget = 0;
-	  var valid_budget;
+  router.get('/exchange', ensureLoggedIn, function(request, response) {
+    var user;
+    var current_budget;
+    var pending_budget = 0;
+    var valid_budget;
 
 
-	    pool.query("SELECT * FROM account WHERE email = $1;",[request.user.email], function(err, result){
-	      if(err){
-	        console.error(err);
-	      }else{
-	        user = request.user;
-	        current_budget = result.rows[0].budget; 
-	        //console.log(current_budget)
-	        pool.query("SELECT * FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", 
-	        			[request.user.email] , function(err1, result1){
-	          if(err1) {
-	            console.error(err);
-	          } else {
+    pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
+      if (err) {
+        console.error(err);
+      } else {
+        user = request.user;
+        current_budget = result.rows[0].budget;
+        //console.log(current_budget)
+        pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [request.user.email], function(err1, result1) {
+          if (err1) {
+            console.error(err);
+          } else {
+            pending_budget = parseFloat(result1.rows[0].sum);
 
-	            for(var i = 0; i < result1.rows.length; i++) {
-	              pending_budget += parseFloat(result1.rows[i].amount);
-	            }
-	            response.render('exchange', {user: user, title: 'Exchange', budget: current_budget, pending_budget: pending_budget, valid_exchange_budget: current_budget  - pending_budget});
-	          }
-	        });
-	      }
-	    });   
-	  });
+            response.render('exchange', {
+              user: user,
+              title: 'Exchange',
+              budget: current_budget,
+              pending_budget: pending_budget,
+              valid_exchange_budget: current_budget - pending_budget
+            });
+          }
+        });
+      }
+    });
+  });
 
-	router.post('/exchange_approving', function(req,res){
-	  var exchangeLog = {
-	    timeCreated: Date.now(),
-	    person: req.user.fullName,
-	    email: req.user.email,
-	    type: req.body.exchangeType,
-	    amount: req.body.amount ,
-	    result: req.body.result,
-	    reason: req.body.reason,
-	    re: null,
-	    approved: null,
-	    timeApproved: null,
-	    exchanged: null,
-	    timeExchanged:null,
-	    apptDate: req.body.apptDate,
-	    apptTime: req.body.apptTime    
-	  }
+  async function exchangeValidation(req, res, next) {
+    const exchangeType = req.body.type;
+    const exchangeEmail = req.user.email;
+    const exchangeAmount = req.body.amount;
+    const exchangeResult = req.body.result;
+    const exchangeApptDate = req.body.apptDate;
+    const exchangeApptTime = req.body.apptTime;
 
-	  var apptDate = exchangeLog.apptDate;
-	  var apptTime = 16;
 
-	    apptDate = new Date(apptDate);
-	    apptDate.setHours(apptTime);
-	    apptDate = apptDate.getUTCFullYear() + '-' +
-	            ('00' + (apptDate.getUTCMonth() + 1)).slice(-2) + '-' +
-	            ('00' + apptDate.getUTCDate()).slice(-2) + ' ' +
-	            ('00' + apptDate.getUTCHours()).slice(-2) + ':' +
-	            ('00' + apptDate.getUTCMinutes()).slice(-2) + ':' +
-	            ('00' + apptDate.getUTCSeconds()).slice(-2); 
-	  console.log("SQL DAte is: " + apptDate);
 
-	  
-	  pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
-	  VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7);", 
-	  [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate],function(err, result) {
-	      if(err) {
-	        console.log(err);
-	      } else {
-	        pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result1){
-	          if(err){
-	            console.log('Error: ' + err);
-	          }else{
-	            res.render('exchange_approving',   {user: req.user, data: result1.rows});
-	          }
-	        });
-	      }
-	    })
-	  });
+    if (exchangeEmail.length == 0 ||
+      exchangeAmount.length == 0 ||
+      exchangeResult.length == 0 ||
+      exchangeApptDate.length == 0 ||
+      exchangeApptTime.length == 0) {
+      return res.status(400).send("Bad request!");
+    }
 
-	router.post('/exchange_list/approve/:id',function(req, res, next) {
-	  var exchangeReq_id = req.params.id;
-	  console.log("Exhnage id: " + exchangeReq_id);
-	  if(exchangeReq_id === undefined){
-	    //console.log(exchangeReq_id)
-	    res.redirect('/exchange_list');
-	  }
-	  var status = req.body.status;
-	  var re = req.user.displayName;
+    if (exchangeType != 'Pedro to Dollar' && exchangeType != 'Dollar to Pedro') {
+      return res.status(400).send("Unsure what the exchange type is!");
+    }
+    if (exchangeAmount < 5) {
+      return res.status(400).send("Amount have to be greater or equal to 5");
+    }
+    if (exchangeAmount % 5 != 0) {
+      return res.status(400).send("Amount have to be mulitiple of 5");
+    }
+    if (exchangeAmount != exchangeResult) {
+      return res.status(400).send("Result and amount aren't the same");
+    }
 
-	  pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", 
-	   	[re, status, exchangeReq_id ], function(err, result){
-	      if (err) {
-	        console.log(err)
-	      } else {
-	        res.redirect('/exchange_list')
-	      }
-	    })
-	 })
-	  
-	router.get('/exchange_list', function(req,res){
-	  var email = req.user.email;
-	  var userName = req.user.fullName;
 
-	    pool.query("SELECT * FROM account WHERE email = $1;", [email] , function(err, result) {
-	      if(err){
-	        console.error(err); 
-	        res.send("Error " + err);
-	      }else{
-	        if(result.rows[0].role == 're'){
-	          pool.query("SELECT * FROM exchange_list WHERE type = 'Pedro to Dollar'\
+    const apptDate = moment(exchangeApptDate).tz("Asia/Bangkok");
+    const now = moment().tz("Asia/Bangkok")
+    const bankCloseTime = moment().tz("Asia/Bangkok").hours(15).minute(30)
+    const nowDate = moment().tz("Asia/Bangkok").startOf("day")
+
+    if (apptDate.day() == 0 || apptDate.day() > 4) {
+      return res.status(400).send("The appointment day is not valid on that day!");
+    } else if (apptDate.isBefore(nowDate)) {
+      return res.status(400).send("Sorry! You can't exchange from the past");
+    } else if (now.isSame(apptDate, 'd')) {
+      if (now.isAfter(bankCloseTime)) {
+        return res.status(400).send("Bank Closed! Exchange next open day!");
+      }
+    }
+
+    var userBudget = await pool.query("SELECT budget FROM account WHERE email = $1;", [req.user.email])
+    var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [req.user.email])
+
+    const userCurrentBudget = parseFloat(userBudget.rows[0].budget);
+    const pendingBudget = parseFloat(pending_budget.rows[0].sum)
+    if (userCurrentBudget - pendingBudget < exchangeAmount) {
+      return res.status(400).send("You don't have enough money to exchange! Check your pending budget!");
+    }
+    next()
+
+
+
+  }
+
+  router.post('/exchange_approving', exchangeValidation, function(req, res) {
+    var exchangeLog = {
+      timeCreated: Date.now(),
+      person: req.user.fullName,
+      email: req.user.email,
+      type: req.body.type,
+      amount: req.body.amount,
+      result: req.body.result,
+      reason: req.body.reason,
+      re: null,
+      approved: null,
+      timeApproved: null,
+      exchanged: null,
+      timeExchanged: null,
+      apptDate: req.body.apptDate,
+      apptTime: req.body.apptTime
+    }
+
+    var apptDate = exchangeLog.apptDate;
+    var apptTime = 16;
+
+    var apptDate = moment(apptDate).tz("Asia/Bangkok");
+    apptDate.hour(apptTime)
+    apptDate = moment.utc(apptDate);
+    apptDate = apptDate.format("YYYY-MM-DD HH:mm:ss");
+
+    console.log("SQL DAte is: " + apptDate);
+
+
+    pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
+	  VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7);", [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate], function(err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        pool.query("SELECT role FROM account WHERE email = $1;", [req.user.email], function(err, result1) {
+          if (err) {
+            console.log('Error: ' + err);
+          } else {
+            res.render('exchange_approving', {
+              user: req.user,
+              data: result1.rows
+            });
+          }
+        });
+      }
+    })
+  });
+
+  router.post('/exchange_list/approve/:id', function(req, res, next) {
+    var exchangeReq_id = req.params.id;
+    console.log("Exhnage id: " + exchangeReq_id);
+    if (exchangeReq_id === undefined) {
+      //console.log(exchangeReq_id)
+      res.redirect('/exchange_list');
+    }
+    var status = req.body.status;
+    var re = req.user.displayName;
+
+    pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", [re, status, exchangeReq_id], function(err, result) {
+      if (err) {
+        console.log(err)
+      } else {
+        res.redirect('/exchange_list')
+      }
+    })
+  })
+
+  router.get('/exchange_list', function(req, res) {
+    var email = req.user.email;
+    var userName = req.user.fullName;
+
+    pool.query("SELECT * FROM account WHERE email = $1;", [email], function(err, result) {
+      if (err) {
+        console.error(err);
+        res.send("Error " + err);
+      } else {
+        if (result.rows[0].role == 're') {
+          pool.query("SELECT * FROM exchange_list WHERE type = 'Pedro to Dollar'\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
-	            if (err2) {
-	              console.log(err2)
-	            } else {
-	              res.render('exchange_list', {requestRow: result2.rows, requestCol: result2.fields, user: req.user, data: result.rows});
-	            }
-	          })
-	        } else {
-	          res.render('notFound');
-	        }
-	      }
-	    });
-	  })
+            if (err2) {
+              console.log(err2)
+            } else {
+              res.render('exchange_list', {
+                requestRow: result2.rows,
+                requestCol: result2.fields,
+                user: req.user,
+                data: result.rows
+              });
+            }
+          })
+        } else {
+          res.render('notFound');
+        }
+      }
+    });
+  })
 }
-

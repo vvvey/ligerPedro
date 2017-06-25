@@ -20,6 +20,7 @@
     "express-handlebars": "^3.0.0",
     "express-promise-router": "^1.1.1",
     "express-session": "^1.14.2",
+    "moment-timezone": "^0.5.13",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
     "pg": "^4.5.6",
