@@ -1,0 +1,29 @@
+
+<script>
+$('#moveBack').on('click', function(event){
+    location.href = '/transfer';
+});
+
+$(document).ready(function() {
+var amount = document.getElementById('amount');
+var email = document.getElementById('userInput');
+var submit_btn = document.getElementById('submit-btn')
+
+submit_btn.addEventListener("click", function(event) {
+  console.log("Click")
+  if(amount.validity.rangeOverflow) {
+    amount.setCustomValidity("Not enough money to transfer!")
+  } else {
+    amount.setCustomValidity("");
+  } 
+  
+  if (email.validity.valueMissing){
+    email.setCustomValidity("Please enter your recipient's email!")
+  } else if (email.validity.patternMismatch){
+    email.setCustomValidity("This email is not in the list!")
+  } else {
+    email.setCustomValidity("")
+  }
+});
+});
+</script>
