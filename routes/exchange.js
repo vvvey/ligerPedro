@@ -122,6 +122,7 @@ module.exports.set = function(router, pool) {
     if (userCurrentBudget - pendingBudget < exchangeAmount) {
       return res.status(400).send("You don't have enough money to exchange! Check your pending budget!");
     }
+    console.log("testing")
 
     next()
   }
