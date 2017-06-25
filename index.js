@@ -54,4 +54,3 @@ app.use(function(req, res) {
     user: req.user
   })
 })
-
