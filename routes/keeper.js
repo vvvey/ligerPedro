@@ -2,9 +2,6 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var uuidv4 = require('uuid/v4');
 var pg = require('pg');
 var _ = require('underscore');
-var Async = require('async-next');
-var async = new Async();
-
 
 module.exports.set = function(router, pool) {
 

@@ -3,7 +3,7 @@
   "version": "0.2.5",
   "description": "A sample Node.js app using Express 4",
   "engines": {
-    "node": "5.9.1"
+    "node": "8.1.2"
   },
   "main": "index.js",
   "scripts": {
@@ -19,12 +19,13 @@
     "cookie-session": "^2.0.0-alpha.2",
     "express": "4.13.3",
     "express-handlebars": "^3.0.0",
+    "express-promise-router": "^1.1.1",
     "express-session": "^1.14.2",
+    "moment-timezone": "^0.5.13",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
     "pg": "^4.5.6",
     "pg-pool": "^1.7.1",
-    "underscore": "^1.8.3",
     "uuid": "^3.1.0"
   },
   "repository": {
