@@ -70,20 +70,23 @@
                   {{/each}}
                   </table>
                 </div>
-
-                
                 {{#if BudA2}}
-                  <div class="card-action">
-                    <a href="/exchange_list">Done</a>
-                    <a href="/exchange_list">Cancel</a>
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneA2">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelA2">Cancel</button>
+                      </form>
+                    </div>
                   </div>
                 {{else}}
-                <div class="row">
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at A2!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at A2!</span>
+                    </div>
                   </div>
-                </div>
-                {{/if}}               
+                {{/if}} 
               </div>
             </div>
 
@@ -109,20 +112,23 @@
                   {{/each}}
                   </table>
                 </div>
-
                 {{#if BudB3}}
-                  <div class="card-action">
-                  <form method="post" action="/keeper/{{ranVal}}">
-                    <button class="transparent black-text" type="submit" name="status" value="doneB3">Done</button>
-                    
-                    <button class="transparent black-text" type="submit" name="status" value="cancelB3">Cancel</button>
-                  </form>
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneB3">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelB3">Cancel</button>
+                      </form>
+                    </div>
                   </div>
                 {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at B3!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at B3!</span>
+                    </div>
                   </div>
-                {{/if}}
+                {{/if}} 
               </div>
             </div>
 
@@ -150,13 +156,20 @@
                 </div>
 
                 {{#if BudB4}}
-                  <div class="card-action">
-                    <a href="/exchange_list">Done</a>
-                    <a href="/exchange_list">Cancel</a>
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneB4">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelB4">Cancel</button>
+                      </form>
+                    </div>
                   </div>
                 {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at B4!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at B4!</span>
+                    </div>
                   </div>
                 {{/if}}
               </div>
@@ -175,9 +188,10 @@
                     <h1>P{{BudTotal}}</h1>
                   </div>
                 </div>
-
-                <div class="card-action">
-                  <span class="white-text">This week exchange!</span>
+                <div class="row">
+                  <div class="card-action">
+                    <span class="white-text">This week exchange!</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -206,13 +220,20 @@
                 </div>
 
                 {{#if BudC5}}
-                  <div class="card-action">
-                    <a href="/exchange_list">Done</a>
-                    <a href="/exchange_list">Cancel</a>
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneC5">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelC5">Cancel</button>
+                      </form>
+                    </div>
                   </div>
                 {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at C5!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at C5!</span>
+                    </div>
                   </div>
                 {{/if}}
               </div>
@@ -242,13 +263,20 @@
                 </div>
 
                 {{#if BudC6}}
-                  <div class="card-action">
-                    <a href="/exchange_list">Done</a>
-                    <a href="/exchange_list">Cancel</a>
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneC6">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelC6">Cancel</button>
+                      </form>
+                    </div>
                   </div>
                 {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at C6!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at C6!</span>
+                    </div>
                   </div>
                 {{/if}}
               </div>
@@ -278,13 +306,20 @@
                 </div>
 
                 {{#if BudD7}}
-                  <div class="card-action">
-                    <a href="/exchange_list">Done</a>
-                    <a href="/exchange_list">Cancel</a>
+                  <div class="row">
+                    <div class="card-action">
+                      <form method="post" action="/keeper/{{ranVal}}">
+                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneD7">Done</button>
+
+                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelD7">Cancel</button>
+                      </form>
+                    </div>
                   </div>
                 {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at D7!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at D7!</span>
+                    </div>
                   </div>
                 {{/if}}
               </div>
@@ -324,8 +359,10 @@
                     </div>
                   </div>
                 {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at D8!</span>
+                  <div class="row">
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at D8!</span>
+                    </div>
                   </div>
                 {{/if}}
               </div>

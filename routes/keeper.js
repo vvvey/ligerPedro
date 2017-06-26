@@ -2,6 +2,9 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var uuidv4 = require('uuid/v4');
 var pg = require('pg');
 var _ = require('underscore');
+var Async = require('async-next');
+var async = new Async();
+
 
 module.exports.set = function(router, pool) {
 
@@ -126,39 +129,39 @@ module.exports.set = function(router, pool) {
         if(exchangeResult.rows){
           //total money for
           for(var i = 0; i < exchangeResult.rows.length; i++) {
-            totalExchange += parseFloat(exchangeResult.rows[i].amount);
+            totalExchange += parseFloat(exchangeResult.rows[i].result);
 
             //total money and people for apartment A1
             if(exchangeResult.rows[i].apartment == 'a1'){
-              totalExchA1 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchA1 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment A2
             if(exchangeResult.rows[i].apartment == 'a2'){
-              totalExchA2 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchA2 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment B3
             if(exchangeResult.rows[i].apartment == 'b3'){
-              totalExchB3 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchB3 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment B4
             if(exchangeResult.rows[i].apartment == 'b4'){
-              totalExchB4 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchB4 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment C5
              if(exchangeResult.rows[i].apartment == 'c5'){
-              totalExchC5 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchC5 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment C6
              if(exchangeResult.rows[i].apartment == 'c6'){
-              totalExchC6 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchC6 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment D7
              if(exchangeResult.rows[i].apartment == 'd7'){
-              totalExchD7 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchD7 += parseFloat(exchangeResult.rows[i].result);
             }
             //total money and people for apartment D8
              if(exchangeResult.rows[i].apartment == 'd8'){
-              totalExchD8 += parseFloat(exchangeResult.rows[i].amount);
+              totalExchD8 += parseFloat(exchangeResult.rows[i].result);
             }
           }
         }else{
@@ -169,73 +172,82 @@ module.exports.set = function(router, pool) {
     });
   });
 
-
-
-
   router.post('/keeper/:id', ensureLoggedIn,function(request, response) {
+    
     var email = request.user.email;
-    pool.query("SELECT * FROM account WHERE email = $1;", [email], function(accountErr, accountResult){
+    
+    const checkingAcc = {
+      text: "SELECT * FROM account WHERE email = $1;",
+      values: [email] 
+    };
+    pool.query(checkingAcc, function(accountErr, accountResult){
       if(accountErr){
         console.log(accountErr);
       } else {
-        //if(accountResult.rows[0].role == 'keeper') {
+        if(accountResult.rows[0].role == 'keeper') {
           var status = request.body.status;
           var apartmentDone = ['doneA1', 'doneA2', 'doneB3', 'doneB4', 'doneC5', 'doneC6', 'doneD7', 'doneD8'];
           var apartmentCancel = ['cancelA1', 'cancelA2', 'cancelB3', 'cancelB4', 'cancelC5', 'cancelC6', 'cancelD7', 'cancelD8'];
           var apartment = ['a1', 'a2', 'b3', 'b4', 'c5', 'c6', 'd7', 'd8'];
 
           _.each(apartmentDone, function (thatAparmtent) {
+            var i = _.indexOf(apartmentDone, thatAparmtent);
+
             if(status == thatAparmtent){
-              console.log("it work, the apartment is: " + thatAparmtent);
-////////////FIXED//////////////
-              var numForApartment = _.indexOf(apartmentDone, thatAparmtent);
-              console.log("indexOf: " + numForApartment);
-              pool.query("SELECT * FROM exchange_list WHERE approved = 'true'\
-               AND pending = 'true' AND apartment = $1;", [apartment[numForApartment]], function (firSelectErr, firSelectResult) {
-                if(firSelectErr){
-                    console.log(firSelectErr);
-                } else {
-                  console.log("it worked!");
-                  console.log("Apartment is: " + thatAparmtent);
+
+              const selectExchange = {
+                text: 'SELECT * FROM exchange_list WHERE approved = $1 AND pending = $2 AND apartment = $3;',
+                values: ["true", "true", apartment[i]]
+              }
+
+              pool.query(selectExchange, function (firSelectErr, firSelectResult) {
+                if(firSelectErr) {console.log(firSelectErr)} 
+                else {
 
                   _.each(firSelectResult.rows, function(exchanger) {
-                    console.log("-----------------: " + exchanger.result);
-                    pool.query("SELECT * FROM account WHERE email = $1", [exchanger.email], function (accountErr, accountResult) {
-                      if(accountErr){
-                        console.log(accountErr);
-                      } else {
-                        console.log("Apartment is (Second loop): " + thatAparmtent);
-                        console.log("Budget: " + accountResult.rows[0].budget);
-
-                        var totalBudget = parseInt(accountResult.rows[0].budget);
-                        console.log("total budget: " + accountResult.rows[0].budget);
-
-                        var exchangeAmount = parseInt(exchanger.result);
-                        console.log("exchanged amount: " + exchanger.result);
-
-                        var resultingBudget = totalBudget - exchangeAmount;
-                        console.log("Resulting budget: " + resultingBudget);
-                        process.nextTick(pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingBudget, exchanger.email], function(upAccountErr, upAccountResult) {
-                          if(upAccountErr){
-                            console.log(upAccountErr);
-                          } else {
-                            console.log("++++++++++++++++++++++++++++++: Updated to the account BUDGET!");
-                          }
-                        }));
+                    const updatingAccount = {
+                      text: "UPDATE account SET budget = budget - $1 WHERE email = $2;",
+                      values: [parseInt(exchanger.result), exchanger.email]
+                    }
+                    pool.query(updatingAccount, function(updateAccErr, updateAccResult){
+                      if(updateAccErr){console.log(updateAccErr);}
+                      else{
+                        console.log("++++++++++: Updated to the account BUDGET!");
+                        const updateExhcange = {
+                          text: "UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), exchanged = $1 WHERE id = $2;",
+                          values: ['true', exchanger.id] 
+                        };
+                        pool.query(updateExhcange, function(exchangeUpErr){
+                          if(exchangeUpErr){console.log(exchangeUpErr);}
+                        });
                       }
+                    });          
+                  });
+                }
+              });
+            } else if(status == apartmentCancel[i]) {
+              const getExchange = {
+                text: "SELECT * FROM exchange_list WHERE approved = $1 AND pending = $2 AND apartment = $3;",
+                values: ["true", "true", apartment[i]]
+              };
+              pool.query(getExchange, function (selectErr, selectResult) {
+                if(selectErr) {console.log(selectErr)} 
+                else {
+                  _.each(selectResult.rows, function(exCancel){
+                    const updateExhcange = {
+                      text: "UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), exchanged = $1 WHERE id = $2;",
+                      values: ['false', exCancel.id] 
+                    };
+                    pool.query(updateExhcange, function(updateExErr) {
+                      if(updateExErr){console.log(updateExErr);}
                     });
                   });
                 }
               });
-
             }
           });
-          
-          console.log("Status: " + status);
           response.redirect('/keeper');
-        //} else {
-          //response.redirect('/notFound');
-        //}
+        } else {response.redirect('/notFound')}
       }
     });
   });

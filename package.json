@@ -10,6 +10,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "async-next": "^0.1.14",
     "body-parser": "^1.15.2",
     "bootstrap-list-filter": "^0.3.2",
     "bootstrap-validator": "^0.11.9",
