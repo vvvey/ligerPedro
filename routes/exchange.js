@@ -1,6 +1,8 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var moment = require('moment-timezone');
+var Async = require('async-next'); 
+var async = new Async(); 
 
 module.exports.set = function(router, pool) {
 
