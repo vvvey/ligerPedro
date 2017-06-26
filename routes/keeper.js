@@ -11,8 +11,52 @@ module.exports.set = function(router, pool) {
       response.redirect('/keeper_list');
     }
     var status = request.body.status;
-    
-    
+    if(status == 'true'){
+      const idData = {
+        text: "SELECT * FROM exchange_list WHERE id = $1",
+        values: [id]
+      }
+      pool.query(idData, function(selectExErr, selectExResult){
+        if(selectExErr){console.log(selectExErr);}
+        else{
+          const upAcc = {
+            text: "UPDATE account SET budget = budget + $1 WHERE email = $2",
+            values: [parseFloat(selectExResult.rows[0].result), selectExResult.rows[0].email]
+          };
+          pool.query(upAcc, function(accUpErr, accUpResult){
+            if(accUpErr){console.log(accUpErr);}
+            else{
+              const changeExhcange = {
+                text: "UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), exchanged = $1 WHERE id = $2;",
+                values: ['true', id] 
+              };
+              pool.query(changeExhcange, function(exchangeUpErr){
+                if(exchangeUpErr){console.log(exchangeUpErr);} 
+                else{response.redirect('/keeper');}
+              });
+            }
+          });
+        }
+      });
+    } else {
+      const idDataF = {
+        text: "SELECT * FROM exchange_list WHERE id = $1",
+        values: [id]
+      }
+      pool.query(idDataF, function(FselectExErr, KselectExResult){
+        if(FselectExErr){console.log(FselectExErr);}
+        else{
+          const changeFExhcange = {
+            text: "UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), exchanged = $1 WHERE id = $2;",
+            values: ['false', id] 
+          };
+          pool.query(changeFExhcange, function(exchangeUpErr){
+            if(exchangeUpErr){console.log(exchangeUpErr);} 
+            else{response.redirect('/keeper');}
+          });
+        }
+      });
+    } 
   });
 
   router.get('/keeper', function(request,response){
