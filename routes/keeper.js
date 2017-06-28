@@ -5,7 +5,7 @@ var _ = require('underscore');
 
 module.exports.set = function(router, pool) {
 
-  router.post('/keeper_list/approve/:id', function(request, response, next){
+  router.post('/keeper/d/p/:id', function(request, response, next){
     var id = request.params.id;
     if(id === undefined){
       response.redirect('/keeper_list');
@@ -32,7 +32,7 @@ module.exports.set = function(router, pool) {
               };
               pool.query(changeExhcange, function(exchangeUpErr){
                 if(exchangeUpErr){console.log(exchangeUpErr);} 
-                else{response.redirect('/keeper');}
+                else{response.redirect('/keeper/d/p');}
               });
             }
           });
@@ -52,14 +52,14 @@ module.exports.set = function(router, pool) {
           };
           pool.query(changeFExhcange, function(exchangeUpErr){
             if(exchangeUpErr){console.log(exchangeUpErr);} 
-            else{response.redirect('/keeper');}
+            else{response.redirect('/keeper/d/p');}
           });
         }
       });
     } 
   });
 
-  router.get('/keeper', ensureLoggedIn, function(request,response) {
+  router.get('/keeper/p/d', ensureLoggedIn, function(request,response) {
     
     var email = request.user.email;
 
@@ -73,7 +73,7 @@ module.exports.set = function(router, pool) {
       else{
         if(accDataResult.rows[0].role == 'keeper'){
           const exchangeSelect = {
-            text: "SELECT * FROM exchange_list WHERE approved = 'true' AND pending = 'true';"
+            text: "SELECT * FROM exchange_list WHERE approved = 'true' AND pending = 'true' AND type = 'pedro-dollar';"
           };
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
@@ -129,7 +129,7 @@ module.exports.set = function(router, pool) {
               } else {
                 totalExchange = 0;
               }
-              response.render('keeper', {BudA1: totalExchA1, BudA2: totalExchA2, BudB3: totalExchB3, BudB4: totalExchB4, BudC5: totalExchC5, BudC6: totalExchC6, BudD7: totalExchD7, BudD8: totalExchD8, BudTotal: totalExchange, approvedDate:exchangeResult.rows, ranVal: uuidv4()});
+              response.render('p-dExchange', {BudA1: totalExchA1, BudA2: totalExchA2, BudB3: totalExchB3, BudB4: totalExchB4, BudC5: totalExchC5, BudC6: totalExchC6, BudD7: totalExchD7, BudD8: totalExchD8, BudTotal: totalExchange, approvedDate:exchangeResult.rows, ranVal: uuidv4()});
             }
           });
         } else{
@@ -139,7 +139,7 @@ module.exports.set = function(router, pool) {
     });
   });
 
-  router.post('/keeper/:id', ensureLoggedIn,function(request, response) {
+  router.post('/keeper/p/d/:id', ensureLoggedIn,function(request, response) {
     if(id === undefined){
       response.redirect('/keeper_list');
     }
@@ -150,6 +150,7 @@ module.exports.set = function(router, pool) {
       text: "SELECT * FROM account WHERE email = $1;",
       values: [email] 
     };
+
     pool.query(checkingAcc, function(accountErr, accountResult){
       if(accountErr){
         console.log(accountErr);
@@ -215,11 +216,38 @@ module.exports.set = function(router, pool) {
               });
             }
           });
-          response.redirect('/keeper');
+          response.redirect('/keeper/p/d');
         } else {response.redirect('/notFound')}
       }
     });
   });
 
+  router.get('/keeper/d/p', function(request, response){
+    var email = request.user.email;
+
+    const dataAcc = {
+      text: "SELECT * FROM account WHERE email = $1;",
+      values: [email]
+    };
+
+    pool.query(dataAcc, function (accDataErr, accDataResult) {
+      if(accDataErr){console.log(accDataErr);}
+      else{
+        if(accDataResult.rows[0].role == 'keeper'){
+          const exchangeSelect = {
+            text: "SELECT * FROM exchange_list WHERE pending = 'true' AND type = 'dollar-pedro' ORDER BY timecreated DESC;"
+          };
+          pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
+            if (exchangeErr) {console.log(exchangeErr);} 
+            else{
+              response.render('d-pExchange', {approvedDate: exchangeResult.rows});
+            }//approved = 'true'
+          });
+        } else{
+          response.redirect('/notFound');
+        }
+      }
+    });
+  });
 }
 
