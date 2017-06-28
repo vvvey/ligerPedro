@@ -27,7 +27,7 @@ module.exports.set = function(router, pool) {
     var current_budget;
     var pending_budget = 0;
     var valid_budget;
-
+   
     pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
       if (err) {
         console.error(err);
@@ -60,7 +60,7 @@ module.exports.set = function(router, pool) {
   });
 
   async function exchangeValidation(req, res, next) {
-    const exchangeType = req.body.type;
+    const exchangeType = req.body.exchangeType;
     const exchangeEmail = req.user.email;
     const exchangeAmount = req.body.amount;
     const exchangeResult = req.body.result;
@@ -74,8 +74,8 @@ module.exports.set = function(router, pool) {
       exchangeApptTime.length == 0) {
       return res.status(400).send("Bad request!");
     }
-
-    if (exchangeType != 'Pedro to Dollar' && exchangeType != 'Dollar to Pedro') {
+    console.log(exchangeType);
+    if (exchangeType !== "pedro-dollar" && exchangeType !== "dollar-pedro") {
       return res.status(400).send("Unsure what the exchange type is!");
     }
     if (exchangeAmount < 5) {
@@ -112,10 +112,7 @@ module.exports.set = function(router, pool) {
     if (userCurrentBudget - pendingBudget < exchangeAmount) {
       return res.status(400).send("You don't have enough money to exchange! Check your pending budget!");
     }
-    next()
-
-
-
+    next();
   }
 
   router.post('/exchange_approving', exchangeValidation, function(req, res) {
@@ -123,7 +120,7 @@ module.exports.set = function(router, pool) {
       timeCreated: Date.now(),
       person: req.user.fullName,
       email: req.user.email,
-      type: req.body.type,
+      type: req.body.exchangeType,
       amount: req.body.amount,
       result: req.body.result,
       reason: req.body.reason,
@@ -146,24 +143,37 @@ module.exports.set = function(router, pool) {
 
     console.log("SQL DAte is: " + apptDate);
 
-
-    pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
-	  VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7);", [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate], function(err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        pool.query("SELECT role FROM account WHERE email = $1;", [req.user.email], function(err, result1) {
-          if (err) {
-            console.log('Error: ' + err);
+    const getApartment = {
+      text: "SELECT * FROM account WHERE email = $1;",
+      values: [exchangeLog.email]
+    }
+    pool.query(getApartment, function(apartmentErr, apartmentResult){
+      if(apartmentErr){console.log(apartmentErr);}
+      else{
+        var apartment = apartmentResult.rows[0].apartment;
+        const insertData = {
+          text: "INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate, apartment)\
+          VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7, $8);",
+          values: [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate, apartment]
+        };
+        pool.query(insertData, function(insertErr, insertResult) {
+          if (insertErr) {
+            console.log(insertErr);
           } else {
-            res.render('exchange_approving', {
-              user: req.user,
-              data: result1.rows
+            pool.query("SELECT role FROM account WHERE email = $1;", [req.user.email], function(err, result1) {
+              if (err) {
+                console.log('Error: ' + err);
+              } else {
+                res.render('exchange_approving', {
+                  user: req.user,
+                  data: result1.rows
+                });
+              }
             });
           }
         });
       }
-    })
+    });
   });
 
   router.post('/exchange_list/approve/:id', function(req, res, next) {
