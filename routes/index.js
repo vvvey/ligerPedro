@@ -8,11 +8,13 @@ var apartments     = require('./apartment');
 var exchange       = require('./exchange');
 var transfer       = require('./transfer');
 var keeper         = require('./keeper');
+var admin          = require('./admin');
 
 apartments.set(router, pool);
 exchange.set(router, pool);
 transfer.set(router, pool);
 keeper.set(router, pool);
+admin.set(router, pool);
 
 router.get('/', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp

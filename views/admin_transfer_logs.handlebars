@@ -1,0 +1,148 @@
+{{> dashboard-nav}}
+
+<div class="row">
+	<div class="col l9 offset-l3 s12">
+		<ul class="collapsible" data-collapsible="accordion">
+			
+				{{#each transfer_data}}
+					<li>
+						<div class="collapsible-header teal lighten-2 transfer-header">
+							<!-- Short Date -->
+							<span class="white-text date">{{dateFormat date}}</span>
+							<!-- Sender Profile Picture -->
+							<img src="https://lh3.googleusercontent.com/-_K5tTEkSx7A/AAAAAAAAAAI/AAAAAAAABOs/RwqSzZzapGY/photo.jpg?sz=40" class="profile-1 circle" >
+							<!-- Recipient Profile Picture -->
+							<img src="https://lh3.googleusercontent.com/-oGc_g93w9Jg/AAAAAAAAAAI/AAAAAAAAAyM/gWXwwss39kU/s90-c-k-no/photo.jpg?sz=40" class="profile-2 circle">
+							<!-- Title of Transfer Log -->
+							<span class="truncate title">{{sender}} <i class="material-icons" style="">send</i> {{recipient}}</span>
+							<!-- Transfer amount -->
+							<span class="white-text darken-4">P{{amount}}</span><br>
+							<!-- Transfer Reason -->
+							<span class="truncate br-reason">{{reason}}</span>
+						</div>
+
+						<div class="collapsible-body transfer-content">
+							<div class="row zero-margin">
+								<div class="col s12 info-body">
+									<span class="info-title">Transfer Date: </span> <span class="blue-text">{{date}}</span><br>
+									<span class="info-title">Amount:</span> P{{amount}}<br>
+									<span class="info-title">Reason:</span> {{reason}}<br>
+								</div>
+
+								<div class="col s12 l6 m6 user-body">
+								
+									<img class="profile circle" src="https://lh3.googleusercontent.com/-oGc_g93w9Jg/AAAAAAAAAAI/AAAAAAAAAyM/gWXwwss39kU/s90-c-k-no/photo.jpg?sz=40" > 
+									<span>Sender | Samnang Noun </span><br>
+									<span class="email">{{sender}}</span><br>
+									Resulting Budget: P{{sender_resulting_budget}}
+								</div>
+								
+								<div class="col s12 l6 m6 user-body">
+								
+									<img class="profile circle" src="https://lh3.googleusercontent.com/-oGc_g93w9Jg/AAAAAAAAAAI/AAAAAAAAAyM/gWXwwss39kU/s90-c-k-no/photo.jpg?sz=40"> 
+									<span class="vuthy">Recipient | Vuthy Vey </span><br>
+									<span class="email">{{recipient}}</span><br>
+									Resulting Budget: P{{recipient_resulting_budget}}
+								</div>
+
+								
+							</div>
+						
+
+
+						</div>
+					</li>
+
+				{{/each}}
+					
+					
+				</ul>
+	</div>
+</div>
+
+<style>
+	.transfer-header {
+		position: relative; 
+		padding: 10px 20px 10px 86px; 
+		line-height: 1.5rem; 
+		min-height: 72px
+	}
+
+	.transfer-header .date {
+		font-size: 12px; 
+		float: right; 
+		margin-left: 1rem
+	}
+
+	.transfer-header .profile-1 { 
+		position: absolute; 
+		left: 1rem; 
+		border: solid 2px white; 
+		height: 40px;
+	}
+
+	.transfer-header .profile-2 {
+		position: absolute; 
+		left: 2.5rem;  
+		border: solid 2px white; 
+		height: 40px;
+	}
+
+	.transfer-header .title {
+		font-size: 16px;
+	}
+
+	.transfer-header i {
+		font-size: inherit; 
+		float: none; display: 
+		inline; line-height: inherit; 
+		margin: 0; vertical-align: middle; 
+		font-weight: bold;
+	}
+
+	.transfer-header .br-reason {
+		font-size: 12px;
+	}
+
+	.transfer-content {
+		padding: 10px;
+	}
+
+	.zero-margin {
+		margin: 0;
+	}
+
+	.transfer-content .info-body {
+		position: relative;
+		padding: 10px;
+		padding-left: 20px;
+		font-size: 12px;
+		line-height: 1.5rem;
+	}
+
+	.transfer-content .info-tittle {
+		width:90px;  
+		display: inline-block;
+	}
+
+	.transfer-content .user-body {
+		position: relative; 
+		padding: 10px 0; 
+		padding-left: 72px; 
+		border: 1px solid #ddd;
+	}
+	
+	.transfer-content img.profile {
+		position:absolute; 
+		left: 20px; 
+		border: solid 2px white; 
+		border-radius: 50%; 
+		height: 40px;
+	}
+
+	.transfer-content .email {
+		font-size: 10px;
+	}
+
+	
+</style>
