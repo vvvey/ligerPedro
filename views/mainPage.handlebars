@@ -93,9 +93,6 @@
 							</div>
 						</div>
 					</div>
-
-
-
 				</div>
 			</div>
 		</div>
@@ -224,37 +221,9 @@
 			</div>
 		</div>
 	</div>
-
-	<footer class="page-footer grey darken-4">
-		<div class="container">
-          <div class="row">
-            <div class="col l5 s12">
-              <h5 class="white-text">Liger Digital Currency</h5>
-              <p class="grey-text text-lighten-4">In this project we had put a lot of effort to do this, we faced with thousand of problems and bugs include technical and rules of how to use this system. We would like to give a big thanks to our mentor Alli Bukys, that drives us to this moment!</p>
-            </div>
-            <div class="col l6 s12">
-              <h5 class="white-text">Liger Digital Currency Members</h5>
-              <p class="grey-text text-lighten-4">Khom Seyha, Lim Menghouth, Loeurngpho Sreyneang, Ly Nilroth, Nuon Sineoun Samnang, Pich Sovannou, Poy Makara, Rith Chan Malika, Than Venghour, Sam Sreynith, Saosuo Visal, Vey Vuthy</p>
-            </div>
-            <div class="col l1 ">
-              <h5 class="white-text">Tabs</h5>
-              <ul>
-                <li><a class="grey-text text-lighten-3" href="#home">Home</a></li>
-                <li><a class="grey-text text-lighten-3" href="#about">About</a></li>
-                <li><a class="grey-text text-lighten-3" href="#tutorial">Tutorial</a></li>
-                <li><a class="grey-text text-lighten-3" href="#contact">Contact</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-	 	<div class="footer-copyright">
-	        <div class="container">
-	        Direct by 
-	        <a class="grey-text text-lighten-4" href="http://www.ligerlearning.org/">the Liger learning Center</a>
-	        </div>
-	    </div>
-    </footer>
+	{{> mainFooter}}
 </div>
+
 <style type="text/css">
 html {
 	font-family: sans-serif;
@@ -286,7 +255,6 @@ html {
 </style>
 <script type="text/javascript">
 	$('.scrollspy').scrollSpy();
-	$(".button-collapse").sideNav();
 	var options = [
 	    {selector: '#home', offset: 300, callback: function(el) {
 	      Materialize.toast("Home", 3000 );
