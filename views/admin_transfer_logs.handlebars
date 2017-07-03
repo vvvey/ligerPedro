@@ -10,11 +10,11 @@
 							<!-- Short Date -->
 							<span class="white-text date">{{dateFormat date}}</span>
 							<!-- Sender Profile Picture -->
-							<img src="https://lh3.googleusercontent.com/-_K5tTEkSx7A/AAAAAAAAAAI/AAAAAAAABOs/RwqSzZzapGY/photo.jpg?sz=40" class="profile-1 circle" >
+							<img src="{{sender_img_url}}?sz=40" class="profile-1 circle" >
 							<!-- Recipient Profile Picture -->
-							<img src="https://lh3.googleusercontent.com/-oGc_g93w9Jg/AAAAAAAAAAI/AAAAAAAAAyM/gWXwwss39kU/s90-c-k-no/photo.jpg?sz=40" class="profile-2 circle">
+							<img src="{{recipient_img_url}}?sz=40" class="profile-2 circle">
 							<!-- Title of Transfer Log -->
-							<span class="truncate title">{{sender}} <i class="material-icons" style="">send</i> {{recipient}}</span>
+							<span class="truncate title">{{sender_username}} <i class="material-icons" style="">send</i> {{recipient_username}}</span>
 							<!-- Transfer amount -->
 							<span class="white-text darken-4">P{{amount}}</span><br>
 							<!-- Transfer Reason -->
@@ -31,16 +31,16 @@
 
 								<div class="col s12 l6 m6 user-body">
 								
-									<img class="profile circle" src="https://lh3.googleusercontent.com/-oGc_g93w9Jg/AAAAAAAAAAI/AAAAAAAAAyM/gWXwwss39kU/s90-c-k-no/photo.jpg?sz=40" > 
-									<span>Sender | Samnang Noun </span><br>
+									<img class="profile circle" src="{{sender_img_url}}?sz=40" > 
+									<span>Sender | {{sender_username}} </span><br>
 									<span class="email">{{sender}}</span><br>
 									Resulting Budget: P{{sender_resulting_budget}}
 								</div>
 								
 								<div class="col s12 l6 m6 user-body">
 								
-									<img class="profile circle" src="https://lh3.googleusercontent.com/-oGc_g93w9Jg/AAAAAAAAAAI/AAAAAAAAAyM/gWXwwss39kU/s90-c-k-no/photo.jpg?sz=40"> 
-									<span class="vuthy">Recipient | Vuthy Vey </span><br>
+									<img class="profile circle" src="{{recipient_img_url}}?sz=40"> 
+									<span class="vuthy">Recipient | {{recipient_username}} </span><br>
 									<span class="email">{{recipient}}</span><br>
 									Resulting Budget: P{{recipient_resulting_budget}}
 								</div>
@@ -54,6 +54,7 @@
 					</li>
 
 				{{/each}}
+				<li><a href="http://localhost:5000/admin/transfer_data?offset={{previousOffset}}" class="btn">Newer Transfer</a><a href="http://localhost:5000/admin/transfer_data?offset={{nextOffset}}" class="btn">Older Transfer</a></li>
 					
 					
 				</ul>
@@ -104,9 +105,9 @@
 		font-size: 12px;
 	}
 
-	.transfer-content {
+/*	.transfer-content {
 		padding: 10px;
-	}
+	}*/
 
 	.zero-margin {
 		margin: 0;
