@@ -38,6 +38,10 @@ router.get('/', function(req, res) {
   }
 });
 
+router.get("/main", function(request, response){
+  response.render('mainPage');
+});
+
 router.get('/login',
   function(req, res) {
     if (req.user) {

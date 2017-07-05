@@ -35,6 +35,39 @@ module.exports.set = function(router, pool) {
     });
   });
 
+  router.get('/transfer_personal', function(request, response){
+    var email = request.user.email;
+    const getAccount = {
+      text: "SELECT * FROM account WHERE email = $1;",
+      values: [email]
+    };
+    pool.query(getAccount, function(accErr, accresult) {
+      if(accErr){response.send(accErr);}
+      else{
+        const getExchang = {
+          text: "SELECT SUM(result) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'pedro-dollar';",
+          values: ['sovannou.p@ligercambodia.org']
+        };
+        pool.query(getExchang, function(exchangeErr, exchangeResult){
+          if(exchangeErr){response.send(exchangeErr);}
+          else{
+
+
+            console.log("Money exhcange: " + exchangeResult);
+            if(exchangeResult){
+              exchangeResult = parseFloat(exchangeResult);
+            } else {
+              exchangeResult = 0;
+            }
+            console.log("Money exhcange nothing: " + exchangeResult);
+            console.log("Money in the bank: " + accresult.rows[0].budget);
+            console.log("Remain: " + (accresult.rows[0].budget - exchangeResult));
+            response.render('transfer_personal');
+          }
+        });
+      }
+    });
+  });
 
   router.get('/transfer_success', function(req, res) {
     res.render('transfer');
@@ -141,10 +174,7 @@ module.exports.set = function(router, pool) {
                 	if (err) {
                 		res.send(err)
                 	} else {
-                		res.render('transfer_success', {
-                         recipient: recipientEmail,
-                         amount: transferBudget
-                       });
+                		res.redirect('/transfer_personal');
                 	}
                 });
     });

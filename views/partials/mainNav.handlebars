@@ -1,0 +1,59 @@
+<nav class="nav-extended">
+	<div class="nav-wrapper grey darken-4 z-depth-3">
+		<a href="#" data-activates="mobile" class="button-collapse hide-on-med-only"><i class="material-icons">view_headline</i></a>
+
+
+		<ul class="hide-on-small-and-down">
+			<li class="green"><a href="#home" style="font-family: Calibri;">Liger Digital Currency</a></li>
+			
+			<li class="green right"><a href="#"><i class="material-icons">view_carousel</i></a></li>
+			<li class="amber right"><a href="/login"><i class="material-icons flipped">input</i></a></li>
+			<li class="amber right"><a href="http://www.ligerlearning.org/"><i class="material-icons">http</i></a></li>
+			
+			
+			<li class="right"><a href="#contact" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#contact')">Contact</a></li>
+
+			<li class="right"><a href="#tutorial" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#tutorial')">Tutorial</a></li>
+
+			<li class="right"><a href="#about" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#about')">About</a></li>
+		</ul>
+
+		<ul id="mobile" class="side-nav grey darken-4">
+			<li>
+	          <div class="userView center">
+	            <img width="100" src="logo.png">
+	            <h5 class="white-text center">Liger Digital Currency</h5>
+	          </div>
+	        </li>
+			
+			<li><a href="#" class="white-text"><i class="material-icons amber-text">input</i> Login</a></li>
+			<li><a href="http://www.ligerlearning.org/" class="white-text"><i class="material-icons amber-text">http</i> Visit Liger Website</a></li>
+			
+			<li><a href="#about" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE865;</i>About</a></li>
+			<li><a href="#tutorial" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE913;</i>Tutorial</a></li>
+			<li><a href="#contact" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE0BA;</i>Contact</a></li>
+		</ul>
+	</div>
+</nav>
+<style type="text/css">
+.flipped {
+    transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+}
+</style>
+<script type="text/javascript">
+	$(".button-collapse").sideNav();
+	
+	$('.button-collapse').sideNav({
+	  menuWidth: 300, // Default is 300
+	  edge: 'right', // Choose the horizontal origin
+	  closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+	  draggable: true, // Choose whether you can drag to open on touch screens,
+	  onOpen: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is opened
+	  onClose: function(el) { /* Do Stuff* / }, // A function to be called when sideNav is closed
+	}
+	);
+        
+</script>
