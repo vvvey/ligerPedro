@@ -6,7 +6,7 @@
 			
 				{{#each transfer_data}}
 					<li>
-						<div class="collapsible-header secondary-color transfer-header">
+						<div class="collapsible-header green transfer-header">
 							<!-- Short Date -->
 							<span class="white-text date">{{dateFormat date}}</span>
 							<!-- Sender Profile Picture -->
@@ -82,7 +82,7 @@
     
     {{#each paginations}}
     	{{#if active}}
-		<li class="secondary-color"><a href="#!" style="cursor: default; color: white;">{{display}}</a></li>
+		<li class="amber"><a href="#!" style="cursor: default; color: white;">{{display}}</a></li>
 
 		{{else}}
 		<li class="waves-effect"><a href="/admin/transfer_data?start={{start}}">{{display}}</a></li>
