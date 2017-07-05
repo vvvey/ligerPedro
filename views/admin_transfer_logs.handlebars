@@ -6,7 +6,7 @@
 			
 				{{#each transfer_data}}
 					<li>
-						<div class="collapsible-header transfer-header">
+						<div class="collapsible-header header transfer">
 							<!-- Short Date -->
 							<span class="date">{{dateFormat date}}</span>
 							<!-- Sender Profile Picture -->
@@ -29,7 +29,7 @@
 							<span class="truncate br-reason blue-grey-text text-darken-2">{{reason}}</span>
 						</div>
 
-						<div class="collapsible-body transfer-content">
+						<div class="collapsible-body content">
 							<div class="row zero-margin">
 								<div class="col s12 info-body">
 									<span class="info-title">Transfer Date: </span> <span class="blue-text">{{date}}</span><br>
@@ -102,27 +102,34 @@
 </div>
 
 <style>
-	.transfer-header {
+	.header {
 		position: relative; 
-		padding: 10px 20px 10px 86px; 
 		line-height: 1.5rem; 
 		min-height: 72px
 	}
 
-	.transfer-header .date {
+	.transfer {
+		padding: 10px 20px 10px 86px; 
+	}
+
+	.exchange {
+		padding: 10px 20px 10px 72px; 
+	}
+
+	.header .date {
 		font-size: 12px; 
 		float: right; 
 		margin-left: 1rem
 	}
 
-	.transfer-header .profile-1 { 
+	.header .profile-1 { 
 		position: absolute; 
 		left: 1rem; 
 		border: solid 2px white; 
 		height: 40px;
 	}
 
-	.transfer-header .profile-letter-1 {
+	.header .profile-letter-1 {
 		height: 40px;
 		width: 40px;
 		line-height: 36px;
@@ -136,7 +143,7 @@
 		left: 1rem;
 	}
 
-	.transfer-header .profile-letter-2 {
+	.header .profile-letter-2 {
 		height: 40px;
 		width: 40px;
 		line-height: 36px;
@@ -162,18 +169,18 @@
 		font-size: 20px; 
 	}
 
-	.transfer-header .profile-2 {
+	.header .profile-2 {
 		position: absolute; 
 		left: 2.5rem;  
 		border: solid 2px white; 
 		height: 40px;
 	}
 
-	.transfer-header .title {
+	.header .title {
 		font-size: 16px;
 	}
 
-	.transfer-header i {
+	.header i {
 		font-size: inherit; 
 		float: none; display: 
 		inline; line-height: inherit; 
@@ -181,11 +188,11 @@
 		font-weight: bold;
 	}
 
-	.transfer-header .br-reason {
+	.header .br-reason {
 		font-size: 12px;
 	}
 
-/*	.transfer-content {
+/*	.content {
 		padding: 10px;
 	}*/
 
@@ -193,7 +200,7 @@
 		margin: 0;
 	}
 
-	.transfer-content .info-body {
+	.content .info-body {
 		position: relative;
 		padding: 10px;
 		padding-left: 20px;
@@ -201,19 +208,19 @@
 		line-height: 1.5rem;
 	}
 
-	.transfer-content .info-tittle {
-		width:90px;  
+	.info-tittle {
+		width:100px;  
 		display: inline-block;
 	}
 
-	.transfer-content .user-body {
+	.content .user-body {
 		position: relative; 
 		padding: 10px 0; 
 		padding-left: 72px; 
 		border: 1px solid #ddd;
 	}
 	
-	.transfer-content img.profile , span.profile{
+	.content img.profile , span.profile{
 		position:absolute; 
 		left: 20px; 
 		border: solid 2px white; 
@@ -221,7 +228,7 @@
 		height: 40px;
 	}
 
-	.transfer-content .email {
+	.content .email {
 		font-size: 10px;
 	}
 	
