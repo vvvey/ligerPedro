@@ -6,9 +6,9 @@
 			
 				{{#each transfer_data}}
 					<li>
-						<div class="collapsible-header green transfer-header">
+						<div class="collapsible-header transfer-header">
 							<!-- Short Date -->
-							<span class="white-text date">{{dateFormat date}}</span>
+							<span class="date">{{dateFormat date}}</span>
 							<!-- Sender Profile Picture -->
 							{{#ifCondA sender_img_url "!=" null}}
 							<img src="{{sender_img_url}}?sz=40" class="profile-1 circle" >
@@ -24,9 +24,9 @@
 							<!-- Title of Transfer Log -->
 							<span class="truncate title">{{sender_username}} <i class="material-icons" style="">send</i> {{recipient_username}}</span>
 							<!-- Transfer amount -->
-							<span class="white-text darken-4">P{{amount}}</span><br>
+							<span class="green-text" style="font-weight: bold;">P{{amount}}</span><br>
 							<!-- Transfer Reason -->
-							<span class="truncate br-reason">{{reason}}</span>
+							<span class="truncate br-reason blue-grey-text text-darken-2">{{reason}}</span>
 						</div>
 
 						<div class="collapsible-body transfer-content">
