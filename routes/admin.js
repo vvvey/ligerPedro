@@ -1,40 +1,102 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-var pg = require('pg');
 
 module.exports.set = function(router, pool) {
-	// router.get('admin/transfer_data', ensureLoggedIn, function (req, res) {
-	// 	res.redirect('')
-	// });
-
 	router.get('/admin/transfer_data', ensureLoggedIn, function (req, res) {
-		console.log(req.query.offset)
+		// req.query.start and req.query.limit is GET request params
+		// e.g. /admin/transfer_data?start=10
+		// e.g. /admin/transfer_data?start=5&limit=10
 
-		if(isNaN(req.query.offset) || req.query.offset == undefined){
-			var offset = 0
-		} else {
-			var offset = req.query.offset
+		
+		// Check if start parms is valid as a number for OFFSET in database
+		// Default: start = 0
+		var start;
+		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
+	      start = 0 
+	    } else { 
+	      start = parseInt(req.query.start)
+	    } 
+
+		// Check if limit parms is valid as a number for OFFSET in database
+		// Default: limit = 20 meaning that a page would show 20 transfer logs
+	    var limit;
+	    if (isNaN(req.query.limit) || req.query.limit == undefined || req.query.limit < 0) {
+	    	limit = 20;
+	    } else {
+	    	limit = req.query.limit;
+	    }
+
+	    // Query Estimate row number of transfer_logs tableS
+	    // For pagnigating purpose
+	    // This query should be faster than the next one
+	    // After next query is done, code will use row_number to calcuate the pagination system
+	    var paginateArray = []
+	    pool.query("SELECT count(id) from transfer_logs;", (err, result) => {
+	    	var row_number = result.rows[0].count;
+	    	console.log("Row number is " + row_number)
+	    	// Generate array of object based on number of rows, limit and start
+			for (var i = 0; i < Math.ceil(row_number / limit); i++) {
+				paginateArray[i] = {
+					start: i * limit, // parms of link to start (offset)
+					display: i + 1, // number to display
+					active: Math.ceil(start/limit) == i ? true : false // active for CSS
+				}
+			}
+
+			// e.g. paginateArray = 
+			// [ 	{ start: 0, display: 1, active: false },
+			//  	{ start: 20, display: 2, active: true },
+			// 		{ start: 40, display: 3, active: false } ]
+
+	    })
+		
+		// Query to get transfer logs joining with sender and recipient data (username and img_url)
+		// Paginate by OFFSET and LIMIT
+		// Additional information needed (username(s) and img_url(s)) and transfer_logs table doesn't have that
+		// Using sender and recipient email to join with account table
+		// Basic picture: transfer_logs join with sender then join with recipient 
+		var query = {
+			text: "	SELECT \
+						transfer_logs.*, \
+						sender.username as sender_username, \
+						sender.img_url as sender_img_url,\
+						recipient.username as recipient_username, \
+						recipient.img_url as recipient_img_url \
+					FROM transfer_logs \
+					JOIN account AS sender on (transfer_logs.sender = sender.email) \
+					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
+					ORDER BY date DESC OFFSET $1 LIMIT $2;",
+			values: [start, limit]
 		}
 
-		offset = parseInt(offset)
-
-		pool.query("select transfer_logs.*, sender.sender_username, sender.sender_img_url, recipient.recipient_username, recipient.recipient_img_url from (select transfer_logs.id, account.username as sender_username, account.img_url as sender_img_url from transfer_logs inner join account on (transfer_logs.sender = account.email)) as sender inner join (select transfer_logs.id, account.username as recipient_username, account.img_url as recipient_img_url from transfer_logs inner join account on (transfer_logs.recipient = account.email)) as recipient on (sender.id = recipient.id) join transfer_logs on (sender.id = transfer_logs.id);", function(err, result) { 
+		pool.query(query, (err, result) => { 
 			if (err) {
 				res.send(err);
 			} else {
-				res.render('admin_transfer_logs', {transfer_data: result.rows, nextOffset: offset+30, previousOffset: offset-30});
+				var previousStart; 
+				var nextStart;
+
+				// Is there newer transfer log
+				if (start  == 0) {
+					previousStart = 'none'
+				} else {
+					previousStart = start - limit;
+				}
+
+				// Is there more
+				if (result.rows.length < limit) {
+					nextStart = 'none';
+				} else {
+					nextStart = start + limit;
+				}
+
+				// Render to client
+				res.render('admin_transfer_logs', {
+					transfer_data: result.rows, 
+					previousStart: previousStart, 
+					nextStart: nextStart, 
+					paginations: paginateArray
+				});
 			}
 		})		
 	});
-
 }	
-
-// select transfer_logs.id, transfer_logs.amount, vuthy.username 
-//from transfer_logs inner join 
-//(select id, json_agg(username) as username from 
-//(SELECT transfer_logs.id, account.username from transfer_logs join account on 
-//(transfer_logs.sender = account.email or transfer_logs.recipient = account.email)) 
-//as vuthy group by id) as vuthy on (transfer_logs.id = vuthy.id);
-
-//select transfer_logs.*, user.* from transfer_logs inner join (select sender.id, sender.username as sender_username, recipient.username as recipient username from (select transfer_logs.id, account.username from transfer_logs inner join account on (transfer_logs.sender = account.email)) as sender inner join (select transfer_logs.id, account.username from transfer_logs inner join account on (transfer_logs.recipient = account.email)) as recipient on (sender.id = recipient.id)) as user on (user.id = transfer_logs.id);
-
-//select transfer_logs.*, sender.sender_username, recipient.recipient_username from (select transfer_logs.id, account.username as sender_username from transfer_logs inner join account on (transfer_logs.sender = account.email)) as sender join (select transfer_logs.id, account.username as recipient_username from transfer_logs inner join account on (transfer_logs.recipient = account.email)) as recipient on (sender.id = recipient.id) join transfer_logs on (sender.id = transfer_logs.id);

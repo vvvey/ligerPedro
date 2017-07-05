@@ -6,13 +6,21 @@
 			
 				{{#each transfer_data}}
 					<li>
-						<div class="collapsible-header teal lighten-2 transfer-header">
+						<div class="collapsible-header secondary-color transfer-header">
 							<!-- Short Date -->
 							<span class="white-text date">{{dateFormat date}}</span>
 							<!-- Sender Profile Picture -->
+							{{#ifCondA sender_img_url "!=" null}}
 							<img src="{{sender_img_url}}?sz=40" class="profile-1 circle" >
+							{{else}}
+							<span class="circle red text-white profile-letter-1">{{firstLetter sender_username}}</span>
+							{{/ifCondA}}
 							<!-- Recipient Profile Picture -->
-							<img src="{{recipient_img_url}}?sz=40" class="profile-2 circle">
+							{{#ifCondA recipient_img_url "!=" null}}
+							<img src="{{recipient_img_url}}?sz=40" class="profile-2 circle" >
+							{{else}}
+							<span class="circle green text-white profile-letter-2">{{firstLetter recipient_username}}</span>
+							{{/ifCondA}}
 							<!-- Title of Transfer Log -->
 							<span class="truncate title">{{sender_username}} <i class="material-icons" style="">send</i> {{recipient_username}}</span>
 							<!-- Transfer amount -->
@@ -30,8 +38,12 @@
 								</div>
 
 								<div class="col s12 l6 m6 user-body">
-								
+									{{#ifCondA sender_img_url "!=" null}}
 									<img class="profile circle" src="{{sender_img_url}}?sz=40" > 
+									{{else}}
+									<span class="circle profile red text-white circle-letter">{{firstLetter sender_username}}</span>
+									{{/ifCondA}}
+									
 									<span>Sender | {{sender_username}} </span><br>
 									<span class="email">{{sender}}</span><br>
 									Resulting Budget: P{{sender_resulting_budget}}
@@ -39,7 +51,11 @@
 								
 								<div class="col s12 l6 m6 user-body">
 								
-									<img class="profile circle" src="{{recipient_img_url}}?sz=40"> 
+									{{#ifCondA recipient_img_url "!=" null}}
+									<img class="profile circle" src="{{recipient_img_url}}?sz=40" > 
+									{{else}}
+									<span class="circle profile green text-white circle-letter">{{firstLetter recipient_username}}</span>
+									{{/ifCondA}}
 									<span class="vuthy">Recipient | {{recipient_username}} </span><br>
 									<span class="email">{{recipient}}</span><br>
 									Resulting Budget: P{{recipient_resulting_budget}}
@@ -54,11 +70,35 @@
 					</li>
 
 				{{/each}}
-				<li><a href="http://localhost:5000/admin/transfer_data?offset={{previousOffset}}" class="btn">Newer Transfer</a><a href="http://localhost:5000/admin/transfer_data?offset={{nextOffset}}" class="btn">Older Transfer</a></li>
-					
 					
 				</ul>
+				<ul class="pagination">
+
+	{{#ifCondA previousStart '!=' 'none'}}
+    	<li class="waves-effect"><a href="/admin/transfer_data?start={{previousStart}}"><i class="material-icons">chevron_left</i></a>
+	{{else ifCondA previousStart '==' 'none'}}
+		<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a>
+	{{/ifCondA}}
+    
+    {{#each paginations}}
+    	{{#if active}}
+		<li class="secondary-color"><a href="#!" style="cursor: default; color: white;">{{display}}</a></li>
+
+		{{else}}
+		<li class="waves-effect"><a href="/admin/transfer_data?start={{start}}">{{display}}</a></li>
+		{{/if}}
+		
+    	
+    {{/each}}
+	{{#ifCondA nextStart '!=' 'none'}}
+    	<li class="waves-effect"><a href="/admin/transfer_data?start={{nextStart}}"><i class="material-icons">chevron_right</i></a>
+	{{else ifCondA nextStart '==' 'none'}}
+		<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a>
+	{{/ifCondA}}
+    </li>
+  </ul>
 	</div>
+
 </div>
 
 <style>
@@ -80,6 +120,46 @@
 		left: 1rem; 
 		border: solid 2px white; 
 		height: 40px;
+	}
+
+	.transfer-header .profile-letter-1 {
+		height: 40px;
+		width: 40px;
+		line-height: 36px;
+		display: inline-block;
+		text-align: center;
+		color: white;
+		border: 2px solid white;
+		font-weight: 00;
+		font-size: 20px; 
+		position: absolute; 
+		left: 1rem;
+	}
+
+	.transfer-header .profile-letter-2 {
+		height: 40px;
+		width: 40px;
+		line-height: 36px;
+		display: inline-block;
+		text-align: center;
+		color: white;
+		border: 2px solid white;
+		font-weight: 00;
+		font-size: 20px; 
+		position: absolute; 
+		left: 2.5rem;
+	}
+	
+	.circle-letter {
+		height: 40px;
+		width: 40px;
+		line-height: 36px;
+		display: inline-block;
+		text-align: center;
+		color: white;
+		border: 2px solid white;
+		font-weight: 00;
+		font-size: 20px; 
 	}
 
 	.transfer-header .profile-2 {
@@ -133,7 +213,7 @@
 		border: 1px solid #ddd;
 	}
 	
-	.transfer-content img.profile {
+	.transfer-content img.profile , span.profile{
 		position:absolute; 
 		left: 20px; 
 		border: solid 2px white; 
@@ -143,6 +223,10 @@
 
 	.transfer-content .email {
 		font-size: 10px;
+	}
+	
+	.secondary-color {
+		background-color: #4caf50
 	}
 
 	
