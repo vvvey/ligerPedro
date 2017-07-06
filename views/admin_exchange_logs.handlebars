@@ -6,7 +6,7 @@
 					{{#each exchange_data}}
 					<li>
 						<div class="collapsible-header header exchange exchange-header">
-							<span class="date">{{dateFormat timecreated}}</span>
+							<span class="date">{{formatDate timecreated 'short'}}</span>
 							{{#ifCondA exchanger_img_url "!=" null}}
 								<img class="profile-1 circle" src="{{exchanger_img_url}}?sz=40">
 							{{else}}
@@ -78,7 +78,7 @@
 									
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Request Date:</span></div>
-										<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{timecreated}}</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{formatDate timecreated 'standard'}}</span></div>
 									</div>
 
 									<div class="row zero-margin">
@@ -115,7 +115,7 @@
 									{{/ifCondA}}
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Appointment Date:</span></div>
-										<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{apptdate}}</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{formatDate apptdate 'standard'}}</span></div>
 									</div>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Reason:</span></div>
@@ -126,7 +126,7 @@
 									<br>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Approve Date:</span></div>
-									<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{timeapproved}}</span></div>
+									<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{formatDate timeapproved 'standard'}}</span></div>
 									</div><div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>RE:</span></div>
 										<div class="col l10	m10 s5 zero-margin zero-padding">{{re}}</div>
@@ -137,7 +137,7 @@
 									<br>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Cancelled Date:</span></div>
-									<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{timeexchanged}}</span></div>
+									<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{formatDate timeexchanged 'standard'}}</span></div>
 									</div><div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Keeper:</span></div>
 										<div class="col l10	m10 s5 zero-margin zero-padding">Dalin | dalin.l@ligercambodia.org</div>
@@ -146,7 +146,7 @@
 									<br>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Exchanged Date:</span></div>
-										<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{timeexchanged}}</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding"><span class="blue-text">{{formatDate timeexchanged 'standard'}}</span></div>
 									</div>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span>Keeper:</span></div>

@@ -8,7 +8,7 @@
 					<li>
 						<div class="collapsible-header header transfer">
 							<!-- Short Date -->
-							<span class="date">{{dateFormat date}}</span>
+							<span class="date">{{formatDate date 'short'}}</span>
 							<!-- Sender Profile Picture -->
 							{{#ifCondA sender_img_url "!=" null}}
 							<img src="{{sender_img_url}}?sz=40" class="profile-img profile-1 circle" >
@@ -34,7 +34,7 @@
 								<div class="col s12 info-body">
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>Transfer Date:</span></div>
-										<div class="col l10	m10 s5 zero-margin zero-padding">{{date}}</div>
+										<div class="col l10	m10 s5 zero-margin zero-padding">{{formatDate date 'standard'}}</div>
 									</div>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>Amount:</span></div>

@@ -89,7 +89,7 @@ module.exports.set = function(router, pool) {
 				} else {
 					nextStart = start + limit;
 				}
-
+				console.log(result.rows[0].date)
 				// Render to client
 				res.render('admin_transfer_logs', {
 					transfer_data: result.rows, 
