@@ -11,15 +11,15 @@
 							<span class="date">{{dateFormat date}}</span>
 							<!-- Sender Profile Picture -->
 							{{#ifCondA sender_img_url "!=" null}}
-							<img src="{{sender_img_url}}?sz=40" class="profile-1 circle" >
+							<img src="{{sender_img_url}}?sz=40" class="profile-img profile-1 circle" >
 							{{else}}
-							<span class="circle red text-white profile-letter-1">{{firstLetter sender_username}}</span>
+							<span class="circle red text-white profile-letter profile-1">{{firstLetter sender_username}}</span>
 							{{/ifCondA}}
 							<!-- Recipient Profile Picture -->
 							{{#ifCondA recipient_img_url "!=" null}}
-							<img src="{{recipient_img_url}}?sz=40" class="profile-2 circle" >
+							<img src="{{recipient_img_url}}?sz=40" class="profile-img profile-2 circle" >
 							{{else}}
-							<span class="circle green text-white profile-letter-2">{{firstLetter recipient_username}}</span>
+							<span class="circle green text-white profile-letter profile-2">{{firstLetter recipient_username}}</span>
 							{{/ifCondA}}
 							<!-- Title of Transfer Log -->
 							<span class="truncate title">{{sender_username}} <i class="material-icons" style="">send</i> {{recipient_username}}</span>
@@ -32,9 +32,18 @@
 						<div class="collapsible-body content">
 							<div class="row zero-margin">
 								<div class="col s12 info-body">
-									<span class="info-title">Transfer Date: </span> <span class="blue-text">{{date}}</span><br>
-									<span class="info-title">Amount:</span> P{{amount}}<br>
-									<span class="info-title">Reason:</span> {{reason}}<br>
+									<div class="row zero-margin">
+										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>Transfer Date:</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding">{{date}}</div>
+									</div>
+									<div class="row zero-margin">
+										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>Amount:</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding">P{{amount}}</div>
+									</div>
+									<div class="row zero-margin">
+										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>Reason:</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding">{{reason}}</div>
+									</div>
 								</div>
 
 								<div class="col s12 l6 m6 user-body">
@@ -101,140 +110,4 @@
 
 </div>
 
-<style>
-	.header {
-		position: relative; 
-		line-height: 1.5rem; 
-		min-height: 72px
-	}
 
-	.transfer {
-		padding: 10px 20px 10px 86px; 
-	}
-
-	.exchange {
-		padding: 10px 20px 10px 72px; 
-	}
-
-	.header .date {
-		font-size: 12px; 
-		float: right; 
-		margin-left: 1rem
-	}
-
-	.header .profile-1 { 
-		position: absolute; 
-		left: 1rem; 
-		border: solid 2px white; 
-		height: 40px;
-	}
-
-	.header .profile-letter-1 {
-		height: 40px;
-		width: 40px;
-		line-height: 36px;
-		display: inline-block;
-		text-align: center;
-		color: white;
-		border: 2px solid white;
-		font-weight: 00;
-		font-size: 20px; 
-		position: absolute; 
-		left: 1rem;
-	}
-
-	.header .profile-letter-2 {
-		height: 40px;
-		width: 40px;
-		line-height: 36px;
-		display: inline-block;
-		text-align: center;
-		color: white;
-		border: 2px solid white;
-		font-weight: 00;
-		font-size: 20px; 
-		position: absolute; 
-		left: 2.5rem;
-	}
-	
-	.circle-letter {
-		height: 40px;
-		width: 40px;
-		line-height: 36px;
-		display: inline-block;
-		text-align: center;
-		color: white;
-		border: 2px solid white;
-		font-weight: 00;
-		font-size: 20px; 
-	}
-
-	.header .profile-2 {
-		position: absolute; 
-		left: 2.5rem;  
-		border: solid 2px white; 
-		height: 40px;
-	}
-
-	.header .title {
-		font-size: 16px;
-	}
-
-	.header i {
-		font-size: inherit; 
-		float: none; display: 
-		inline; line-height: inherit; 
-		margin: 0; vertical-align: middle; 
-		font-weight: bold;
-	}
-
-	.header .br-reason {
-		font-size: 12px;
-	}
-
-/*	.content {
-		padding: 10px;
-	}*/
-
-	.zero-margin {
-		margin: 0;
-	}
-
-	.content .info-body {
-		position: relative;
-		padding: 10px;
-		padding-left: 20px;
-		font-size: 12px;
-		line-height: 1.5rem;
-	}
-
-	.info-tittle {
-		width:100px;  
-		display: inline-block;
-	}
-
-	.content .user-body {
-		position: relative; 
-		padding: 10px 0; 
-		padding-left: 72px; 
-		border: 1px solid #ddd;
-	}
-	
-	.content img.profile , span.profile{
-		position:absolute; 
-		left: 20px; 
-		border: solid 2px white; 
-		border-radius: 50%; 
-		height: 40px;
-	}
-
-	.content .email {
-		font-size: 10px;
-	}
-	
-	.secondary-color {
-		background-color: #4caf50
-	}
-
-	
-</style>
