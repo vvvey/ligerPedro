@@ -36,37 +36,38 @@ module.exports.set = function(router, pool) {
   });
 
   router.get('/transfer_personal', function(request, response){
-    var email = request.user.email;
-    const getAccount = {
-      text: "SELECT * FROM account WHERE email = $1;",
-      values: [email]
-    };
-    pool.query(getAccount, function(accErr, accresult) {
-      if(accErr){response.send(accErr);}
-      else{
-        const getExchang = {
-          text: "SELECT SUM(result) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'pedro-dollar';",
-          values: ['sovannou.p@ligercambodia.org']
-        };
-        pool.query(getExchang, function(exchangeErr, exchangeResult){
-          if(exchangeErr){response.send(exchangeErr);}
-          else{
-
-
-            console.log("Money exhcange: " + exchangeResult);
-            if(exchangeResult){
-              exchangeResult = parseFloat(exchangeResult);
-            } else {
-              exchangeResult = 0;
+    if(request.user){
+      var email = request.user.email;
+      const getAccount = {
+        text: "SELECT * FROM account WHERE email = $1;",
+        values: [email]
+      };
+      const getExchange = {
+        text: "SELECT * FROM exchange_list WHERE email = $1 AND pending = 'true' AND type = 'pedro-dollar';",
+        values: [email]
+      };
+      pool.query(getAccount, function(accErr, accresult) {
+        if(accErr){console.log(accErr);}
+        else{
+          console.log("About to query!");
+          pool.query(getExchange, function(exchangeErr, exchangeResult) {
+            if(exchangeErr){console.log(exchangeErr);}
+            else{
+              var moneyExchange = 0;
+              if(exchangeResult.rows){
+                console.log("Something in exhcange");
+                for(var i = 0; i < exchangeResult.rows.length; i++){
+                  moneyExchange += parseFloat(exchangeResult.rows[i].result);
+                }
+              }
+              response.render('transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role});
             }
-            console.log("Money exhcange nothing: " + exchangeResult);
-            console.log("Money in the bank: " + accresult.rows[0].budget);
-            console.log("Remain: " + (accresult.rows[0].budget - exchangeResult));
-            response.render('transfer_personal');
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+    }else{
+      response.redirect('/login');
+    }
   });
 
   router.get('/transfer_success', function(req, res) {
