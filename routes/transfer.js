@@ -36,37 +36,53 @@ module.exports.set = function(router, pool) {
   });
 
   router.get('/transfer_personal', function(request, response){
-    var email = request.user.email;
-    const getAccount = {
-      text: "SELECT * FROM account WHERE email = $1;",
-      values: [email]
-    };
-    pool.query(getAccount, function(accErr, accresult) {
-      if(accErr){response.send(accErr);}
-      else{
-        const getExchang = {
-          text: "SELECT SUM(result) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'pedro-dollar';",
-          values: ['sovannou.p@ligercambodia.org']
-        };
-        pool.query(getExchang, function(exchangeErr, exchangeResult){
-          if(exchangeErr){response.send(exchangeErr);}
-          else{
+    if(request.user){
+      var email = request.user.email;
+      const getAccount = {
+        text: "SELECT * FROM account WHERE email = $1;",
+        values: [email]
+      };
+      const getExchange = {
+        text: "SELECT * FROM exchange_list WHERE email = $1 AND pending = 'true' AND type = 'pedro-dollar';",
+        values: [email]
+      };
+      const getAccountAll = {
+        text: "SELECT * FROM account;"
+      };
 
+      pool.query(getAccount, function(accErr, accresult) {
+        if(accErr){console.log(accErr);}
+        else{
+          pool.query(getAccountAll, function(allAccErr, allAccResult) {
+            if(allAccErr){console.log(allAccErr);}
+            else{
+              var emailsList = [];
+              for(var i = 0; i < allAccResult.rows.length; i++){
+                emailsList.push(allAccResult.rows[i].email);
+              } 
+              console.log("About to query!");
+              pool.query(getExchange, function(exchangeErr, exchangeResult) {
+                if(exchangeErr){console.log(exchangeErr);}
+                else{
+                  var moneyExchange = 0;
+                  if(exchangeResult.rows){
+                    console.log("Something in exhcange");
+                    for(var i = 0; i < exchangeResult.rows.length; i++){
+                      moneyExchange += parseFloat(exchangeResult.rows[i].result);
+                    }
+                  }
+                  console.log("money: " + (accresult.rows[0].budget - moneyExchange));
 
-            console.log("Money exhcange: " + exchangeResult);
-            if(exchangeResult){
-              exchangeResult = parseFloat(exchangeResult);
-            } else {
-              exchangeResult = 0;
+                  response.render('transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
+                }
+              });
             }
-            console.log("Money exhcange nothing: " + exchangeResult);
-            console.log("Money in the bank: " + accresult.rows[0].budget);
-            console.log("Remain: " + (accresult.rows[0].budget - exchangeResult));
-            response.render('transfer_personal');
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+    }else{
+      response.redirect('/login');
+    }
   });
 
   router.get('/transfer_success', function(req, res) {
@@ -159,8 +175,8 @@ module.exports.set = function(router, pool) {
 
     const transferBudget = parseFloat(req.body.amount);
     const senderNewBudget = senderCurrentBudget - transferBudget;
-	const recipientNewBudget = transferBudget + recipientCurrentBudget;
-    
+	  const recipientNewBudget = transferBudget + recipientCurrentBudget;
+    console.log("senderCurrentBudget: " + senderCurrentBudget);
     console.log("transferBudget: " + transferBudget)
     console.log("Sender New Budget: " + senderNewBudget)
     console.log("Recipient New Budget: " + recipientNewBudget)
@@ -170,12 +186,12 @@ module.exports.set = function(router, pool) {
     pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [recipientNewBudget, recipientEmail])
 
     pool.query("INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason) \
-                VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP(2), $6)", [transferBudget, senderEmail, recipientEmail, senderNewBudget, recipientNewBudget, reason], function (err, result) {
-                	if (err) {
-                		res.send(err)
-                	} else {
-                		res.redirect('/transfer_personal');
-                	}
-                });
+      VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP(2), $6)", [transferBudget, senderEmail, recipientEmail, senderNewBudget, recipientNewBudget, reason], function (err, result) {
+    	if (err) {
+    		res.send(err)
+    	} else {
+    		res.redirect('/transfer_personal');
+    	}
     });
+  });
 }

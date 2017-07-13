@@ -8,10 +8,11 @@
 			<div class="card amber">
 				<div class="card-content">
 					<span class="card-title">Total Budget: </span>
-					<h3 class="center white-text">P 90</h3>
+					<h3 class="center white-text">P {{budget}}</h3>
 				</div>
 			</div>
 		</div>
+
 		<div class="col s12 l8">
 		  <div class="card circle z-depth-2">
 		    <div class="card-content black-text center">
@@ -31,59 +32,9 @@
 		              <label for="email" class="active">e-mail</label>
 
 		              <datalist id="liger_email">
-						  <option>alli.b@ligercambodia.org</option>
-						  <option>chhoeu.c@ligercambodia.org</option>
-						  <option>chimean.h@ligercambodia.org</option>
-						  <option>dalin.s@ligercambodia.org</option>
-						  <option>david.p@ligercambodia.org</option>
-						  <option>davith.c@ligercambodia.org</option>
-						  <option>hongly.p@ligercambodia.org</option>
-						  <option>kangnaneat.s@ligercambodia.org</option>
-						  <option>kagna.s@ligercambodia.org</option>
-						  <option>ketya.n@ligercambodia.org</option>
-						  <option>kimseng.s@ligercambodia.org</option>
-						  <option>lux.s@ligercambodia.org</option>
-						  <option>makara.p@ligercambodia.org</option>
-						  <option>chanmalika.r@ligercambodia.org</option>
-						  <option>marady.h@ligercambodia.org</option>
-						  <option>maya.y@ligercambodia.org</option>
-						  <option>menghouth.s@ligercambodia.org</option>
-						  <option>mengthong.l@ligercambodia.org</option>
-						  <option>nilroth.l@ligercambodia.org</option>
-						  <option>niron.c@ligercambodia.org</option>
-						  <option>panharith.y@ligercambodia.org</option>
-						  <option>puthea.h@ligercambodia.org</option>
-						  <option>rathanak.s@ligercambodia.org</option>
-						  <option>rika.c@ligercambodia.org</option>
-						  <option>rithy.h@ligercambodia.org</option>
-						  <option>samady.s@ligercambodia.org</option>
-						  <option>samnang.h@ligercambodia.org</option>
-						  <option>samnang.n@ligercambodia.org</option>
-						  <option>seyha.k@ligercambodia.org</option>
-						  <option>sokea.s@ligercambodia.org</option>
-						  <option>soliday.y@ligercambodia.org</option>
-						  <option>somphors.y@ligercambodia.org</option>
-						  <option>sophat.s@ligercambodia.org</option>
-						  <option>sopheak.t@ligercambodia.org</option>
-						  <option>sopor.t@ligercambodia.org</option>
-						  <option>souyeth.k@ligercambodia.org</option>
-						  <option>sovannary.r@ligercambodia.org</option>
-						  <option>sovannou.p@ligercambodia.org</option>
-						  <option>kangnaneat.s@ligercambodia.org</option>
-						  <option>sreyneang.l@ligercambodia.org</option>
-						  <option>sreyneang.o@ligercambodia.org</option>
-						  <option>sreynith.s@ligercambodia.org</option>
-						  <option>sreypich.k@ligercambodia.org</option>
-						  <option>sythong.r@ligercambodia.org</option>
-						  <option>theara.k@ligercambodia.org</option>
-						  <option>thiny.t@ligercambodia.org</option>
-						  <option>vattey.l@ligercambodia.org</option>
-						  <option>venghour.t@ligercambodia.org</option>
-						  <option>visal.s@ligercambodia.org</option>
-						  <option>vitou.n@ligercambodia.org</option>
-						  <option>vornsar.s@ligercambodia.org</option>
-						  <option>vuthy.v@ligercambodia.org</option>
-						  <option>c5.ligercambodia.org</option>
+		         	    {{#each emails}}
+						  <option>{{this}}</option>
+						{{/each}}
 					  </datalist>
 
 		            </div>
@@ -131,10 +82,10 @@
 				      <h6 class="center">Are you sure that you want to transfer <a href="#amount" class="modal-action modal-close" id="amountInput">x</a> to e-mail: <a href="mailto:" id="emailInput">someone@ligercambodia.org</a>?</h6>
 				    </div>
 				    <div class="modal-footer center">
-				    <center>
-				      <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat amber">Disagree</a>
-				      <button class="green waves-effect waves-black btn-flat" type="submit">Agree</button>
-				    </center>
+					    <center>
+					      <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat amber">Disagree</a>
+					      <button class="green waves-effect waves-black btn-flat" type="submit">Agree</button>
+					    </center>
 				    </div>
 				  </div>
 		        </form>
@@ -153,6 +104,7 @@
 	margin: 0;
 }
 </style>
+
 <script type="text/javascript">
 function check(){
 	var amount = document.getElementById('amount').value;
@@ -160,14 +112,16 @@ function check(){
 
 	document.getElementById('amountInput').innerHTML = "P 0" + amount;
 	document.getElementById('emailInput').innerHTML = email;
-	}
-$(function() {
-	$('textarea#reason').characterCounter();
-	$('.modal').modal();
+}
+$('textarea#reason').characterCounter();
+$('.modal').modal();
 
+$(function() {
 
 	$.validator.addMethod('list', function(value, element){
-		var email = ["chhoeu.c@ligercambodia.org", "chimean.h@ligercambodia.org", "dalin.s@ligercambodia.org", "david.p@ligercambodia.org", "davith.c@ligercambodia.org","hongly.p@ligercambodia.org", "kangnaneat.s@ligercambodia.org", "kagna.s@ligercambodia.org", "ketya.n@ligercambodia.org", "kimseng.s@ligercambodia.org"];
+		
+		var	email= [{{#each emails}} "{{this}}", {{/each}}];
+		
 		var wrong = 0;
 		for(var i = 0; i < email.length; i++){
 			if(value == email[i]){
@@ -183,7 +137,7 @@ $(function() {
 			amount: {
 				required: true,
 				min: 0,
-				max: 100,
+				max: {{budget}},
 				number: true
 			},
 			recipient: {

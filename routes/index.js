@@ -16,7 +16,7 @@ transfer.set(router, pool);
 keeper.set(router, pool);
 admin.set(router, pool);
 
-router.get('/', function(req, res) {
+/*router.get('/', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp
   // if we store the user's role in cookies, no longer necessary to query the database
   console.log(req.session)
@@ -36,10 +36,25 @@ router.get('/', function(req, res) {
       user: req.user
     });
   }
-});
+});*/
 
-router.get("/main", function(request, response){
-  response.render('mainPage');
+router.get("/", function(request, response){
+    if(request.user){
+      var email = request.user.email;
+      const getAccount = {
+        text: "SELECT * FROM account WHERE email = $1;",
+        values: [email]
+      };
+      
+      pool.query(getAccount, function(accErr, accresult) {
+        if(accErr){console.log(accErr);}
+        else{
+          response.render('mainPage', {user: request.user, data: accresult.rows[0].role});
+        }
+      });
+    }else{
+      response.render('mainPage');
+    }
 });
 
 router.get('/login',
