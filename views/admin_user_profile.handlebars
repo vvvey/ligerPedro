@@ -1,0 +1,604 @@
+{{> dashboard-nav}}
+<div class="row">
+	<br>
+	<!-- Add New User -->
+	<div class="col l7 offset-l4 s12">
+		<a href="#new" class="waves-effect waves-light btn right green" type="new"><i class="material-icons left">add</i>ADD NEW USER</a>
+	</div>
+	
+	<div class="col l7 offset-l4 s12">	
+		{{#each user_info}}
+		<ul class="collection with-header">
+			<li class="collection-header">
+				<div class="row zero-margin">
+					<div class="col l8 s6 zero-padding">
+						{{#ifCondA apartment '!=' null}}
+							<h5>Apartment {{upperCase apartment}}</h5>
+						{{else}}
+							<h5>Others</h5>
+						{{/ifCondA}}
+					</div>
+					<!-- Send by apartment member modal trigger -->
+					<div class="col l4 s6 zero-padding">
+						<a href="#apartment" class="btn blue-grey darken-4 right" apartment="{{apartment}}" type="apartment">Send All</a>
+					</div>
+				</div>
+			</li>
+
+			{{#each apartment_member}}
+			<li class="collection-item blue-grey darken-4" email="{{email}}" style="padding-left: 72px; position: relative; line-height: 20px;">
+				<div class="fixed-action-btn toolbar custom" style="position: absolute !important; top: 0px; bottom: 0px; height: auto; background-color: transparent; z-index: 2;">
+					<a class="btn-floating" style=" top: 10px; right: -10px">
+						<i class=" material-icons">more_vert</i>
+					</a>
+					<ul>
+						<!-- Delete  -->
+						<li class="waves-effect waves-red green">
+							<a href="#delete-user" style="line-height: 60px" type="delete-user" username="{{username}}" email="{{email}}"><i class="material-icons ">delete</i></a>
+						</li>
+						<!-- Edit -->
+						<li class="waves-effect waves-light green">
+							<a href="#edit" style="line-height: 60px" type="edit" email="{{email}}" apartment="{{apartment}}" role="{{role}}" username="{{username}}" img_url="{{img_url}}" budget="{{budget}}"><i class="material-icons" >mode_edit</i></a>
+						</li>
+						<!-- Single Send -->
+						<li class="waves-effect waves-light green">
+							<a href="#user" type="single" email="{{email}}"><i class="material-icons">send</i></a>
+						</li>
+						<!-- More Info -->
+						<li class="waves-effect waves-light green">
+							<a href="#!"><i class="material-icons">info</i></a>
+						</li>
+					</ul>
+				</div>
+				<!-- Content -->
+				<div class="row zero-margin">
+					<!-- Image profile, name and role -->
+					<div class="col l4 m4 s6 zero-padding">
+						{{#ifCondA img_url "==" null}}
+							<span class="circle profile text-white circle-letter">{{firstLetter username}}</span>
+						{{else ifCondA img_url '==' ""}}
+							<span class="circle profile text-white circle-letter">{{firstLetter username}}</span>
+						{{else}}
+							<img src="{{img_url}}?sz=40" class="circle" style="position: absolute; left: 20px; border: white 2px solid; width: 40px; height: 40px;">
+						{{/ifCondA}}
+							<span class="username white-text">{{username}}</span> <br><span class="amber-text">
+						{{#ifCondA role '==' 'senior_student'}}
+							Senior
+						{{else}}
+							{{role}}
+						{{/ifCondA}}
+							</span>
+					</div>
+					<!-- Budget -->
+					<div class="col l2 m2 s3 zero-padding">
+						<span class="white-text">Budget</span><br>
+						<span class="amber-text">P{{budget}}</span>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</ul>	
+		{{/each}}
+	</div>
+</div>
+
+<div class="row">
+	<!-- ********************************************** -->
+	<!-- 			SINGLE TRANSFER MODAL 				-->
+	<!-- ********************************************** -->
+	<div id="user" class="modal modal-fixed-footer">
+		<form action="">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<h5 class="center">Individually Transfer</h5>
+				<!-- Disabled input for from  -->
+				<div class="input-field col l6 m6 s12">
+					<input disabled id="from-email" class="disabled" type="email" value="dom.s@ligercambodia.org">
+					<label for="from-email">From</label>
+				</div>
+				<!-- To recipient email address -->
+				<div class="input-field col l6 m6 s12">
+					<input id="user-email" type="email" class="validate input-need-clear" name="recipient" required="required">
+					<label class="active" for="user-email" data-error="Please enter a valid email!" placeholder="email">To</label>
+				</div>
+				<!-- Number of PEDRO -->
+				<div class="input-field col l6 m6 s12">
+					<input id="ind-amount" type="number" min='0' step="0.01" class="validate input-need-clear" name="amount" required="required">
+					<label for="ind-amount" data-error="Please enter a valid amount!">Amount</label>
+				</div>
+				<!-- Reason for transaction  -->
+				<div class="input-field col s12 m12 s12">
+					<textarea id="reason" class="materialize-textarea input-need-clear" data-length="100" name="reason"></textarea>
+					<label for="reason">Reason</label>
+				</div>
+			</div>
+			<!-- Modal Footer -->
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+				<button disabled class="green btn-flat modal-action modal-close waves-effect waves-green" type="submit">SEND</button>
+				<!-- Custom loading bar -->
+				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- ********************************************** -->
+	<!-- 			TRANSFER BY APARTMENT MODAL			-->
+	<!-- ********************************************** -->
+	<div id="apartment" class="modal modal-fixed-footer">
+		<form action="/admin/send/apartment" method="post">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<h5 class="center">Apartment Transfer</h5>
+				<!-- Disable Input for from -->
+				<div class="input-field col l6 m6">
+					<input disabled id="from-email"  class="disabled" type="email" value="dom.s@ligercambodia.org">
+					<label for="from-email">From</label>
+				</div>
+				<!-- Apartment checkbox -->
+				<div class="col l6 m6 s12 zero-margin">
+					<p>To Apartment</p>
+					<label>This will send to every member of selected apartment(s) with the same amount.</label>
+					<div class="row zero-margin">
+						{{#each user_info}}
+						{{#ifCondA apartment "!=" null}}
+						<p class="col zero-padding l3 s6">
+							<input type="checkbox" class="filled-in" id="{{apartment}}" value="{{apartment}}"  name="apartment_list[]"/>
+							<label for="{{apartment}}">{{upperCase apartment}}</label>
+						</p>
+						{{/ifCondA}}
+						{{/each}}
+					</div>
+				</div>
+				<!-- Amount for each transaction -->
+				<div class="input-field col l6 m6 s12">
+					<input id="apt-amount" type="number" min='0' step="0.01" class="validate input-need-clear" name="amount" required="required">
+					<label for="apt-amount" data-error="Please enter a valid amount!">Amount</label>
+				</div>
+				<!-- Reason for transaction  -->
+				<div class="input-field col l12 s12 m12">
+					<textarea id="ap-reason" class="materialize-textarea input-need-clear" data-length="100" name="reason"></textarea>
+					<label for="reason">Reason</label>
+				</div>
+			</div>
+			<!-- Modal Footer -->
+			<div class="modal-footer">
+				<a href="#!" class="btn-flat modal-action modal-close waves-effect waves-green">cancel</a>
+				<button disabled class="green btn-flat modal-action waves-effect waves-green" type="submit">SEND</button>
+				<!-- Custom loading bar -->
+				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- ********************************************** -->
+	<!-- 			DELETE USER MODAL 					-->
+	<!-- ********************************************** -->
+	<div id="delete-user" class="modal modal-fixed-footer">
+		<form action="/admin/delete/user" method="post">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<h5 class="center red-text">Delete User</h5>
+				<label>You about to delete a user. All of his/her content will also delete permently. Please confirm this by writing his/her username.</label>
+				<h5 class="center text-need-clear" id="delete-user-text"></h5>
+				<!-- Confirmation username input -->
+				<div class="input-field">
+					<input type="text" id="delete-user-input" class="validate input-need-clear" pattern="" required="required" name="username">
+					<label for="delete-user-input" data-error="Make sure it matches with the username">Username</label>
+				</div>
+				<!-- Hidden input -->
+				<div class="input-field">
+					<input type="hidden" id="delete-user-email" class="input-need-clear" required="required" name="user_email" value="">
+				</div>
+			</div>
+			<!-- Modal Footer -->
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+				<button disabled class="btn-flat modal-action waves-effect red" type="submit">DELETE</button>
+				<!-- Custom loading bar -->
+				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- ********************************************** -->
+	<!-- 			EDIT USER MODAL 					-->
+	<!-- ********************************************** -->
+	<div id="edit" class="modal modal-fixed-footer">
+		<form action="/admin/update/user" method="post">
+			<!-- Hidden input -->
+			<input class="validate input-need-clear needed" id="edit-user-original-email" type="hidden" value="" name="user_original_email">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<h5 class="center">Edit User</h5>
+				<!-- Username -->
+				<div class="input-field col l4 m4 s12">
+					<input class="validate input-need-clear" id="edit-user-username" type="text" value="" required="required" name="username">
+					<label for="edit-user-username">Username</label>
+				</div>
+				<!-- Email -->
+				<div class="input-field col l5 m8 s12">
+					<input  class="validate input-need-clear" id="edit-user-email" type="email" name="email">
+					<label for="edit-user-email" data-error="Please enter a valid email!">Email</label>
+				</div>
+				<!-- Budget -->
+				<div class="input-field col l3 m6 s12">
+					<input  class="validate input-need-clear"  id="edit-user-budget" type="number" min="0" step="0.01" required="required" name="budget">
+					<label for="edit-user-budget" data-error="Please enter a valid number!">Budget</label>
+				</div>
+				<!-- Role -->
+				<div class="input-field col l6 m6 s12">
+					<select id="edit-user-role" class="validate input-need-clear" required="required" name="role">
+						<option value="" disabled selected>Choose a role</option>
+						<option value="senior_student" selected>Senior Student</option>
+						<option value="re">Residential Educator</option>
+						<option value="keeper">Keeper</option>
+						<option value="admin">Admin</option>
+						<option value="facilitator">Facilitator</option>
+					</select>
+					<label for="edit-user-role" data-error="Role is required!">Role</label>
+				</div>
+				<!-- Apartment -->
+				<div class="input-field col l6 m6 s12">
+					<select id="edit-user-apartment" class="input-need-clear" name="apartment">
+						<option value="" selected>None</option>
+						
+						{{#each user_info}}
+						{{#ifCondA apartment "!=" null}}
+						<option value="{{apartment}}">{{upperCase apartment}}</option>
+						{{/ifCondA}}
+						{{/each}}
+					</select>
+					<label>Apartment</label>
+				</div>
+				<!-- Image URL -->
+				<div class="input-field col l12 m12 s12">
+					<input  class="validate input-need-clear" id="edit-user-img-url" type="url" value="" name="img_url">
+					<label for="edit-user-img-url">Image Link: Optional</label>
+				</div>
+			</div>
+			<!-- Modal Footer -->
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+				<button class="green btn-flat modal-action waves-effect waves-green" type="submit">UPDATE</button>
+				<!-- Custom loading bar -->
+				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- ********************************************** -->
+	<!-- 			NEW USER MODAL 					-->
+	<!-- ********************************************** -->
+	<div id="new" class="modal modal-fixed-footer">
+		<form action="/admin/new/user" method="post" enctype="multipart/form-data">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<h5 class="center">Add New Username</h5>
+				<!-- Username -->
+				<div class="input-field col l4 m4 s12">
+					<input class="validate input-need-clear" id="new-user-username" type="text" value="" required="required" name="username">
+					<label for="new-user-username">Username</label>
+				</div>
+				<!-- Email -->
+				<div class="input-field col l5 m8 s12">
+					<input  class="validate input-need-clear" id="new-user-email" type="email" name="email">
+					<label for="new-user-email" data-error="Please enter a valid email!">Email</label>
+				</div>
+				<!-- Budget -->
+				<div class="input-field col l3 m6 s12">
+					<input  class="validate input-need-clear"  id="new-user-budget" type="number" min="0" step="0.01" required="required" name="budget">
+					<label for="new-user-budget">Budget</label>
+				</div>
+				<!-- Role -->
+				<div class="input-field col l6 m6 s12">
+					<select id="new-user-role" class="validate input-need-clear" required="required" name="role">
+						<option value="" disabled selected>Choose a role</option>
+						<option value="senior_student">Senior Student</option>
+						<option value="re">Residential Educator</option>
+						<option value="keeper">Keeper</option>
+						<option value="admin">Admin</option>
+					</select>
+					<label for="new-user-role" data-erro="Role is required!">Role</label>
+				</div>
+				<!-- Apartment -->
+				<div class="input-field col l6 m6 s12">
+					<select id="new-user-apartment" class="input-need-clear" name="apartment">
+						<option value="" selected>None</option>
+						
+						{{#each user_info}}
+						{{#ifCondA apartment "!=" null}}
+						<option value="{{apartment}}">{{upperCase apartment}}</option>
+						{{/ifCondA}}
+						{{/each}}
+					</select>
+					<label>Apartment</label>
+				</div>
+				<!-- Image URL -->
+				<div class="input-field col l12 m12 s12">
+					<input  class="validate input-need-clear" id="new-user-img-url" type="url" value="" name="img_url">
+					<label for="new-user-img-url">Image Link: Optional</label>
+				</div>
+			</div>
+			<!-- Modal Footer -->
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+				<button class="green btn-flat modal-action waves-effect waves-green" type="submit">CREATE</button>
+				<!-- Custom loading bar -->
+				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+
+
+
+
+<script>
+$(document).ready(function() {
+	// Initialize Select
+	$('select').material_select();
+	// Initialize Modal
+	$('.modal').modal({
+		ready: function(modal, trigger) {
+			var type = trigger.attr('type')
+
+			if (typeof type != undefined || type != false) {
+				if (type == "single") {
+						// One input for auto fill
+						$('#user-email').val(trigger.attr("email"));
+						Materialize.updateTextFields(); //Update so the label flexible
+					} else if (type == "apartment") {
+						// One input for auto check
+						var checkbox = $('#' + trigger.attr("apartment")); //Find checkbox by apartment name
+						checkbox.prop("checked", true)
+					} else if (type == "delete-user") {
+						// One element and two inputs for auto fill
+						$("#delete-user-text").text(trigger.attr("username")); //Display username
+						$("#delete-user-input").attr("pattern", trigger.attr("username")); //Pattern
+						$("#delete-user-email").val(trigger.attr("email")); //Hidden email
+					} else if (type == "edit") {
+						// All inputs that the user has
+						$("#edit-user-username").val(trigger.attr("username"));
+						$("#edit-user-email").val(trigger.attr("email"));
+						$("#edit-user-original-email").val(trigger.attr("email"));
+						$("#edit-user-budget").val(trigger.attr("budget"));
+						$("#edit-user-apartment").val(trigger.attr("apartment"));
+						$("#edit-user-role").val(trigger.attr("role"));
+						$("#edit-user-img-url").val(trigger.attr("img_url"));
+						// Update Select and text field
+						$('select').material_select();
+						Materialize.updateTextFields();						
+					} else if (type == "new") {
+						// Nothing
+						// Blank form
+					}
+			} 
+		},
+		complete: function() {
+			$(':input:not(.disabled)').attr('disabled', false) // Clear inputs, textarea, select, checkbox
+			$(':input').removeClass("valid error invalid"); // Remove class, Materialize added class when the input is invalid
+			$('button[type=submit').prop('disabled', true) // Submit button disabled at first
+			$('.input-need-clear').val("") 
+			$('select').material_select(); //Update selected
+			$('.materialize-textarea').trigger('autoresize'); //Text area auto resize
+			$('.text-need-clear').text(" ") // HTML element text is also need to clear (DELETE modal)
+			$("input:checkbox").prop("checked", false) // Remove checked attribute
+			$(':input.changed').removeClass('changed'); // Remove changed class (UPDATE modal)
+		}
+	});
+
+	// ************************** DELETE *******************************
+	// Event handler, validate the form and does the action to submit button
+	$('div#delete-user input').on("keyup blur paste input propertychange", function() {
+		if ($('div#delete-user form').valid()) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	// Jquery validate plugin over delete-user form
+	$('div#delete-user form').validate({
+		errorPlacement: function(error, element) { 
+			// Display none when there is error for input
+			return true;
+		},
+		submitHandler: function(form) {
+			// Dispaly the loading bar
+			$(form).find('.progress').css("display", "block");
+			//Submit AJAX
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					// Store the email
+					var user_email = $(form).find('input[name="user_email"]').val();
+					if (response == 'Done') {
+						$('.modal').modal('close'); // close modal
+						$('div#delete-user div.progress').css("display", "none"); // hide
+						// Animate over li which have email attribute equal to user_email
+						$('li.collection-item[email="' + user_email + '"]').hide('slow', function() {
+							$(this).remove()
+							Materialize.toast('Deleted', 4000)
+						})
+					} else {
+						$('div#delete-user div.progress').css("display", "none");
+						Materialize.toast(response, 4000)
+					}
+
+				}
+			});
+		}
+	});
+	// *********************************************************************
+
+	$('div#user input').on("keyup blur paste input propertychange", function() {
+		if ($('div#user form').valid()) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	$('div#user form').validate({
+		errorPlacement: function(error, element) {
+			return true;
+		}
+	});
+
+
+	// ************************** APARTMENT *******************************
+	// Event handler when editing inputs, validate the form and does the action to submit button
+	$('div#apartment input').on("keyup blur paste input propertychange", function() {
+		if ($('div#apartment form').valid() && $('div#apartment input[type=checkbox]:checked').length != 0) { // checks form for validity both the form and if checked values is more than 0
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	// Event handler when changing checkbox, validate the form and does the action to submit button
+	$('div#apartment input[type=checkbox]').change(function() {
+		if ($('div#apartment form').valid() && $('div#apartment input[type=checkbox]:checked').length != 0) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+
+	$('div#apartment form').validate({
+		errorPlacement: function(error, element) {
+			return true;
+		},
+		submitHandler: function(form) {
+			$(form).find('.progress').css("display", "block");
+			$(form).find(":input").prop("readonly", true)
+
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					$(form).find('.progress').css("display", "none");
+					Materialize.toast(response, 4000)
+					if (response == "Sent") {
+						$('.modal').modal('close');
+						location.reload();
+					} else {
+						$(form).find(":input").prop("readonly", false);
+					}
+
+				}
+			});
+		}
+
+	});
+
+	// ************************** EDIT *******************************
+	// Event handler when editing inputs, validate the form and does the action to submit button
+	$('div#edit input').on("keyup blur paste input propertychange", function() {
+		if ($('div#edit form').valid() && $('#edit-user-role').val() != null) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	// Event handler when editing select, validate the form and does the action to submit button
+	$('#edit-user-role, #edit-user-apartment, #edit input').change(function() {
+		$(this).addClass("changed"); // add changed class to input
+		if ($('div#edit form').valid() && $('#edit-user-role').val() != null) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	$('div#edit form').validate({
+		errorPlacement: function(error, element) {
+			return true;
+		},
+		submitHandler: function(form) {
+			$(form).find('.progress').css("display", "block");
+			$(form).find(":input:not(.changed)").attr("disabled", "disabled"); // Disabled input without changed class
+			$(form).find(":input.needed").prop("disabled", false) // Needed class is exception
+
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					$(form).find('.progress').css("display", "none");
+					Materialize.toast(response, 4000)
+					if (response == "Updated!") {
+						$('.modal').modal('close');
+						location.reload();
+					} else {
+						$(form).find(":input:not(.changed)").prop("disabled", false);
+					}
+
+				}
+			});
+		}
+	});
+
+	// ************************** NEW *******************************
+	// Event handler when editing inputs, validate the form and does the action to submit button
+	$('div#new input').on("keyup blur paste input propertychange", function() {
+		if ($('div#new form').valid() && $('#new-user-role').val() != null) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	// Event handler when change selects, validate the form and does the action to submit button
+	$('#new-user-role, #new-user-apartment, #new input').change(function() {
+		if ($('div#new form').valid() && $('#new-user-role').val() != null ) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	$('div#new form').validate({
+		errorPlacement: function(error, element) {
+			return true;
+		},
+		submitHandler: function(form) {
+			$(form).find('.progress').css("display", "block");
+			$(form).find(":input").prop("readonly", true)
+
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					$(form).find('.progress').css("display", "none");
+					Materialize.toast(response, 4000)
+					if (response == "Inserted") {
+						$('.modal').modal('close');
+						location.reload();
+					} else {
+						$(form).find(":input").prop("readonly", false);
+					}
+
+				}
+			});
+		}
+	});
+});
+</script>

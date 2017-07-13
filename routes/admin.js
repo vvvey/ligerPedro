@@ -2,7 +2,15 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 module.exports.set = function(router, pool) {
 
-	router.get('/admin/transfer_data', ensureLoggedIn, function (req, res) {
+	function isAdmin (req, res, next) {
+		if (req.user.role != "admin") {
+			return res.status(500).send("You need to be an admin to proceed this!")
+		} else {
+			next()
+		}
+	}
+
+	router.get('/admin/transfer_data', ensureLoggedIn, isAdmin, (req, res) => {
 		// req.query.start and req.query.limit is GET request params
 		// e.g. /admin/transfer_data?start=10
 		// e.g. /admin/transfer_data?start=5&limit=10
@@ -65,7 +73,7 @@ module.exports.set = function(router, pool) {
 					FROM transfer_logs \
 					JOIN account AS sender on (transfer_logs.sender = sender.email) \
 					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
-					ORDER BY date DESC OFFSET $1 LIMIT $2;",
+					ORDER BY date DESC, recipient_username DESC  OFFSET $1 LIMIT $2;",
 			values: [start, limit]
 		}
 
@@ -101,7 +109,7 @@ module.exports.set = function(router, pool) {
 		})		
 	});
 
-	router.get('/admin/exchange_data', ensureLoggedIn, (req, res) => {
+	router.get('/admin/exchange_data', ensureLoggedIn, isAdmin, (req, res) => {
 		// req.query.start and req.query.limit is GET request params
 		// e.g. /admin/exchange_data?start=10
 		// e.g. /admin/exchange_data?start=5&limit=10
@@ -155,9 +163,9 @@ module.exports.set = function(router, pool) {
 		}
 
 		pool.query(query, (err, result) => {
-			if (err) {
-				res.send(err)
-			} else {
+			if (err) { res.send(err)}
+
+			else {
 				console.log(paginateArray)
 				var previousStart; 
 				var nextStart;
@@ -182,9 +190,220 @@ module.exports.set = function(router, pool) {
 					nextStart: nextStart, 
 					paginations: paginateArray})
 			}
-		}) 
-
-		
+		}) 	
 	});
 
+	router.get("/admin/user", ensureLoggedIn, isAdmin, (req, res) => {
+		// Group account by apartment, sorted by username, all information from user turn into json then array aggreate
+		var query = {
+			text: "	SELECT 	apartment, \
+							array_agg(json_build_object(\
+								'username', username, \
+								'email', email, \
+								'apartment', apartment, \
+								'budget', budget, \
+								'role', role, \
+								'img_url', img_url)) \
+							AS apartment_member \
+					FROM (SELECT * FROM account ORDER BY username ASC) AS account  \
+					GROUP BY apartment ORDER BY apartment;"
+		}
+
+		pool.query(query, (err, result) => {
+			if (err) {res.send(err)} 
+			else {
+				res.render("admin_user_profile", {user_info: result.rows});
+				
+			}
+		})		
+	})
+
+
+	router.post("/admin/delete/user", ensureLoggedIn, isAdmin, (req, res) => {
+			const deletQuery = {
+				text: "DELETE FROM account WHERE email = $1 and username = $2;",
+				values: [req.body.user_email, req.body.username]
+			}
+
+			pool.query(deletQuery, (err, result) => {
+				if (err) {res.send(err)} 
+				else {
+					if (result.rowCount == 0) { //rowCount = 0 means that the query didn't find the account
+						res.status(200).send("Account is not exists!")
+					} else {
+						res.send("Done")
+					}		
+				}
+				
+			})
+		}
+	);
+
+	router.post("/admin/update/user", ensureLoggedIn, isAdmin, async(req, res) => {
+		// req.body valuds pass through depend on client update specific inputs
+
+		var bodyColumnArray = Object.keys(req.body); // Turn key of body object to array e.g. {'email': '...'} --> ['email']
+		var userOriginalEmailIndex = bodyColumnArray.indexOf("user_original_email") // find 'user_original_email' from array
+		if (userOriginalEmailIndex == -1) {
+			return res.status(500).send("user_original_email is need!");
+		}
+
+		bodyColumnArray.splice(userOriginalEmailIndex, 1) // delete user_original_email from the array
+
+		// SELECT column name and datatype from account
+		const columnQuery = {
+			text: "SELECT 	array(SELECT column_name::text FROM information_schema.columns WHERE table_name='account') AS column_names, \
+							array(SELECT data_type::text FROM information_schema.columns WHERE table_name='account') as data_type;"
+		}
+
+		var columns = await pool.query(columnQuery);
+
+		var databaseColumnArray = columns.rows[0];
+		var valueColumnArray = new Array();
+		
+		// Find if the key from request body is match with the database
+		// if so push to valuesColumnArray 
+		for (var column of bodyColumnArray) {			
+			var index = databaseColumnArray.column_names.indexOf(column)
+			if (databaseColumnArray.column_names.indexOf(column) == -1) {
+				return res.send(column + " column is not found!")
+			} else {
+				// If datatype if numberic, parseFloat it
+				if (databaseColumnArray.data_type[index] == "numeric") {
+					valueColumnArray.push(parseFloat(req.body[column]))
+				} else {
+					valueColumnArray.push(req.body[column])
+				}
+			}
+		}
+
+		var parms = []
+		for (var i = 2; i <= valueColumnArray.length + 1; i++) {
+			parms.push('$'+i);
+		}
+		parms = parms.join(',')
+		var updateQuery = 'update account set (' + bodyColumnArray.join(',') +') = ('+ parms +') where email = $1;'
+		
+		// ... set (budget, img_url, ...) = (12, 'http://', ...) where email = 'someone@ligercambodia.org'
+		// ... set (budget, img_url, ...) = ($2, $3, ...) where email = $1
+		pool.query(updateQuery, [req.body.user_original_email].concat(valueColumnArray) ,(err, result)=> {
+			if (err){
+				res.send(err)
+			} else {
+				res.send("Updated!")
+			}
+		})
+	});
+
+	router.post("/admin/new/user", ensureLoggedIn, async(req, res) => {
+		// VALIDATION is still needed
+
+		var bodyRequest = req.body;
+
+		const existsQuery = {
+			text: "	SELECT exists \
+					(SELECT * FROM account WHERE email = $1 or username = $2);",
+			values: [req.body.email, req.body.username]
+		}
+
+		const isAccountExist = await pool.query(existsQuery);
+
+		if(isAccountExist.rows[0].exists) {
+			return res.status(200).send("Username or email is already exists!")
+		} 
+
+		if(bodyRequest.apartment == '') {
+			bodyRequest.apartment = null
+		}
+
+		if(bodyRequest.img_url == '') {
+			bodyRequest.img_url = null
+		}
+
+		const insertQuery = {
+			text: "INSERT INTO account (username, email, budget, role, apartment, img_url) \
+					VALUES ($1, $2, $3, $4, $5, $6);",
+			values: [bodyRequest.username, bodyRequest.email, parseFloat(bodyRequest.budget), bodyRequest.role, bodyRequest.apartment, bodyRequest.img_url]
+		}
+
+		pool.query(insertQuery, (err, result) => {
+			if (err) {res.send(err)}
+			else {
+				res.send("Inserted")
+			}
+		})
+	});
+
+	router.post("/admin/send/apartment", ensureLoggedIn, isAdmin, async(req, res) => {
+		//  VALIDATION need DEVELOPMENT
+		var requestBody = req.body;
+
+		const apartment_list = {
+			text: "SELECT array(SELECT apartment FROM account GROUP BY apartment HAVING apartment IS NOT NULL) AS apartment_list;",
+		}
+
+		var apartment = await pool.query(apartment_list);
+
+		var apartmentFromDatabase = apartment.rows[0].apartment_list; // apartment_list: ['a1', 'a2', 'b3', ...]
+
+		// Check apartment from req.body.apartment_list array if it contains in database
+		for (var i = 0; i < requestBody.apartment_list.length; i++) {
+			if (apartmentFromDatabase.indexOf(requestBody.apartment_list[i]) == -1 ) {
+				return res.send(requestBody.apartment_list[i] + " apartment is not exists")
+			} 
+		}
+		// If n
+		if (isNaN(req.body.amount)) {
+			return res.status(500).send("Amount is in valid number;")
+		}
+
+		// inserting and also update admin's budget for every insert by TRIGGER but not update to recipients
+		var transferLogsInsertingQuery = {
+			text: "	INSERT INTO transfer_logs (date, sender, recipient, amount, reason, recipient_resulting_budget) \
+					SELECT (select now()), $1, email, $2, $3, (budget + $2::numeric) FROM account \
+					WHERE apartment = ANY($4::text[]) ORDER BY username ASC;",
+			values: [req.user.email, parseFloat(req.body.amount), req.body.reason, req.body.apartment_list	]
+		}
+
+		// Trigger exists in database
+ 		//
+		// 	CREATE TRIGGER admin_resulting_budget_update AFTER INSERT ON transfer_logs 
+		// 		FOR EACH ROW EXECUTE PROCEDURE update_admin();
+
+		/// -------------------------------------------------------------------------
+
+		//
+		// CREATE or REPlACE FUNCTION update_admin() RETURNS trigger AS $BODY$ 
+		// 		DECLARE sender_budget int := (SELECT budget FROM account WHERE email = 'dom.s@ligercambodia.org'); 
+		//		BEGIN 
+		//			IF NEW.sender_resulting_budget IS NULL AND NEW.sender = 'dom.s@ligercambodia.org' THEN 
+		//				UPDATE account SET budget = budget - NEW.amount WHERE email = 'dom.s@ligercambodia.org'; 
+		//				UPDATE transfer_logs SET sender_resulting_budget = sender_budget - NEW.amount WHERE id = NEW.id; 
+		//			END IF; 
+		//			RETURN NEW; 
+		//		END; 
+		//	$BODY$ 
+		//	language plpgsql
+
+		pool.query(transferLogsInsertingQuery, (err, result) => {
+			if (err) {
+				console.log(err)
+				res.send(err);
+			} else {
+				res.send("Sent")
+			}
+		})
+
+		//  Update to recipient budget
+		var updateRecipientBudget = {
+			text: "	UPDATE account SET budget = budget + $1::numeric WHERE apartment = ANY($2::text[]);",
+			values: [req.body.amount, req.body.apartment_list]
+		}
+
+		pool.query(updateRecipientBudget, (err, result) => {
+			if (err) {
+				console.log(err)
+			} 
+		})
+	})
 }	

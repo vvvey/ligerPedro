@@ -31,6 +31,7 @@
 .header .profile-img {
 	border: solid 2px white; 
 	height: 40px;
+	width: 40px;
 }
 
 .header .profile-letter {
@@ -118,4 +119,23 @@
 }
 .zero-padding {
 	padding: 0px !important;
+}
+.custom.toolbar a, .custom.toolbar.active a{
+		-webkit-transition-property: none !important;
+		-moz-transition-property: none !important;
+		-o-transition-property: none !important;
+		transition: none !important;
+
+		-webkit-transform: none !important;
+		-moz-transform: none !important;
+		-o-transform: none !important;
+		transform: none !important;
+
+		box-shadow: none !important;
+		background-color: transparent !important;
+
+	}
+
+.custom.toolbar.active {
+	background-color: #4CAF50 !important;
 }
