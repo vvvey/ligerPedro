@@ -1,15 +1,19 @@
-{{> dashboard-nav}}
-<div class="row">
+{{> admin_sideNav}}
+<style>
+	body {
+		background-color: #eeeeee;
+	}
+</style>
+<main class="grey lighten-3">
+	<div class="container" >
 	<br>
-	<!-- Add New User -->
-	<div class="col l7 offset-l4 s12">
-		<a href="#new" class="waves-effect waves-light btn right green" type="new"><i class="material-icons left">add</i>ADD NEW USER</a>
-	</div>
-	
-	<div class="col l7 offset-l4 s12">	
+		<div class="row zero-margin">	
+				<a href="#new" class="waves-effect waves-light btn right green" type="new"><i class="material-icons left">add</i>ADD NEW USER</a>
+		</div>
+		
 		{{#each user_info}}
-		<ul class="collection with-header">
-			<li class="collection-header">
+		<ul class="collection with-header" id="{{apartment}}">
+			<li class="collection-header amber" >
 				<div class="row zero-margin">
 					<div class="col l8 s6 zero-padding">
 						{{#ifCondA apartment '!=' null}}
@@ -20,13 +24,13 @@
 					</div>
 					<!-- Send by apartment member modal trigger -->
 					<div class="col l4 s6 zero-padding">
-						<a href="#apartment" class="btn blue-grey darken-4 right" apartment="{{apartment}}" type="apartment">Send All</a>
+						<a href="#apartment" class="btn grey darken-4 right" apartment="{{apartment}}" type="apartment">Send All</a>
 					</div>
 				</div>
 			</li>
 
 			{{#each apartment_member}}
-			<li class="collection-item blue-grey darken-4" email="{{email}}" style="padding-left: 72px; position: relative; line-height: 20px;">
+			<li class="collection-item grey darken-4" email="{{email}}" style="padding-left: 72px; position: relative; line-height: 20px;">
 				<div class="fixed-action-btn toolbar custom" style="position: absolute !important; top: 0px; bottom: 0px; height: auto; background-color: transparent; z-index: 2;">
 					<a class="btn-floating" style=" top: 10px; right: -10px">
 						<i class=" material-icons">more_vert</i>
@@ -80,9 +84,9 @@
 		</ul>	
 		{{/each}}
 	</div>
-</div>
+</main>
 
-<div class="row">
+<div class="row zero-margin">
 	<!-- ********************************************** -->
 	<!-- 			SINGLE TRANSFER MODAL 				-->
 	<!-- ********************************************** -->
@@ -336,6 +340,7 @@
 		</form>
 	</div>
 </div>
+{{> mainFooter}}
 
 
 
@@ -343,9 +348,11 @@
 
 
 
-
 <script>
+$(".button-collapse").sideNav();
+ 
 $(document).ready(function() {
+
 	// Initialize Select
 	$('select').material_select();
 	// Initialize Modal

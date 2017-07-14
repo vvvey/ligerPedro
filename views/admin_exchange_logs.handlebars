@@ -1,7 +1,13 @@
-{{> dashboard-nav}}
+{{> admin_sideNav}}
 
-<div class="row">
-	<div class="col l9 offset-l3 s12">
+<style>
+	body {
+		background-color: #eeeeee;
+	}
+</style>
+
+<main>
+	<div class="container">
 		<ul class="collapsible" data-collapsible="accordion">
 					{{#each exchange_data}}
 					<li>
@@ -72,7 +78,7 @@
 							<span class="truncate br-reason blue-grey-text text-darken-2">{{reason}}</span>
 						
 						</div>
-						<div class="collapsible-body content">
+						<div class="collapsible-body content white">
 							<div class="row zero-margin">
 								<div class="col s12 info-body">
 									
@@ -193,5 +199,5 @@
 </li>
 </ul>
 </div>
-	
-</div>
+</main>
+{{> mainFooter}}
