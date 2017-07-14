@@ -337,7 +337,7 @@ module.exports.set = function(router, pool) {
 	router.post("/admin/send/apartment", ensureLoggedIn, isAdmin, async(req, res) => {
 		//  VALIDATION need DEVELOPMENT
 		var requestBody = req.body;
-
+		
 		const apartment_list = {
 			text: "SELECT array(SELECT apartment FROM account GROUP BY apartment HAVING apartment IS NOT NULL) AS apartment_list;",
 		}
@@ -358,9 +358,10 @@ module.exports.set = function(router, pool) {
 		}
 
 		// inserting and also update admin's budget for every insert by TRIGGER but not update to recipients
+		// date is the same so we sorted the username and inserted by order A-Z 
 		var transferLogsInsertingQuery = {
 			text: "	INSERT INTO transfer_logs (date, sender, recipient, amount, reason, recipient_resulting_budget) \
-					SELECT (select now()), $1, email, $2, $3, (budget + $2::numeric) FROM account \
+					SELECT ((CURRENT_TIMESTAMP(2))), $1, email, $2, $3, (budget + $2::numeric) FROM account \
 					WHERE apartment = ANY($4::text[]) ORDER BY username ASC;",
 			values: [req.user.email, parseFloat(req.body.amount), req.body.reason, req.body.apartment_list	]
 		}
