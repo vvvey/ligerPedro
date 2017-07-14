@@ -87,7 +87,7 @@
 	<!-- 			SINGLE TRANSFER MODAL 				-->
 	<!-- ********************************************** -->
 	<div id="user" class="modal modal-fixed-footer">
-		<form action="">
+		<form action="/transfer_success" method="post">
 			<!-- Modal Content -->
 			<div class="modal-content">
 				<h5 class="center">Individually Transfer</h5>
@@ -115,7 +115,7 @@
 			<!-- Modal Footer -->
 			<div class="modal-footer">
 				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-				<button disabled class="green btn-flat modal-action modal-close waves-effect waves-green" type="submit">SEND</button>
+				<button disabled class="green btn-flat modal-action	 waves-effect waves-green" type="submit">SEND</button>
 				<!-- Custom loading bar -->
 				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
 					<div class="indeterminate"></div>
@@ -455,6 +455,28 @@ $(document).ready(function() {
 	$('div#user form').validate({
 		errorPlacement: function(error, element) {
 			return true;
+		},
+		submitHandler: function(form) {
+			$(form).find('.progress').css("display", "block");
+			$('button[type=submit').prop('disabled', true);
+			$(form).find(":input").prop("readonly", true)
+
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					$(form).find('.progress').css("display", "none");
+					Materialize.toast(response, 4000)
+					if (response == "Sent") {
+						$('.modal').modal('close');
+						location.reload();
+					} else {
+						$(form).find(":input").prop("readonly", false);
+					}
+
+				}
+			});
 		}
 	});
 
@@ -486,6 +508,7 @@ $(document).ready(function() {
 		submitHandler: function(form) {
 			$(form).find('.progress').css("display", "block");
 			$(form).find(":input").prop("readonly", true)
+			$('button[type=submit').prop('disabled', true);
 
 			$.ajax({
 				url: form.action,
@@ -581,6 +604,7 @@ $(document).ready(function() {
 		submitHandler: function(form) {
 			$(form).find('.progress').css("display", "block");
 			$(form).find(":input").prop("readonly", true)
+			$('button[type=submit').prop('disabled', true);
 
 			$.ajax({
 				url: form.action,

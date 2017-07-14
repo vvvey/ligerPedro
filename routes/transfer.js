@@ -190,7 +190,7 @@ module.exports.set = function(router, pool) {
     	if (err) {
     		res.send(err)
     	} else {
-    		res.redirect('/transfer_personal');
+        res.send('Sent')
     	}
     });
   });
