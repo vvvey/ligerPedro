@@ -1,4 +1,4 @@
-var useFake      = false;
+var useFake      = true;
 var express      = require('express');
 var app          = express();
 var cookieParser = require('cookie-parser');
@@ -23,7 +23,7 @@ if(useFake){
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: false
+  extended: true
 }));
 app.use(cookieParser());
 app.use(session({

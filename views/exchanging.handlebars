@@ -1,0 +1,323 @@
+{{> mainNav}}
+<style>
+		[type="radio"] + label:before, [type="radio"] + label:after {
+	content: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	margin: 4px;
+	width: 0px;
+	height: 0px;
+	z-index: 0;
+	transition: .28s ease;
+	}
+	[type="radio"] + label {
+		color: white !important;
+		transition: 0.28s ease;
+	}
+	[type="radio"]:checked + label {
+		color: red !important;
+		background-color: yellow !important;
+		transition: 0.28s ease;
+	}
+	.type-switch {
+	display: block;
+	line-height: 36px !important;
+	text-align: center !important;
+	
+height: 36px !important;
+padding-right: 2rem !important;
+padding-left: 2rem !important;
+	}
+	.indicator{
+		background-color: #ffc107 !important;
+	}
+
+	.picker__date-display, .picker__day--selected, .picker--focused .picker__day--selected{
+		background-color: #4caf50;
+
+	}
+	.picker__today, .picker__close, .picker__day.picker__day--today {
+		color: #4caf50;
+	}
+</style>
+	<main>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col s12 l3">
+				<div class="row zero-margin">
+					<div class="col l12 s12 m4">
+						<div class="card">
+							<div class="card-content">
+								<span class="card-title">Exchanging Rate:</span>
+								<h4 class="center">P1 = $1</h4>
+							</div>
+						</div>
+					</div>
+					<div class="col l12 s12 m4">
+						
+						<div class="card amber">
+							<div class="card-content">
+								<span class="card-title">Total Budget: </span>
+								<h4 class="center white-text">P {{budget}}</h4>
+							</div>
+						</div>
+					</div>
+					<div class="col l12 s12 m4">
+						<div class="card amber">
+							<div class="card-content">
+								<span class="card-title">Pending Budget: </span>
+								<h4 class="center white-text">P {{pendingBudget}}</h4>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="col s12 l9">
+				<div class="card">
+					<div class="card-content">
+						<span class="card-title center">Exchange</span>
+					</div>
+					<div class="card-tabs">
+						<ul class="tabs tabs-fixed-width ">
+							<li class="tab"><a href="#test4" class="active green-text">Pedro to Dollar </a></li>
+							<li class="tab"><a class="green-text" href="#test5">Dollar to Pedro</a></li>
+						</ul>
+					</div>
+					<div class="card-content grey lighten-4">
+						<div id="test4">
+							<div class="row">
+								<form id="PDexchange" action="/exchange_approving" method="post">
+									<div class="input-field col l4 offset-l2 s12">
+										<i class="material-icons prefix">P</i>
+										<input type="number" name="amount" id="PDexchange_amount" step="5" min="5" max="{{validBudget}}" class="validate" required>
+										<label for="PDexchange_amount" data-error="Please enter a valid number!">Amount</label>
+									</div>
+									<div class="input-field col l4 s12">
+										<i class="material-icons prefix">$</i>
+										<input type="number" name="result" readonly id="PDexchange_result" >
+										<label for="PDexchange_result">Result</label>
+									</div>
+									<div class="input-field col l4 offset-l2 s12">
+										<i class="material-icons prefix">date_range</i>
+										<input type="date" name="apptDate" class="datepicker" id="PDappointment_date" required="required">
+										<label for="PDappointment_date">Appointment Date</label>
+									</div>
+									<div class="input-field col l4 s12">
+										<i class="material-icons prefix">schedule</i>
+										<input type="time" name="apptTime" value="16:00" readonly id="PDapointment_time">
+										<label class="active" for="PDapointment_time">Appointment Time</label>
+									</div>
+									<div class="input-field col l8 offset-l2 s12">
+										<i class="material-icons prefix">comment</i>
+										<textarea id="PDtextarea1" name="reason" class="materialize-textarea" data-length="120" required="required"></textarea>
+										<label for="PDtextarea1">Reason</label>
+									</div>
+									<input type="hidden" name="exchangeType" value="pedro-dollar">
+									<div class="col l4 offset-l4 m4 offset-m4 s8 offset-s2">
+										<a href="#confirm" disabled class="btn green submit-button"><i class="material-icons left">compare_arrows</i>Exchange</a>
+									</div>
+								</form>
+								
+							</div>
+							
+						</div>
+						<div id="test5">
+							<div class="row">
+								<form id="DPexchange" action="/exchange_approving" method="post">
+									<div class="input-field col l4 offset-l2 s12">
+										<i class="material-icons prefix">$</i>
+										<input type="number" name="amount" id="DPexchange_amount" step="5" min="5"  class="validate" required>
+										<label for="DPexchange_amount" data-error="Please enter a valid number!">Amount</label>
+									</div>
+									<div class="input-field col l4 s12">
+										<i class="material-icons prefix">P</i>
+										<input type="number" name="result" readonly id="DPexchange_result" >
+										<label for="DPexchange_result">Result</label>
+									</div>
+									<div class="input-field col l4 offset-l2 s12">
+										<i class="material-icons prefix">date_range</i>
+										<input type="date" name="apptDate" class="datepicker" id="DPapointment_date" required="required">
+										<label for="DPapointment_date">Appointment Date</label>
+									</div>
+									<div class="input-field col l4 s12">
+										<i class="material-icons prefix">schedule</i>
+										<input type="time" name="apptTime" value="16:00" readonly id="DPapointment_time">
+										<label class="active" for="DPapointment_time">Appointment Time</label>
+									</div>
+									<div class="input-field col l8 offset-l2 s12">
+										<i class="material-icons prefix">comment</i>
+										<textarea id="DPtextarea1" name="reason" class="materialize-textarea" data-length="120" required="required"></textarea>
+										<label for="DPtextarea1">Reason</label>
+									</div>
+									<input type="hidden" name="exchangeType" value="dollar-pedro">
+									<div class="col l4 offset-l4 m4 offset-m4 s8 offset-s2">
+										<a href="#confirm" disabled class="btn green submit-button"><i class="material-icons left">compare_arrows</i>Exchange</a>
+									</div>
+								</form>
+								
+							</div>
+							
+						</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- Modal Structure -->
+	<div id="confirm" class="modal">
+		<div class="modal-content">
+			<h4>Confirmation</h4>
+			<span>Are you sure you want to exchange from <span id="confirm_amount"></span> to <span id="confirm_result"></span></span>?
+		</div>
+		<div class="modal-footer">
+			<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
+			<a id="confirm_button" class="modal-action waves-effect waves-green btn-flat">Confirm</a>
+
+			<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+		</div>
+	</div>
+</main>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+<script>
+	
+
+
+$(document).ready(function() {	
+
+	$('.submit-button').on('click', function() {
+		var form = $(this).closest('form')
+		$('#confirm_button').attr('for', form.attr('id'))
+
+		var exchangeType = $(form).find('input[name=exchangeType]').val();
+		var amount = $(form).find('input[name=amount]').val();
+		var result = 	$(form).find('input[name=result]').val();
+
+		if (exchangeType == 'pedro-dollar') {
+			$('#confirm_amount').text('P' + amount)
+			$('#confirm_result').text('$' + result)
+		} else if (exchangeType == 'dollar-pedro'){
+			$('#confirm_amount').text('$' + amount)
+			$('#confirm_result').text('P' + result)
+		}
+	});
+
+	$('#confirm_button').on('click', function() {
+		var formID = $(this).attr('for')
+		var form = $('#'+formID);
+
+		form.submit()
+	})
+
+	
+	function changeModal() {
+	if ($(window).width() <= 600) {
+		$("#confirm").addClass('bottom-sheet')
+		$('#confirm').attr('style', '');
+		$('.modal').modal();
+
+	} else {
+		$("#confirm").removeClass('bottom-sheet')
+		$('#confirm').attr('style', '');
+		$('.modal').modal();
+	}
+}
+	$('form :input').on("keyup blur paste input propertychange change", function() {
+		if (($(this).closest('form')).valid()) { // checks form for validity
+			$('a.submit-button').attr('disabled', false); // enables button
+		} else {
+			$('a.submit-button').attr('disabled', 'disabled'); // disables button
+		}
+	});
+
+	$("#DPexchange, #PDexchange").each(function() {
+		$(this).validate({
+			errorPlacement: function(error, element) {
+				// Display none when there is error for input
+				return true;
+			},
+			submitHandler: function(form) {
+				console.log("Hello")
+				$('.progress').css("display", "block");
+				$.ajax({
+					url: form.action,
+					type: form.method,
+					data: $(form).serialize(),
+					success: function(response) {
+						var exchangeType = $(form).find('input[name=exchangeType]').val()
+						Materialize.toast(response, 4000)
+						$('.progress').css("display", "none");
+						if (response == "Success!") {
+							if (exchangeType == 'pedro-dollar') {
+								Materialize.toast('Your exchange request sent to RE succesfully!', 4000)
+							} else {
+								Materialize.toast('Your exchange request sent to Keeper succesfully!', 4000)
+							}
+
+							setTimeout(function() {
+								location.reload()
+							}, 2000)
+
+						}
+						$('.modal').modal('close');
+
+					},
+					error: function(xhr, status, error) {
+
+						$('.progress').css("display", "none");
+						$('.modal').modal('close');
+						Materialize.toast(xhr.responseText, 4000)
+					}
+				});
+			}
+		})
+	})
+	
+		
+	$(window).resize(changeModal);
+
+	changeModal()
+		// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+	$('.modal').modal();
+
+
+	Materialize.updateTextFields();
+	$('#DPexchange_amount').on('keyup', function() {
+		$('#DPexchange_result').val($('#DPexchange_amount').val())
+		Materialize.updateTextFields();
+	});
+	$('#PDexchange_amount').on('keyup', function() {
+		$('#PDexchange_result').val($('#PDexchange_amount').val())
+		Materialize.updateTextFields();
+	});
+})
+
+$('.datepicker').pickadate({
+	selectMonths: true, // Creates a dropdown to control month
+	selectYears: 10, // Creates a dropdown of 15 years to control year
+	min: giveValidDate("15:30"),
+	firstDay: 1,
+	disable: [5, 6, 7]
+});
+
+function giveValidDate(closeTime) {
+	var today = new Date();
+	var tomorrow = new Date();
+	tomorrow.setDate(today.getDate() + 1);
+	var hour = parseInt(closeTime.split(':')[0])
+	var minute = parseInt(closeTime.split(':')[1])
+	if (today.getHours() <= hour) {
+		if (today.getHours() == hour && today.getMinutes() > minute) {
+			return new Date(tomorrow);
+		} else {
+			return new Date(today);
+		}
+	} else {
+		return new Date(tomorrow);
+	}
+}
+</script>
+{{> mainFooter}}

@@ -157,6 +157,21 @@ $(function() {
 				max: "It too much!",
 				number: "Number please!"
 			}
+		},
+		submitHandler: function(form) {
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					Materialize.toast(response, 4000)
+					if (response == "Sent") {
+						$('.modal').modal('close');
+						location.reload();
+					} 
+
+				}
+			});
 		}
 	});
 });

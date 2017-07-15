@@ -1,9 +1,13 @@
-{{> dashboard-nav}}
-
-<div class="row">
-	<div class="col l9 offset-l3 s12">
+{{> admin_sideNav}}
+<style>
+	body {
+		background-color: #eeeeee;
+	}
+</style>
+<main>
+	<div class="container">
 		<ul class="collapsible" data-collapsible="accordion">
-			
+	
 				{{#each transfer_data}}
 					<li>
 						<div class="collapsible-header header transfer">
@@ -13,7 +17,7 @@
 							{{#ifCondA sender_img_url "!=" null}}
 							<img src="{{sender_img_url}}?sz=40" class="profile-img profile-1 circle" >
 							{{else}}
-							<span class="circle red text-white profile-letter profile-1">{{firstLetter sender_username}}</span>
+							<span class="circle red profile-letter profile-1">{{firstLetter sender_username}}</span>
 							{{/ifCondA}}
 							<!-- Recipient Profile Picture -->
 							{{#ifCondA recipient_img_url "!=" null}}
@@ -26,10 +30,10 @@
 							<!-- Transfer amount -->
 							<span class="green-text" style="font-weight: bold;">P{{amount}}</span><br>
 							<!-- Transfer Reason -->
-							<span class="truncate br-reason blue-grey-text text-darken-2">{{reason}}</span>
+							<span class="truncate br-reason grey-text text-darken-3">{{reason}}</span>
 						</div>
 
-						<div class="collapsible-body content">
+						<div class="collapsible-body content white">
 							<div class="row zero-margin">
 								<div class="col s12 info-body">
 									<div class="row zero-margin">
@@ -48,7 +52,7 @@
 
 								<div class="col s12 l6 m6 user-body">
 									{{#ifCondA sender_img_url "!=" null}}
-									<img class="profile circle" src="{{sender_img_url}}?sz=40" > 
+									<img class="profile circle" src="{{sender_img_url}}?sz=40"> 
 									{{else}}
 									<span class="circle profile red text-white circle-letter">{{firstLetter sender_username}}</span>
 									{{/ifCondA}}
@@ -106,8 +110,9 @@
 	{{/ifCondA}}
     </li>
   </ul>
-	</div>
-
 </div>
+</main>
 
 
+
+{{> mainFooter}}

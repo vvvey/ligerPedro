@@ -1,0 +1,68 @@
+
+<style>
+  header, main, footer {
+        padding-left: 300px;
+  }
+  #title:before{
+    content: 'Liger Digital Currency';
+    text-align: center;
+  }
+
+  .container {
+      width: 90%;
+    }
+
+
+  @media only screen and (max-width: 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+    #title:before{
+      content: 'LDC';
+    }
+
+
+  }
+  .container .row {
+      margin-left: 0rem;
+      margin-right: 0rem;
+  }
+  
+</style>
+
+<header>
+    <ul id="slide-out" class="side-nav fixed">
+    <li><div class="user-view">
+      <div class="background ">
+        <img src="http://www.ligerlearning.org/wp-content/themes/liger-learning-center/img/facilities-image-3.jpg">
+      </div>
+      <a href="#!user"><img class="circle" src="https://z-m-scontent.fpnh2-2.fna.fbcdn.net/v/t1.0-1/p160x160/15085717_132486190563404_3707114318246988854_n.jpg?_nc_ad=z-m&oh=165128b2d2efdf9754ba55b74c513c52&oe=5A055388"></a>
+      <a href="#!name"><span class="white-text name">Domnic Sharpe</span></a>
+      <a href="#!email"><span class="white-text email">dom.s@ligercambodiaorg</span></a>
+    </div></li>
+    <li><a href="/admin/user"><i class="material-icons">account_box</i>User Profile</a></li>
+    <li><a href="/admin/exchange_data"><i class="material-icons"></i>Exchange Logs</a></li>
+    <li><a href="/admin/transfer_data"><i class="material-icons">send</i>Transfer Logs</a></li>
+    <li><a href="/admin/transfer_data"><i class="material-icons">settings</i>Settings</a></li> 
+  </ul>
+
+  <nav class="top-nav grey darken-4">
+    <div class="container">
+      <div class="nav-wrapper">
+      <a href="#!" id="title" class="center" style="font-size: 24px"></a>
+        <!-- <a href="" class="center" style="font-size: 22px;">Liger Digital Currency</a> -->
+      <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+      </div>
+    </div>
+    
+    
+  </nav>
+</header>
+    
+
+  <script type="text/javascript">
+    // Initialize collapse button
+  $(".button-collapse").sideNav();
+  // Initialize collapsible (uncomment the line below if you use the dropdown variation)
+  //$('.collapsible').collapsible();
+  </script>
