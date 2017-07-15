@@ -10,6 +10,10 @@ module.exports.set = function(router, pool) {
 		}
 	}
 
+	router.get('/admin', (req, res) => {
+		res.redirect('/admin/user')
+	})
+
 	router.get('/admin/transfer_data', ensureLoggedIn, isAdmin, (req, res) => {
 		// req.query.start and req.query.limit is GET request params
 		// e.g. /admin/transfer_data?start=10

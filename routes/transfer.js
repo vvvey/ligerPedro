@@ -3,36 +3,7 @@ var pg = require('pg');
 
 module.exports.set = function(router, pool) {
   router.get('/transfer', ensureLoggedIn, function(request, response) {
-    pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
-      if (err) {
-        console.error(err);
-        response.send("Error " + err);
-      } else {
-        pool.query("SELECT * FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [request.user.email], function(err1, result1) {
-          if (err1) {
-            console.error(err);
-          } else {
-            var pending_budget = 0;
-            for (var i = 0; i < result1.rows.length; i++) {
-              pending_budget += parseFloat(result1.rows[i].amount);
-            }
-            console.log(pending_budget)
-            console.log(result.rows[0].budget)
-            console.log(result.rows[0].budget - pending_budget)
-            response.render('transfer', {
-              user: request.user,
-              title: 'Transfer',
-              budget: result.rows[0].budget,
-              data: result.rows,
-              pending_budget: pending_budget,
-              valid_transfer_budget: result.rows[0].budget - pending_budget
-            });
-          }
-        });
-        //console.log(request.user);
-
-      }
-    });
+    response.redirect('/transfer_personal')
   });
 
   router.get('/transfer_personal', function(request, response){
