@@ -22,42 +22,69 @@ module.exports.set = function(router, pool) {
     res.render('exchanging_system');
   });
 
-  router.get('/exchange', ensureLoggedIn, function(request, response) {
-    var user;
-    var current_budget;
-    var pending_budget = 0;
-    var valid_budget;
+  // router.get('/exchange', ensureLoggedIn, function(request, response) {
+  //   var user;
+  //   var current_budget;
+  //   var pending_budget = 0;
+  //   var valid_budget;
    
-    pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        user = request.user;
-        current_budget = result.rows[0].budget;
-        //console.log(current_budget)
-        pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [request.user.email], function(err1, result1) {
-          if (err1) {
-            console.error(err);
-          } else {
-          	console.log(result1)
-          	if(result1.rows.sum == null) {
-          		pending_budget = 0;
-          	} else {
-          		pending_budget = parseFloat(result1.rows[0].sum);
-          	}
+  //   pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
+  //     if (err) {
+  //       console.error(err);
+  //     } else {
+  //       user = request.user;
+  //       current_budget = result.rows[0].budget;
+  //       //console.log(current_budget)
+  //       pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [request.user.email], function(err1, result1) {
+  //         if (err1) {
+  //           console.error(err);
+  //         } else {
+  //         	console.log(result1)
+  //         	if(result1.rows.sum == null) {
+  //         		pending_budget = 0;
+  //         	} else {
+  //         		pending_budget = parseFloat(result1.rows[0].sum);
+  //         	}
 
-            response.render('exchange', {
-              user: user,
-              title: 'Exchange',
-              budget: current_budget,
-              pending_budget: pending_budget,
-              valid_exchange_budget: current_budget - pending_budget
-            });
+  //           response.render('exchange', {
+  //             user: user,
+  //             title: 'Exchange',
+  //             budget: current_budget,
+  //             pending_budget: pending_budget,
+  //             valid_exchange_budget: current_budget - pending_budget
+  //           });
+  //         }
+  //       });
+  //     }
+  //   });
+  // });
+
+  router.get('/exchange', (req, res) => {
+    var selectUserInfo = {
+      text: 'SELECT * FROM account WHERE email = $1;',
+      values: [req.user.email]
+    }
+    var selectPendingBudget = {
+      text: "SELECT sum(amount) FROM exchange_list WHERE pending = true AND type = 'pedro-dollar';"
+    }
+
+    pool.query(selectUserInfo, (userErr, userResult) => {
+      if (userErr) {res.send(userErr)}
+      else {
+        pool.query(selectPendingBudget, (pendingErr, pendingResult) => {
+          if (pendingErr) {
+            res.send(pendingErr)
+          } else {
+            var budget = userResult.rows[0].budget;
+            var pendingBudget = pendingResult.rows[0].sum;
+            var validBudget = parseFloat(budget) - parseFloat(pendingBudget)
+            res.render('exchanging', {budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
           }
-        });
+        })
       }
-    });
-  });
+    })
+    
+  })
 
   async function exchangeValidation(req, res, next) {
     const exchangeType = req.body.exchangeType;
@@ -87,9 +114,11 @@ module.exports.set = function(router, pool) {
     if (exchangeAmount != exchangeResult) {
       return res.status(400).send("Result and amount aren't the same");
     }
+    console.log(exchangeApptDate)
+    // return res.send("Hello!")
 
-
-    const apptDate = moment(exchangeApptDate).tz("Asia/Bangkok");
+    const apptDate = moment(exchangeApptDate, 'DD MMMM, YYYY').tz("Asia/Bangkok");
+    console.log(apptDate)
     const now = moment().tz("Asia/Bangkok")
     const bankCloseTime = moment().tz("Asia/Bangkok").hours(15).minute(30)
     const nowDate = moment().tz("Asia/Bangkok").startOf("day")
@@ -105,12 +134,13 @@ module.exports.set = function(router, pool) {
     }
 
     var userBudget = await pool.query("SELECT budget FROM account WHERE email = $1;", [req.user.email])
-    var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [req.user.email])
+    var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'pedro-dollar';", [req.user.email])
 
     const userCurrentBudget = parseFloat(userBudget.rows[0].budget);
     const pendingBudget = parseFloat(pending_budget.rows[0].sum)
+    console.log(userCurrentBudget - pendingBudget < exchangeAmount)
     if (userCurrentBudget - pendingBudget < exchangeAmount) {
-      return res.status(400).send("You don't have enough money to exchange! Check your pending budget!");
+      return res.status(403).send("You don't have enough money to exchange! Check your pending budget!");
     }
     next();
   }
@@ -136,7 +166,7 @@ module.exports.set = function(router, pool) {
     var apptDate = exchangeLog.apptDate;
     var apptTime = 16;
 
-    var apptDate = moment(apptDate).tz("Asia/Bangkok");
+    var apptDate = moment(apptDate, 'DD MMMM, YYYY').tz("Asia/Bangkok");
     apptDate.hour(apptTime)
     apptDate = moment.utc(apptDate);
     apptDate = apptDate.format("YYYY-MM-DD HH:mm:ss");
@@ -164,10 +194,7 @@ module.exports.set = function(router, pool) {
               if (err) {
                 console.log('Error: ' + err);
               } else {
-                res.render('exchange_approving', {
-                  user: req.user,
-                  data: result1.rows
-                });
+                res.send("Success!")
               }
             });
           }
@@ -205,7 +232,7 @@ module.exports.set = function(router, pool) {
         res.send("Error " + err);
       } else {
         if (result.rows[0].role == 're') {
-          pool.query("SELECT * FROM exchange_list WHERE type = 'Pedro to Dollar'\
+          pool.query("SELECT * FROM exchange_list WHERE type = 'pedro-dollar'\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
             if (err2) {
               console.log(err2)
