@@ -7,7 +7,7 @@ module.exports.set = function(router, pool) {
 
   router.post('/keeper/d/p/:id', function(request, response, next){
     var id = request.params.id;
-    if(id === undefined){
+    if(id === undefineds){
       response.redirect('/keeper_list');
     }
     var status = request.body.status;
