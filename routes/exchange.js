@@ -22,44 +22,8 @@ module.exports.set = function(router, pool) {
     res.render('exchanging_system');
   });
 
-  // router.get('/exchange', ensureLoggedIn, function(request, response) {
-  //   var user;
-  //   var current_budget;
-  //   var pending_budget = 0;
-  //   var valid_budget;
-   
-  //   pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
-  //     if (err) {
-  //       console.error(err);
-  //     } else {
-  //       user = request.user;
-  //       current_budget = result.rows[0].budget;
-  //       //console.log(current_budget)
-  //       pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [request.user.email], function(err1, result1) {
-  //         if (err1) {
-  //           console.error(err);
-  //         } else {
-  //         	console.log(result1)
-  //         	if(result1.rows.sum == null) {
-  //         		pending_budget = 0;
-  //         	} else {
-  //         		pending_budget = parseFloat(result1.rows[0].sum);
-  //         	}
-
-  //           response.render('exchange', {
-  //             user: user,
-  //             title: 'Exchange',
-  //             budget: current_budget,
-  //             pending_budget: pending_budget,
-  //             valid_exchange_budget: current_budget - pending_budget
-  //           });
-  //         }
-  //       });
-  //     }
-  //   });
-  // });
-
-  router.get('/exchange', (req, res) => {
+ 
+  router.get('/exchange', ensureLoggedIn, (req, res) => {
     var selectUserInfo = {
       text: 'SELECT * FROM account WHERE email = $1;',
       values: [req.user.email]
@@ -78,7 +42,7 @@ module.exports.set = function(router, pool) {
             var budget = userResult.rows[0].budget;
             var pendingBudget = pendingResult.rows[0].sum;
             var validBudget = parseFloat(budget) - parseFloat(pendingBudget)
-            res.render('exchanging', {budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
+            res.render('exchanging', {user: req.user, data: userResult.rows[0] ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
           }
         })
       }
