@@ -74,12 +74,6 @@ router.get('/login',
     }
   });
 
-router.get('/test', function(req, res) {
-  res.render('module', {
-    recipient: 'Visal Sao',
-    amount: 30
-  });
-});
 
 router.get('/tutorials', ensureLoggedIn, function(req, res) {
   res.render('tutorials');
@@ -129,6 +123,11 @@ router.get('/history', ensureLoggedIn, function(request, response) {
     }
   });
 });
+
+router.get('/history_personal', function(request, response){
+  response.render('history_personal');
+});
+
 
 router.get('/about_us', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp
