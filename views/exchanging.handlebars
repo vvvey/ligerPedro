@@ -1,34 +1,6 @@
 {{> mainNav}}
 <style>
-		[type="radio"] + label:before, [type="radio"] + label:after {
-	content: none;
-	position: absolute;
-	left: 0;
-	top: 0;
-	margin: 4px;
-	width: 0px;
-	height: 0px;
-	z-index: 0;
-	transition: .28s ease;
-	}
-	[type="radio"] + label {
-		color: white !important;
-		transition: 0.28s ease;
-	}
-	[type="radio"]:checked + label {
-		color: red !important;
-		background-color: yellow !important;
-		transition: 0.28s ease;
-	}
-	.type-switch {
-	display: block;
-	line-height: 36px !important;
-	text-align: center !important;
-	
-height: 36px !important;
-padding-right: 2rem !important;
-padding-left: 2rem !important;
-	}
+		
 	.indicator{
 		background-color: #ffc107 !important;
 	}
@@ -41,7 +13,9 @@ padding-left: 2rem !important;
 		color: #4caf50;
 	}
 </style>
+
 	<main>
+	<br>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col s12 l3">
@@ -76,13 +50,13 @@ padding-left: 2rem !important;
 			</div>
 			<div class="col s12 l9">
 				<div class="card">
-					<div class="card-content">
+					<div class="card-content amber">
 						<span class="card-title center">Exchange</span>
 					</div>
 					<div class="card-tabs">
-						<ul class="tabs tabs-fixed-width ">
-							<li class="tab"><a href="#test4" class="active green-text">Pedro to Dollar </a></li>
-							<li class="tab"><a class="green-text" href="#test5">Dollar to Pedro</a></li>
+						<ul class="tabs tabs-fixed-width">
+							<li class="tab"><a href="#test4" class="active black-text">Pedro to Dollar </a></li>
+							<li class="tab"><a class="black-text" href="#test5">Dollar to Pedro</a></li>
 						</ul>
 					</div>
 					<div class="card-content grey lighten-4">
