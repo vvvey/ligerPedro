@@ -125,7 +125,13 @@ router.get('/history', ensureLoggedIn, function(request, response) {
 });
 
 router.get('/history_personal', function(request, response){
-  response.render('history_personal');
+  if(request.user){
+    var email = request.user.email;
+    console.log(email);
+    response.render('history_personal');
+  } else {
+    response.redirect('/login');
+  }
 });
 
 
