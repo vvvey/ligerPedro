@@ -29,14 +29,16 @@ module.exports.set = function(router, pool) {
       values: [req.user.email]
     }
     var selectPendingBudget = {
-      text: "SELECT sum(amount) FROM exchange_list WHERE pending = true AND type = 'pedro-dollar';"
+      text: "SELECT COALESCE(SUM(amount), 0) AS sum FROM exchange_list WHERE pending = true AND type = 'pedro-dollar' AND email = $1;",
+      values: [req.user.email]
     }
 
     pool.query(selectUserInfo, (userErr, userResult) => {
-      if (userErr) {res.send(userErr)}
+      if (userErr) {console.log("Here"); res.send(userErr)}
       else {
         pool.query(selectPendingBudget, (pendingErr, pendingResult) => {
           if (pendingErr) {
+            console.log("This");
             res.send(pendingErr)
           } else {
             var budget = userResult.rows[0].budget;
