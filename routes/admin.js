@@ -4,7 +4,7 @@ module.exports.set = function(router, pool) {
 
 	function isAdmin (req, res, next) {
 		if (req.user.role != "admin") {
-			return res.status(500).send("You need to be an admin to proceed this!")
+			return res.status(500).render("notFound")
 		} else {
 			next()
 		}
@@ -107,7 +107,8 @@ module.exports.set = function(router, pool) {
 					transfer_data: result.rows, 
 					previousStart: previousStart, 
 					nextStart: nextStart, 
-					paginations: paginateArray
+					paginations: paginateArray,
+					userData: req.user
 				});
 			}
 		})		
@@ -192,7 +193,9 @@ module.exports.set = function(router, pool) {
 					exchange_data: result.rows,
 					previousStart: previousStart, 
 					nextStart: nextStart, 
-					paginations: paginateArray})
+					paginations: paginateArray,
+					userData: req.user
+				})
 			}
 		}) 	
 	});
@@ -216,7 +219,7 @@ module.exports.set = function(router, pool) {
 		pool.query(query, (err, result) => {
 			if (err) {res.send(err)} 
 			else {
-				res.render("admin_user_profile", {user_info: result.rows});
+				res.render("admin_user_profile", {user_info: result.rows, userData: req.user});
 				
 			}
 		})		
