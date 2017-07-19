@@ -69,14 +69,38 @@
       <li><a href="/admin/exchange_data"><i class="material-icons"></i>All Exchange Logs</a></li>
       <li><a href="/admin/transfer_data"><i class="material-icons">send</i>All Transfer Logs</a></li>
       <li><div class="divider"></div></li>
-      <li><a href="/catering/overview"><i class="material-icons">shopping_cart</i>Catering Overview</a></li>
-      <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Catering Transfer Logs</a></li>
-      <li><div class="divider"></div></li>
-      <li><a href="/residence/overview"><i class="material-icons">store</i>Residence Overview</a></li>
-      <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Residence Transfer Logs</a></li>
-      <li><div class="divider"></div></li>
-      <li><a href="/maintenance/overview"><i class="material-icons">build</i>Maintenance Overview</a></li>
-      <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Maintenance Transfer Logs</a></li>
+
+      <li>
+        <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header"><i class="material-icons">shopping_cart</i>Catering</a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a class="collapsible-header"><i class="material-icons">store</i>Residence</a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a class="collapsible-header"><i class="material-icons">build</i>Maintenance</a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </li>
     {{else ifCondA role '==' 'catering_manager'}}
       <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
       <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
@@ -108,5 +132,5 @@
     // Initialize collapse button
   $(".button-collapse").sideNav();
   // Initialize collapsible (uncomment the line below if you use the dropdown variation)
-  //$('.collapsible').collapsible();
+  $('.collapsible').collapsible();
   </script>
