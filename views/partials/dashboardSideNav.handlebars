@@ -1,0 +1,112 @@
+
+<style>
+  header, main, footer {
+        padding-left: 300px;
+  }
+
+  #title:before{
+    content: 'Liger Digital Currency';
+    text-align: center;
+  }
+
+  .container {
+      width: 90%;
+    }
+
+    main {
+      min-height: 300px;
+    }
+
+  @media only screen and (max-width: 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+    #title:before{
+      content: 'LDC';
+    }
+
+
+
+  }
+  .container .row {
+      margin-left: 0rem;
+      margin-right: 0rem;
+  }
+  
+</style>
+
+<header>
+{{#with userData}}
+    <ul id="slide-out" class="side-nav fixed">
+    <li><div class="user-view">
+      <div class="background ">
+        <img src="http://i.imgur.com/iWBk7rH.jpg" width="100%">
+      </div>
+      {{#ifCondA image '!=' null}}
+          <a href="#!user"><img class="circle" src="{{image}}"></a>
+      {{else}}
+          <a href="#!user"><span class="circle grey-text text-darken-4 center" style="border-radius: 50%"><i class="material-icons medium">account_circle</i></span></a>
+      {{/ifCondA}}
+     
+      <a href="#!name"><span class="white-text name">{{fullName}}</span></a>
+      <a href="#!email"><span class="white-text email">
+    {{#ifCondA role '==' 'admin'}}
+      Administrator
+    {{else ifCondA role '==' 'catering_manager'}}
+      Catering Manager
+    {{else ifCondA role '==' 're'}}
+      Residential Educator
+    {{else ifCondA role '==' 'maintenance_manager'}}
+      Maintenance Manager
+    {{/ifCondA}}
+
+
+      </span></a>
+    </div>
+    </li>
+    {{#ifCondA role '==' 'admin'}}
+      <li><a href="/admin/user"><i class="material-icons">people</i>User Profile</a></li>
+      <li><a href="/admin/exchange_data"><i class="material-icons"></i>All Exchange Logs</a></li>
+      <li><a href="/admin/transfer_data"><i class="material-icons">send</i>All Transfer Logs</a></li>
+      <li><div class="divider"></div></li>
+      <li><a href="/catering/overview"><i class="material-icons">shopping_cart</i>Catering Overview</a></li>
+      <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Catering Transfer Logs</a></li>
+      <li><div class="divider"></div></li>
+      <li><a href="/residence/overview"><i class="material-icons">store</i>Residence Overview</a></li>
+      <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Residence Transfer Logs</a></li>
+      <li><div class="divider"></div></li>
+      <li><a href="/maintenance/overview"><i class="material-icons">build</i>Maintenance Overview</a></li>
+      <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Maintenance Transfer Logs</a></li>
+    {{else ifCondA role '==' 'catering_manager'}}
+      <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
+      <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+    {{else ifCondA role '==' 're'}}
+      <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
+      <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+    {{else ifCondA role '==' 'maintenance_manager'}}
+      <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
+      <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+    {{/ifCondA}}
+  </ul>
+{{/with}}
+
+  <nav class="top-nav grey darken-4">
+    <div class="container">
+      <div class="nav-wrapper">
+      <a href="#!" id="title" class="center brand-logo" style="font-size: 24px"></a>
+        <!-- <a href="" class="center" style="font-size: 22px;">Liger Digital Currency</a> -->
+      <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+      </div>
+    </div>
+    
+    
+  </nav>
+</header>
+    
+
+  <script type="text/javascript">
+    // Initialize collapse button
+  $(".button-collapse").sideNav();
+  // Initialize collapsible (uncomment the line below if you use the dropdown variation)
+  //$('.collapsible').collapsible();
+  </script>
