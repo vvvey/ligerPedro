@@ -1,8 +1,8 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-var pg = require('pg');
+
 
 module.exports.set = function(router, pool)  {
-	router.get('/catering/transfer_logs', (req, res) => {
+	router.get('/residence/transfer_logs', (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
 	      start = 0 
@@ -24,7 +24,7 @@ module.exports.set = function(router, pool)  {
 	    // This query should be faster than the next one
 	    // After next query is done, code will use row_number to calcuate the pagination system
 	    var paginateArray = []
-	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'catering@ligercambodia.org';", (err, result) => {
+	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'residence@ligercambodia.org';", (err, result) => {
 	    	var row_number = result.rows[0].count;
 	    	console.log("Row number is " + row_number)
 	    	// Generate array of object based on number of rows, limit and start
@@ -58,7 +58,7 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN account AS sender on (transfer_logs.sender = sender.email) \
 					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
-					WHERE transfer_logs.recipient = 'catering@ligercambodia.org' \
+					WHERE transfer_logs.recipient = 'residence@ligercambodia.org' \
 					ORDER BY date DESC, recipient_username DESC  OFFSET $1 LIMIT $2;",
 			values: [start, limit]
 		}
@@ -83,6 +83,7 @@ module.exports.set = function(router, pool)  {
 				} else {
 					nextStart = start + limit;
 				}
+				
 				// Render to client
 				res.render('banks_transferLog', {
 					transfer_data: result.rows, 
@@ -94,9 +95,9 @@ module.exports.set = function(router, pool)  {
 		});		
 	})
 
-	router.get('/catering/overview', (req, res) => {
+	router.get('/residence/overview', (req, res) => {
 		var selectCatering =  {
-			text: "SELECT budget FROM account WHERE email = 'catering@ligercambodia.org';"
+			text: "SELECT budget FROM account WHERE email = 'residence@ligercambodia.org';"
 		}
 		var cateringBudget; 
 		pool.query(selectCatering, (err, result) => {
@@ -108,7 +109,7 @@ module.exports.set = function(router, pool)  {
 
 		var recentTransfer  = {
 			text: "	SELECT * FROM transfer_logs \
-					WHERE recipient = 'catering@ligercambodia.org' \
+					WHERE recipient = 'residence@ligercambodia.org' \
 					ORDER BY date DESC LIMIT 4;"
 		}
 
@@ -123,7 +124,7 @@ module.exports.set = function(router, pool)  {
 
 		var select = {
 			text: "	SELECT apartment, SUM(amount) \
-					FROM transfer_logs WHERE recipient = 'catering@ligercambodia.org' \
+					FROM transfer_logs WHERE recipient = 'residence@ligercambodia.org' \
 					GROUP BY apartment ORDER BY apartment;"
 		}
 		pool.query(select, (err, result) => {
