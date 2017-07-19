@@ -1,0 +1,66 @@
+{{> admin_sideNav}}
+
+<style>
+	.collection a.collection-item {
+    transition: .25s;
+    color: black;
+    background: transparent;
+}
+body {
+		background-color: #eeeeee;
+	}
+</style>
+<br>
+	<main>
+			<div class="container-fluid">
+				<div class="row">
+				<div class="col l12">
+			<div class="col l6 m6 s12">
+				<div class="card amber ">
+							<div class="card-content">
+								<span class="card-title"><i class="material-icons white-text right">grade</i>Catering Current Budget </span>
+								<h4 class="white-text">P{{bankBudget}}</h4>
+								<span>Some other graph	<br>	
+								<br>	
+								skldfjslkaf<br>	
+								sdfl</span>
+							</div>
+							
+						</div>
+			
+			</div>
+			{{#ifCondA recentTranfer '!=' null}}
+			<div class="col l6 m6 s12">
+				<div class="card green ">
+							<div class="card-content">
+								<span class="card-title">Recent Transfer </span>
+								<ul class="collection transparent">
+								{{#each recentTransfer}}
+									 <a href="/catering/transfer_logs" class="collection-item">Apartment {{upperCase apartment}} sent P{{amount}} <span class="right">{{formatDate date 'short'}}</span></a>
+								{{/each}}
+							    </ul>
+							</div>
+							
+			</div></div>
+						
+						
+				</div>
+				{{/ifCondA}}
+		
+				</div>
+				<div class="row">
+					{{#each apartmentData}}
+						<div class="col l4 m6 s12">
+							<div class="card grey darken-4">
+								<div class="card-content white-text">
+									<span class="card-title">Apartment {{upperCase apartment}}</span>
+									<h4 class="amber-text">Total Sent {{sum}}</h4>
+								</div>
+								<div class="card-action grey darken-4"><a href="" class="white-text">View More</a></div>
+							</div>
+						</div>
+					{{/each}}
+				</div>			
+			</div>
+		</main>
+{{> mainFooter}}
