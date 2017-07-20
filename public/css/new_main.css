@@ -143,3 +143,7 @@
 .custom.toolbar.active {
 	background-color: #4CAF50 !important;
 }
+
+.login-image-logo {
+	width: 100px;
+}
