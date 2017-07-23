@@ -1,70 +1,112 @@
 {{> simNav}}
+
 <div class="container-fluid">
 	<div class="row"><br />
-		<div class="col s12 l10 offset-l1" id="transfer">
+		<div class="col s12 l10 offset-l1">
 			<div class="card">
 				<div class="card-content">
-					<table class="striped responsive-table centered">
-						<thead>
-							<tr>
-								<th>Date</th>
-								<th>Recipient</th>
-								<th>Amount</th>
-								<th>Remain Budget</th>
-								<th>Reason</th>
-
-							</tr>
-						</thead>
-
-						<tbody>
-							<tr>
-								<td>Jan 12, 2017</td>
-								<td>sovannou.p@ligercambodia.org</td>
-								<td>P5</td>
-								<td>P6</td>
-								<td>Pay the money back!</td>
-							</tr>
-							<tr>
-								<td>Jan 12, 2017</td>
-								<td>sovannou.p@ligercambodia.org</td>
-								<td>P5</td>
-								<td>P6</td>
-								<td>Pay the money back!</td>
-							</tr>
-						</tbody>
-					</table>
+					<span class="card-title">Info</span>
+					<p>These are all the datas that we got about the exchange that you have made so far and hopefuly you happy with it! Thank you.</p>
 				</div>
 			</div>
 		</div>
-		<div class="col s12 l10 offset-l1" id="exchange">
-			<div class="card">
-				<div class="card-content">
-					<div class="row">
-						<div class="col s12 m4 l4">
-							<div class="card blue-grey darken-1 white-text">
-								<div class="card-content">
-									<tr>
-										<p class="left">Jan 12, 2017</p>
 
-										<p class="right">P60</p>
-									</tr>
-									<br /> <br />
-									<center><button data-target="modal1" class="btn">Detail</button></center>
-								</div>
-								<div id="modal1" class="modal black-text">
-								    <div class="modal-content">
-								      <h4 class="center">Jan 12, 2017</h4>
-								      <p>Type: pedro-dollar <br />Initial Exchange: P12 <br /> Amount: P12.5 <br /> Reason: klfsdhal;fhadslk flsdkajf lsdkjf <br /> RE Approve: Yes <br /> RE Approve Date: Jan 15, 2017 <br /> Keeper Approve: Pendding <br /> </p>
-								    </div>
-								    <div class="modal-footer">
-								      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-								    </div>
-							  	</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+		<div class="col s12 l10 offset-l1" id="transfer">
+		{{#if transferData}}
+			<table class="responsive-table centered z-depth-1">
+				<thead class="black">
+					<tr class="white-text">
+						<th>Date</th>
+						<th>Recipient</th>
+						<th>Amount</th>
+						<th>Remain Budget</th>
+						<th>Reason</th>
+
+					</tr>
+				</thead>
+
+				<tbody>
+					{{#each transferData}}
+					<tr>
+						<td>{{dateFormat this.date}}</td>
+						<td>{{this.recipient}}</td>
+						<td>P {{this.amount}}</td>
+						<td>P {{this.sender_resulting_budget}}</td>
+						<td class="left">{{this.reason}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+		{{else}}
+			<h2 class="center">Nothing Collected</h2>
+		{{/if}}
+		</div>
+
+		<div class="col s12 l10 offset-l1" id="exchange">				
+	    	{{#if exchangeData}}
+		    	<ul class="collection">
+		    		<li class="collection-item">
+		    			<h5 class="">History</h5>
+		    		</li>
+		    		{{#each exchangeData}}
+			    		<li class="collection-item">
+			    			<div class="row" style="margin-bottom: 0;">
+						    	<div class="col s4 m5">
+						    		<span class="collections-title">{{dateFormat this.timecreated}}</span> <br>
+						    		<span class="collections-content red-text" data-badge-caption="">Exchange: P {{this.result}}</span>
+						    	</div>
+						    	<div class="col s4 m4">
+						    		{{#ifCondA this.type '==' 'pedro-dollar'}}
+						    			<span class="new badge red black-text left" data-badge-caption="">Pedro to Dollar</span>
+						    		{{else}}
+						    			<span class="new badge green black-text left" data-badge-caption="">Dollar to Pedro</span>
+						    		{{/ifCondA}}
+						    	</div>
+						    	<div class="col s4 m3">
+						    		<a href="#{{this.id}}" class="secondary-content blue-text">More...</a>
+						    	</div>
+					    	</div>
+					    	<div id="{{this.id}}" class="modal black-text">
+							    <div class="modal-content">
+							      <h4 class="center">Jan 12, 2017</h4>
+							      <p class="blue-text">
+							      	  Date Exchanging: {{dateFormat this.timecreated}} <br />
+
+								      Type: {{#ifCondA this.type '==' 'pedro-dollar'}}Pedro to Dollar{{else}}Dollar to Pedro{{/ifCondA}} <br />
+
+								      Initial Exchange: P {{this.amount}} <br /> 
+
+								      Amount: P {{this.result}} <br /> 
+
+								      Reason: {{this.reason}} <br /> <br /> 
+
+								      RE Approve: {{#ifCondA this.approved '==' 'true'}} Yes {{else ifCondA this.approve '==' "false"}} No {{else}} Pendding {{/ifCondA}}<br /> 
+
+								      RE Approve Date: {{dateFormat this.timeapproved}} <br /> <br /> 
+
+								      Keeper Approve: {{#ifCondA this.exchanged '==' 'true'}} Success Exchagned {{else ifCondA this.exchanged '==' "false"}} Fail Exchange {{else}} Not yet arrive! {{/ifCondA}} <br /> 
+
+								      Keeper Approve Date: {{dateFormat this.timeexchanged}} <br /> 
+
+							      </p>
+							    </div>
+							    <div class="modal-footer">
+							      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+							    </div>
+						  	</div>
+			    		</li>
+		    		{{/each}}
+		    	</ul>
+	    	{{else}}
+	    		<h2 class="center">Nothing Collected</h2>
+			{{/if}}
 		</div>
 	</div>
 </div>
+
+
+<style type="text/css">
+.marginLes{
+	margin-top: 0px;
+}
+</style>
