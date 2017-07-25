@@ -72,43 +72,21 @@ module.exports.set = function(router, pool) {
       });
   });
         
-  router.get('/apartment_history', ensureLoggedIn, function(request, response){
+  router.get('/apartment_history', ensureLoggedIn, async function(request, response){
 
     var email = request.user.email;
-    pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(accountErr, accountResult){ 
-        if (accountErr) {
-          console.log(accountErr);
-        }else{
-          if(accountResult.rows[0].role == 'senior_student'){
-            var apartment = accountResult.rows[0].apartment;
+    var personality = await pool.query("SELECT * FROM account WHERE email = $1;", [email]);
+    var apartment = {
+      role: personality.rows[0].role, 
+      name: personality.rows[0].apartment,
+      ident: personality.rows[0].apartment
+    };
 
-            var tranferListQuery = "SELECT * FROM transfer_logs WHERE apartment = '"+ apartment +"'\
-            ORDER BY date DESC;"; //Taking all the data that, that person's apartment did 
+    var dataTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 ORDER BY date DESC;", [apartment.name]);
 
-            var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
+    var dateApartment = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
 
-            pool.query(tranferListQuery, function(tranApartmentErr, tranApartmentResult){
-              if(tranApartmentErr){
-                console.log(tranApartmentErr);
-              }else{
-                
-                pool.query(apart_quer, function(apartmentErr, apartmentResult){
-                  if(apartmentErr){
-                    console.log(apartmentErr);
-                  }else{
-                    console.log("Appartment: " + apartment + ".ligercambodia||");
-                    console.log(request.user.email);
-                    response.render('apartment_history', {user: request.user, user_email: request.user.email, trans_apart: tranApartmentResult.rows, apartmentData: apartmentResult.rows, accountData: accountResult.rows});
-                  }
-                });
-
-              }
-            });
-          }else{
-            response.redirect('notFound');
-          }     
-        }
-      });
+    response.render('apartment_history', {user: request.user, data: personality.rows[0].role, transferData: dataTransfer.rows, accountData: dateApartment.rows});
   });
 
   router.post('/apartment_list/approve/:id',function(request, response) {
