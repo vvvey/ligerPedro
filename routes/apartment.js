@@ -10,33 +10,36 @@ module.exports.set = function(router, pool) {
 		response.end();
 	});
 
-  router.get('/apartment_transfer', ensureLoggedIn, function(request, response){
-    pool.query("SELECT * FROM account WHERE \
-      email = $1;", [request.user.email], function(accountErr, accountResult){
-      if(accountErr) {
-        console.error(accountErr); 
-        response.send("Error " + accountErr);
-      }else{
-        console.log(accountResult.rows)
-        if(accountResult.rows[0].role == 'senior_student'){
-          var apartment = accountResult.rows[0].apartment;
+  router.get('/apartment_transfer', ensureLoggedIn, async function(request, response){
+    var email = request.user.email;
+    var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [email]); 
+    var accCollection = {
+      role: accountData.rows[0].role, 
+      ident: accountData.rows[0].apartment
+    };
+    if(accCollection.role == 'senior_student'){
+      var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [accCollection.ident.toUpperCase()]);
+      var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]); //crate another row that calculate is the request finish or not yet
+      var emails = await pool.query("SELECT email FROM account;");
+      var apartmentTransferBudget = 0;
+      var emailsList = [];
 
-          var apart_quer = "SELECT * FROM account WHERE email = ";
-          pool.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'", function(apartmentErr, apartmentResult){
-            if(apartmentErr){
-              console.log(apartmentErr);
-            }else{
-              response.render('apartment_transfer', {user: request.user, accountData: accountResult.rows, apartmentData: apartmentResult.rows});
-            }
-          });
-        }else{
-          response.redirect('notFound');
+      for(var i = 0; i < emails.rows.length; i++){
+        emailsList.push(emails.rows[i].email);
+      } 
+      if(apartmentTransfer.rows){        
+        for(var i = 0; i < apartmentTransfer.rows.length; i++){
+          apartmentTransferBudget += parseInt(apartmentTransfer.rows[i].amount);
         }
       }
-    });
+      var budgetRemain =  parseInt(apartmentData.rows[0].budget) - apartmentTransferBudget;
+      response.render('apartment_transfer', {emails: emailsList, user: request.user, data: accCollection.role, apartmentData: apartmentData.rows, budget: budgetRemain});
+    }else{
+      response.redirect('notFound');
+    }
   });
 
-  router.get('/apartment_list', ensureLoggedIn, function(request, response){
+  router.get('/apartment_approve', ensureLoggedIn, function(request, response){
 
     var email = request.user.email;
     pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(accountErr, accountResult){ 
@@ -78,15 +81,19 @@ module.exports.set = function(router, pool) {
     var personality = await pool.query("SELECT * FROM account WHERE email = $1;", [email]);
     var apartment = {
       role: personality.rows[0].role, 
-      name: personality.rows[0].apartment,
       ident: personality.rows[0].apartment
     };
 
-    var dataTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 ORDER BY date DESC;", [apartment.name]);
+    if(apartment.role == 'senior_student'){
 
-    var dateApartment = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
+      var dataTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 AND finished = 'y' ORDER BY date DESC;", [apartment.ident]);
 
-    response.render('apartment_history', {user: request.user, data: personality.rows[0].role, transferData: dataTransfer.rows, accountData: dateApartment.rows});
+      var dateApartment = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
+
+      response.render('apartment_history', {user: request.user, data: personality.rows[0].role, transferData: dataTransfer.rows, accountData: dateApartment.rows});
+    } else{
+      response.redirect('/notFound');
+    }
   });
 
   router.post('/apartment_list/approve/:id',function(request, response) {
@@ -196,7 +203,7 @@ module.exports.set = function(router, pool) {
     });
   });
 
-  router.post('/trans_success_apartment', ensureLoggedIn, function(request, response){
+  router.post('/transferApartmentSucc', ensureLoggedIn, async function(request, response){
 
     var fromUser = {
       amountSend: request.body.amountTrans,
@@ -206,39 +213,15 @@ module.exports.set = function(router, pool) {
       email: request.user.email
     };
 
+    var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [fromUser.email]);
+    var ident = accountData.rows[0].apartment;
+    var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [ident.toUpperCase()]);
 
-    pool.query("SELECT * FROM account WHERE email = '" + request.user.email + "'", function (accountErr, accountResult) {
-      if(accountErr){
-        console.log(accountErr);
-      } else {
-        var apartment = accountResult.rows[0].apartment;
-
-        var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'";
-
-        pool.query(apart_quer, function(apartmentErr, apartmentResult) {
-          if(apartmentErr){
-            console.log(apartmentErr);
-          } else {
-
-            /*var insert = "INSERT INTO transfer_apartment(person, email, amount, resulting_budget, recipient, reason, apartment, num_approve, num_disapprove, email_logs, time)\
-            VALUES('" + fromUser.userName +"', '"+ fromUser.email +"', \
-            '"+ fromUser.amountSend +"', '"+ apartmentResult.rows[0].budget +"', '"+ fromUser.emailSend +"', '"+ fromUser.reasonSend +"', '"+ apartment +"', 0, 0, '{Submited}', CURRENT_TIMESTAMP(2));"; */
-
-            var insert = "INSERT INTO transfer_logs(sender, recipient, amount, sender_resulting_budget, reason, apartment, num_approve, num_disapprove, date)\
-            VALUES('" + fromUser.email +"', '"+ fromUser.emailSend +"', \
-            '"+ fromUser.amountSend +"', '"+ apartmentResult.rows[0].budget +"', '"+ fromUser.reasonSend +"', '"+ apartment +"', 0, 0, CURRENT_TIMESTAMP(2));"; 
-            
-            pool.query(insert, function(inApartmentErr, inApartmentResult){
-              if(inApartmentErr){
-                console.log(inApartmentErr);
-              }else{
-                console.log("Success!");
-                response.redirect('/apartment_transfer');              
-              }
-            });
-          }
-        });
-      }
-    });
+    var insert = await pool.query("INSERT INTO transfer_logs(sender, recipient, amount, sender_resulting_budget, reason,\
+                  apartment, date) VALUES($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP(2));", 
+                  [fromUser.email, fromUser.emailSend, fromUser.amountSend, apartmentData.rows[0].budget, 
+                  fromUser.reasonSend, ident]); 
+    console.log("Success!");
+    response.redirect('/apartment_transfer'); 
   });
 }
