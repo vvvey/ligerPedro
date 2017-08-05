@@ -1,0 +1,382 @@
+{{> mainNav}}
+{{> bottonNavigation}}
+<div class="container-fliud">
+  <div class="row">
+    {{> apartmentValue}}
+    <div class="col s12 l10 offset-l1">
+    	{{#sorten exData}}
+	    	{{#if day1}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <span class="card-title center">Apartment Exchange</span>
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day1}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day1}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day1}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+
+			{{#if day2}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day2}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day2}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day2}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+
+			{{#if day3}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day3}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day3}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day3}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+
+			{{#if day4}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day4}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day4}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day4}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+
+			{{#if day5}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day5}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day5}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day5}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+
+			{{#if day6}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day6}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day6}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day6}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+
+			{{#if day7}}
+			    <div class="card circle z-depth-2">
+			      <div class="card-content black-text center">
+			          <div class="container-fluid">
+			          	<div class="row">
+			          		
+			          		<div>
+			          			{{#readArr day7}}
+			          				{{#if time}}
+					          			<div class="col s12 m2">
+						          			<h5>{{time}}</h5>
+						          		</div>
+					          		{{/if}}
+					          	{{/readArr}}
+
+				          		<div style="border-left:1px solid black;" class="col s12 m7">
+				          			<ul class="collection">
+				          			{{#readArr day7}}
+				          				{{#if username}}
+									      <li class="collection-item">
+										      <div class="row" style="margin: 0;">
+
+										      	<div class="col s4">
+										      		<span class="new badge blue" data-badge-caption="">{{username}}</span>
+										      	</div>
+
+										      	<div class="col s3 offset-s5">
+										      		<span class="new badge red" data-badge-caption="">P {{budget}}</span>
+										      	</div>
+
+										      </div>
+									      </li>
+								        {{/if}}
+								    {{/readArr}}
+								    </ul>
+				          		</div>
+
+				          		{{#readArr day7}}
+			          				{{#if picker}}					          	
+									    <div class="col s12 m3">
+						          			<h5>Picker</h5>
+						          			<h6>{{picker}}</h6>
+					          			</div>
+			          				{{/if}}
+					          	{{/readArr}}
+			          		</div>
+			          		
+			          	</div>
+			          </div>
+			      </div>
+			    </div>
+			{{/if}}
+		{{/sorten}}
+    </div>
+  </div>
+</div>
