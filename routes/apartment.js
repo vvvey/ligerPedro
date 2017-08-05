@@ -19,7 +19,8 @@ module.exports.set = function(router, pool) {
     };
     if(accCollection.role == 'senior_student'){
       var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [accCollection.ident.toUpperCase()]);
-      var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]); //crate another row that calculate is the request finish or not yet
+      var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
+       WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]);
       var emails = await pool.query("SELECT email FROM account;");
       var apartmentTransferBudget = 0;
       var emailsList = [];
@@ -29,50 +30,57 @@ module.exports.set = function(router, pool) {
       } 
       if(apartmentTransfer.rows){        
         for(var i = 0; i < apartmentTransfer.rows.length; i++){
-          apartmentTransferBudget += parseInt(apartmentTransfer.rows[i].amount);
+          apartmentTransferBudget += parseFloat(apartmentTransfer.rows[i].amount);
         }
       }
-      var budgetRemain =  parseInt(apartmentData.rows[0].budget) - apartmentTransferBudget;
-      response.render('apartment_transfer', {emails: emailsList, user: request.user, data: accCollection.role, apartmentData: apartmentData.rows, budget: budgetRemain});
+      var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+      response.render('apartment_transfer', {
+        emails: emailsList, 
+        user: request.user, 
+        data: accCollection.role,
+
+        totalBudget: apartmentData.rows[0].budget,
+        pendingBudget: apartmentTransferBudget,
+        resultingBudget: budgetRemain});
     }else{
       response.redirect('notFound');
     }
   });
 
-  router.get('/apartment_approve', ensureLoggedIn, function(request, response){
+  router.get('/apartment_approve', ensureLoggedIn, async function(request, response){
 
     var email = request.user.email;
-    pool.query("SELECT * FROM account WHERE email = '"+ email +"';", function(accountErr, accountResult){ 
-        if (accountErr) {
-          console.log(accountErr);
-        }else{
-          if(accountResult.rows[0].role == 'senior_student'){
-            var apartment = accountResult.rows[0].apartment;
-
-            var tranferListQuery = "SELECT * FROM transfer_logs WHERE apartment = '"+ apartment +"'\
-            ORDER BY date DESC;"; //Taking all the data that, that person's apartment did 
-
-            var apart_quer = "SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org'"; //Taking the info form some apartment 
-            pool.query(tranferListQuery, function(tranApartmentErr, tranApartmentResult){
-              if(tranApartmentErr){
-                console.log(tranApartmentErr);
-              }else{
-                pool.query(apart_quer, function(apartmentErr, apartmentResult){
-                  if(apartmentErr){
-                    console.log(apartmentErr);
-                  }else{
-                    console.log("Appartment: " + apartment + ".ligercambodia||");
-                    console.log(request.user.email);
-                    response.render('apartment_approve', {user: request.user, user_email: request.user.email, accountData: accountResult.rows, trans_apart: tranApartmentResult.rows, apartment: apartmentResult.rows});
-                  }
-                });
-              }
-            });
-          }else{  
-            response.redirect('notFound');
-          }     
+    var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [email]); 
+    var accCollection = {
+      role: accountData.rows[0].role, 
+      ident: accountData.rows[0].apartment
+    };
+    if(accCollection.role == 'senior_student'){
+      var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [accCollection.ident.toUpperCase()]);
+      var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
+        WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]); 
+      var apartmentTransferBudget = 0;
+      if(apartmentTransfer.rows){        
+        for(var i = 0; i < apartmentTransfer.rows.length; i++){
+          apartmentTransferBudget += parseFloat(apartmentTransfer.rows[i].amount);
         }
+      }
+      var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+      response.render('apartment_approve', {
+        email: email, 
+        user: request.user, 
+        data: accCollection.role,
+
+        accountData: accountData.rows,
+        transferData: apartmentTransfer.rows,
+
+        totalBudget: apartmentData.rows[0].budget,
+        pendingBudget: apartmentTransferBudget,
+        resultingBudget: budgetRemain
       });
+    }else{
+      response.redirect('notFound');
+    }
   });
         
   router.get('/apartment_history', ensureLoggedIn, async function(request, response){
@@ -86,121 +94,136 @@ module.exports.set = function(router, pool) {
 
     if(apartment.role == 'senior_student'){
 
-      var dataTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 AND finished = 'y' ORDER BY date DESC;", [apartment.ident]);
+      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 AND finished = 'y' ORDER BY date DESC;", [apartment.ident]);
+      var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE apartment = $1 AND finished = 'f' ORDER BY date DESC;", [apartment.ident]);
+      var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
+      var apartmentTransferBudget = 0;
+      if(dataTransferNot.rows){        
+        for(var i = 0; i < dataTransferNot.rows.length; i++){
+          apartmentTransferBudget += parseFloat(dataTransferNot.rows[i].amount);
+        }
+      }
+      var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+      response.render('apartment_history', {
+        user: request.user, 
+        data: personality.rows[0].role, 
+        transferData: dataTransferFinish.rows,
 
-      var dateApartment = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
-
-      response.render('apartment_history', {user: request.user, data: personality.rows[0].role, transferData: dataTransfer.rows, accountData: dateApartment.rows});
+        totalBudget: apartmentData.rows[0].budget,
+        pendingBudget: apartmentTransferBudget,
+        resultingBudget: budgetRemain
+      });
     } else{
       response.redirect('/notFound');
     }
   });
 
-  router.post('/apartment_list/approve/:id',function(request, response) {
-    var id = request.params.id; 
-    
-    console.log(id);
-    if(id === undefined){
-      response.redirect('/apartment_list');
+  router.get('/apartment_members', ensureLoggedIn, async function(request, response){
+    var exportDate = function(date){
+      var today = new Date(date);
+      return today.toDateString();
     }
+    var email = request.user.email;
+    var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [email]);
+    var accCollection = {
+      role: accountData.rows[0].role, 
+      ident: accountData.rows[0].apartment
+    };
+    if(accCollection.role == 'senior_student'){
+
+      var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [accCollection.ident.toUpperCase()]);
+      var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
+        WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]); 
+      var apartmentTransferBudget = 0;
+
+      if(apartmentTransfer.rows){        
+        for(var i = 0; i < apartmentTransfer.rows.length; i++){
+          apartmentTransferBudget += parseFloat(apartmentTransfer.rows[i].amount);
+        }
+      }
+      var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+
+      var exchangeInfro = await pool.query("SELECT * FROM exchange_list WHERE approved = 'true' \
+        AND pending = 'true' AND apartment = $1 AND type = 'pedro-dollar' ORDER BY apptdate ASC;", [accCollection.ident]);
+      var shr = exchangeInfro;
+      var dataCollection = [];
+
+      for(var i = 0; i < exchangeInfro.rows.length; i++){
+        dataCollection.push([]);
+        dataCollection[i].push(shr.rows[i].person, parseFloat(shr.rows[i].result), shr.rows[i].id, exportDate(shr.rows[i].apptdate));
+      }
+      response.render('apartment_memberExchange', {
+        exData: dataCollection,
+        user: request.user, 
+        data: accountData.rows[0].role, 
+
+        totalBudget: apartmentData.rows[0].budget,
+        pendingBudget: apartmentTransferBudget,
+        resultingBudget: budgetRemain
+      });
+    } else{
+      response.redirect('/notFound');
+    }
+  });
+
+  router.post('/apartment_list/approve/:id',async function(request, response) {
     var fromUser = {
       status: request.body.status,
       userName: request.user.displayName,
-      userEmail: request.user.email
+      userEmail: request.user.email,
+      id: request.params.id
     }
-    //id = '"+ id +"';
     console.log(fromUser.userEmail);
-    pool.query("SELECT * FROM account WHERE email = '"+ fromUser.userEmail +"';", function(UserErr, result){
-        if(UserErr){
-          console.log(UserErr);
-        }else{
-          var apartment = result.rows[0].apartment;
-          console.log("Your apartment name: " + apartment);
-          pool.query("SELECT * FROM transfer_logs WHERE id = '"+ id +"';", function(transferErr, result2){
-            if (transferErr) {
-              console.log(transferErr);
-            } else {
-              var requestInfo = {
-                name: result2.rows[0].person,
-                email: result2.rows[0].email, //sender email
-                amount: result2.rows[0].amount,
-                resulting_budget: result2.rows[0].resulting_budget,
-                recipient: result2.rows[0].recipient, // reciver email
-                num_approve: result2.rows[0].num_approve,
-                num_disapprove: result2.rows[0].num_disapprove,
-                apartment: result2.rows[0].apartment,
-                email_logs: result2.rows[0].email_logs
-              }
-              pool.query("SELECT * FROM account WHERE email = '"+ apartment +".ligercambodia.org';", function(apartmentErr, result3){
-                if(apartmentErr){
-                  console.log(apartmentErr);
-                }else{
-                  pool.query("SELECT * FROM account WHERE email = '"+ requestInfo.recipient +"';", function(RecipientErr, result4){
-                    if(RecipientErr){
-                      console.log(RecipientErr);
-                    }else{
-                      if(fromUser.status == 'accept'){
-                        requestInfo.num_approve = parseInt(requestInfo.num_approve) + 1;
-                      }else{
-                        requestInfo.num_disapprove = parseInt(requestInfo.num_disapprove) + 1; 
-                      }
-                      var monSender = 0;
-                      var monRecipient = 0;
+    
+    if(fromUser.id === undefined){
+      response.redirect('/apartment_list');
+    }
+    var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [fromUser.userEmail]);
+    var apartment = accountData.rows[0].apartment;
+    var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [apartment.toUpperCase()]);
+    var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs WHERE id = $1;", [fromUser.id]); //crate another row that calculate is the request finish or not yet
+    var recipientData = await pool.query("SELECT * FROM account WHERE email = $1", [apartmentTransfer.rows[0].recipient]);
+ 
+    var approveSystem = {
+      monApartment: parseFloat(apartmentData.rows[0].budget),
+      monTransfer: parseFloat(apartmentTransfer.rows[0].amount),
+      monRecipient: parseFloat(recipientData.rows[0].budget),
+      recipient: apartmentTransfer.rows[0].recipient,
+      approve: parseFloat(apartmentTransfer.rows[0].num_approve),
+      disapprove: parseFloat(apartmentTransfer.rows[0].num_disapprove)
+    }
 
-                      if(parseInt(requestInfo.num_approve) >= 3) {
-                        //The sender apartment - their money
-                        monSender = parseInt(result3.rows[0].budget) - parseInt(requestInfo.amount); 
-                        console.log("Sender: " + result3.rows[0].budget);
-                        console.log("amuntSend: " + requestInfo.amount);
-                        console.log(monSender);
-                        //The reciver + their money
-                        monRecipient = parseInt(result4.rows[0].budget) + parseInt(requestInfo.amount);
-                        console.log("Reciver: " + result4.rows[0].budget);
-                        console.log("amuntGet: " + requestInfo.amount);
-                        console.log(monRecipient);
-
-                        pool.query("UPDATE transfer_logs SET \
-                          num_approve = $1, num_disapprove = $2, \
-                          sender_resulting_budget = $3, email_logs = \
-                          email_logs || '{ "+ fromUser.userEmail +" }' \
-                          WHERE id = '"+ id +"';",[requestInfo.num_approve, requestInfo.num_disapprove, monSender], function(tranUpdateErr, result3) {
-                          if(tranUpdateErr){
-                            console.log(tranUpdateErr);
-                          }else{
-                            pool.query("UPDATE account SET budget = $1 WHERE email = '"+ apartment +".ligercambodia.org';", [monSender], function(mistakeSend, outcomeSend) {
-                              if(mistakeSend){
-                                console.log(mistakeSend);
-                              }else{
-                                pool.query("UPDATE account SET budget = $1 WHERE email = '"+ requestInfo.recipient +"';", [monRecipient], function(mistakeRev, outcomeRev){
-                                  if(mistakeRev){
-                                    console.log(mistakeRev);
-                                  }else{
-                                    response.redirect('/apartment_list');
-                                  }
-                                });
-                              }
-                            });
-                          }
-                        });
-                        //Show approve in the handlebars
-                      }else{
-                        pool.query("UPDATE transfer_logs SET \
-                          num_approve = $1, num_disapprove = $2, email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = '"+ id +"';",[requestInfo.num_approve, requestInfo.num_disapprove], function(eventErr, result3) {
-                          if(eventErr){
-                            console.log(eventErr);
-                          }else{
-                            response.redirect('/apartment_list');
-                          }
-                        });
-                      }        
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-    });
+    var approved = approveSystem.approve; 
+    var denied = approveSystem.disapprove;
+    console.log(fromUser.status);
+    if(fromUser.status == 'accept'){
+      approved += 1;
+      if(approved >= 3){
+        //sustract from apartment
+        var resultingApartment = approveSystem.monApartment - approveSystem.monTransfer;
+        //add to recipient
+        var resultingRecipient = approveSystem.monRecipient + approveSystem.monTransfer;
+        await pool.query("UPDATE account SET budget = $1 WHERE username = $2;", [resultingApartment, apartment.toUpperCase()]);
+        await pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingRecipient, approveSystem.recipient]);
+        await pool.query("UPDATE transfer_logs SET num_approve = $1, finished = 't',\
+        email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = $2;", [approved, fromUser.id]);
+        response.redirect('/apartment_approve');
+      } 
+    } else {
+      denied += 1;
+      if(denied >= 2) {
+        console.log("denied");
+        await pool.query("UPDATE transfer_logs SET num_disapprove = $1, finished = 't',\
+        email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = $2;", [denied, fromUser.id]);
+        response.redirect('/apartment_approve');
+      } 
+    }
+    if(approved < 3 && denied < 2){
+      console.log("Adding everyhing");
+      await pool.query("UPDATE transfer_logs SET num_disapprove = $1, num_approve = $2,\
+      email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = $3;", [denied, approved, fromUser.id]);
+      response.redirect('/apartment_approve');
+    }
   });
 
   router.post('/transferApartmentSucc', ensureLoggedIn, async function(request, response){
