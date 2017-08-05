@@ -2,11 +2,12 @@
 {{> bottonNavigation}}
 <div class="container-fliud">
   <div class="row">
+    {{> apartmentValue}}
     <div class="col s12 m10 l10 offset-l1 l10 offset-m1">       
       {{#if transferData}}
-        <ul class="collection">
+        <ul class="collection z-depth-1">
           <li class="collection-item">
-            <h5 class="">History</h5>
+            <h5 class="center">Appartment History</h5>
           </li>
           {{#each transferData}}
             <li class="collection-item">
@@ -30,7 +31,7 @@
                 <div class="modal-content">
                   <h4 class="center">{{dateFormat this.date}}</h4>
                   <p class="blue-text">
-                    Date Exchanging: {{dateFormat this.date}} <br />
+                    Date Transfering: {{dateFormat this.date}} <br />
 
                     Sender: {{this.sender}} <br />
 
@@ -38,7 +39,7 @@
 
                     Transfer Amount: P {{this.amount}} <br />
 
-                    Left Over: P{{this.sender_resulting_budget}} <br />
+                    Left Over: P {{this.sender_resulting_budget}} <br />
 
                     Number Approve: {{this.num_approve}} <br />
 
