@@ -8,13 +8,20 @@ var apartments     = require('./apartment');
 var exchange       = require('./exchange');
 var transfer       = require('./transfer');
 var keeper         = require('./keeper');
+var admin          = require('./admin');
+var catering       = require('./catering')
+var residence      = require('./residence')
+var maintenance    = require('./maintenance')
 
 apartments.set(router, pool);
 exchange.set(router, pool);
 transfer.set(router, pool);
 keeper.set(router, pool);
-
-router.get('/', function(req, res) {
+admin.set(router, pool);
+catering.set(router, pool);
+residence.set(router, pool);
+maintenance.set(router, pool);
+/*router.get('/', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp
   // if we store the user's role in cookies, no longer necessary to query the database
   console.log(req.session)
@@ -34,6 +41,25 @@ router.get('/', function(req, res) {
       user: req.user
     });
   }
+});*/
+
+router.get("/", function(request, response){
+    if(request.user){
+      var email = request.user.email;
+      const getAccount = {
+        text: "SELECT * FROM account WHERE email = $1;",
+        values: [email]
+      };
+      
+      pool.query(getAccount, function(accErr, accresult) {
+        if(accErr){console.log(accErr);}
+        else{
+          response.render('mainPage', {user: request.user, data: accresult.rows[0].role});
+        }
+      });
+    }else{
+      response.render('mainPage');
+    }
 });
 
 router.get('/login',
@@ -53,12 +79,6 @@ router.get('/login',
     }
   });
 
-router.get('/test', function(req, res) {
-  res.render('module', {
-    recipient: 'Visal Sao',
-    amount: 30
-  });
-});
 
 router.get('/tutorials', ensureLoggedIn, function(req, res) {
   res.render('tutorials');
@@ -108,6 +128,21 @@ router.get('/history', ensureLoggedIn, function(request, response) {
     }
   });
 });
+
+router.get('/history_personal', async function(request, response){
+  if(request.user){
+    var email = request.user.email;
+    
+    var getTransfer = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1 ORDER BY date DESC;", [email]);
+    
+    var getExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [email]);
+
+    response.render('history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows});
+  } else {
+    response.redirect('/login');
+  }
+});
+
 
 router.get('/about_us', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp

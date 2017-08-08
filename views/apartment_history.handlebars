@@ -1,56 +1,73 @@
-{{> header_apartment}}
-
-<div class="container-fluid">
-    <div class="row profile">
-		{{> apart_side}}
-
-		<div class="col-md-9">
-      <div class="profile-content">
-        <div class="bg-danger budget text-center fixed-top">
-		   		Budget: {{#each apartmentData}} {{this.budget}} {{/each}}
-		   	</div>
-
-		   	<div class=	"body-apartment text-center">
-			   	<h1 class="h2">History of Transfering</h1>
- 	        <div class="win-history tab-pane fade in active" id="transfer_his" style="padding: 10px;">
-          
-          <table class="table table-striped table-inverse">
-            <thead>
-              <tr>
-                <th class="text-center">Date/Time</th>
-                <th class="text-center">Person</th>
-                <th class="text-center">Amount</th>
-                <th class="text-center">Reason</th>
-                <th class="text-center">Recipient</th>
-                <th class="text-center">Resulting Budget</th>
-              </tr>
-            </thead>
-            <thead>
-              {{#each trans_apart}}
-               
-                <tr class="text-center">
-                  <td scope="row">{{dateFormat this.date}}</td>
-                  <td>{{this.sender}}</td>  
-                  <td>{{this.amount}}</td>
-                  <td>{{this.reason}}</td>
-                  <td>{{this.recipient}}</td>
-                  <td>{{this.sender_resulting_budget}}</td>
-                </tr>
+{{> mainNav}}
+{{> bottonNavigation}}
+<div class="container-fliud">
+  <div class="row">
+    {{> apartmentValue}}
+    <div class="col s12 m10 l10 offset-l1 l10 offset-m1">       
+      {{#if transferData}}
+        <ul class="collection z-depth-1">
+          <li class="collection-item">
+            <h5 class="center">Appartment History</h5>
+          </li>
+          {{#each transferData}}
+            <li class="collection-item">
+              <div class="row" style="margin-bottom: 0;">
                 
-              {{/each}}
-              
-              <!--{{this.email_logs}}
-              </br></br> {{user._json.email}}-->
-            </thead>
-          </table>
-          
-        </div>
-        </div>
-			  </div>
-      </div>
-		</div>
-	</div>
+                <div class="col s4 m5">
+                  <span class="collections-title">{{dateFormat this.date}}</span> <br>
+                  <span class="collections-content red-text" data-badge-caption="">Transfer: P {{this.amount}}</span>
+                </div>
+
+                <div class="col s4 m4">
+                    <span class="new badge green black-text left" data-badge-caption="">{{this.recipient}}</span>
+                </div>
+
+                <div class="col s4 m3">
+                  <a href="#{{this.id}}" class="secondary-content blue-text">More...</a>
+                </div>
+              </div>
+
+              <div id="{{this.id}}" class="modal black-text">
+                <div class="modal-content">
+                  <h4 class="center">{{dateFormat this.date}}</h4>
+                  <p class="blue-text">
+                    Date Transfering: {{dateFormat this.date}} <br />
+
+                    Sender: {{this.sender}} <br />
+
+                    Recipient: {{this.recipient}} <br />
+
+                    Transfer Amount: P {{this.amount}} <br />
+
+                    Left Over: P {{this.sender_resulting_budget}} <br />
+
+                    Number Approve: {{this.num_approve}} <br />
+
+                    Number Disapprove: {{this.num_disapprove}} <br />
+
+                    Responses: {{this.email_logs}} <br />
+
+                    Reason: {{this.reason}} <br /> <br /> 
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                </div>
+              </div>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <h2 class="center">Nothing Collected</h2>
+      {{/if}}
+    </div>
+  </div>
 </div>
-</br>	
-{{> apartment_js}}
-{{> apartment_css}}
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+          
+</script>

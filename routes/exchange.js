@@ -1,6 +1,8 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var moment = require('moment-timezone');
+var Async = require('async-next'); 
+var async = new Async(); 
 
 module.exports.set = function(router, pool) {
 
@@ -20,45 +22,38 @@ module.exports.set = function(router, pool) {
     res.render('exchanging_system');
   });
 
-  router.get('/exchange', ensureLoggedIn, function(request, response) {
-    var user;
-    var current_budget;
-    var pending_budget = 0;
-    var valid_budget;
+ 
+  router.get('/exchange', ensureLoggedIn, (req, res) => {
+    var selectUserInfo = {
+      text: 'SELECT * FROM account WHERE email = $1;',
+      values: [req.user.email]
+    }
+    var selectPendingBudget = {
+      text: "SELECT COALESCE(SUM(amount), 0) AS sum FROM exchange_list WHERE pending = true AND type = 'pedro-dollar' AND email = $1;",
+      values: [req.user.email]
+    }
 
-    pool.query("SELECT * FROM account WHERE email = $1;", [request.user.email], function(err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        user = request.user;
-        current_budget = result.rows[0].budget;
-        //console.log(current_budget)
-        pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [request.user.email], function(err1, result1) {
-          if (err1) {
-            console.error(err);
+    pool.query(selectUserInfo, (userErr, userResult) => {
+      if (userErr) {console.log("Here"); res.send(userErr)}
+      else {
+        pool.query(selectPendingBudget, (pendingErr, pendingResult) => {
+          if (pendingErr) {
+            console.log("This");
+            res.send(pendingErr)
           } else {
-          	console.log(result1)
-          	if(result1.rows.sum == null) {
-          		pending_budget = 0;
-          	} else {
-          		pending_budget = parseFloat(result1.rows[0].sum);
-          	}
-
-            response.render('exchange', {
-              user: user,
-              title: 'Exchange',
-              budget: current_budget,
-              pending_budget: pending_budget,
-              valid_exchange_budget: current_budget - pending_budget
-            });
+            var budget = userResult.rows[0].budget;
+            var pendingBudget = pendingResult.rows[0].sum;
+            var validBudget = parseFloat(budget) - parseFloat(pendingBudget)
+            res.render('exchanging', {user: req.user, data: userResult.rows[0] ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
           }
-        });
+        })
       }
-    });
-  });
+    })
+    
+  })
 
   async function exchangeValidation(req, res, next) {
-    const exchangeType = req.body.type;
+    const exchangeType = req.body.exchangeType;
     const exchangeEmail = req.user.email;
     const exchangeAmount = req.body.amount;
     const exchangeResult = req.body.result;
@@ -72,8 +67,8 @@ module.exports.set = function(router, pool) {
       exchangeApptTime.length == 0) {
       return res.status(400).send("Bad request!");
     }
-
-    if (exchangeType != 'Pedro to Dollar' && exchangeType != 'Dollar to Pedro') {
+    console.log(exchangeType);
+    if (exchangeType !== "pedro-dollar" && exchangeType !== "dollar-pedro") {
       return res.status(400).send("Unsure what the exchange type is!");
     }
     if (exchangeAmount < 5) {
@@ -85,9 +80,11 @@ module.exports.set = function(router, pool) {
     if (exchangeAmount != exchangeResult) {
       return res.status(400).send("Result and amount aren't the same");
     }
+    console.log(exchangeApptDate)
+    // return res.send("Hello!")
 
-
-    const apptDate = moment(exchangeApptDate).tz("Asia/Bangkok");
+    const apptDate = moment(exchangeApptDate, 'DD MMMM, YYYY').tz("Asia/Bangkok");
+    console.log(apptDate)
     const now = moment().tz("Asia/Bangkok")
     const bankCloseTime = moment().tz("Asia/Bangkok").hours(15).minute(30)
     const nowDate = moment().tz("Asia/Bangkok").startOf("day")
@@ -103,17 +100,15 @@ module.exports.set = function(router, pool) {
     }
 
     var userBudget = await pool.query("SELECT budget FROM account WHERE email = $1;", [req.user.email])
-    var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'Pedro to Dollar';", [req.user.email])
+    var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'pedro-dollar';", [req.user.email])
 
     const userCurrentBudget = parseFloat(userBudget.rows[0].budget);
     const pendingBudget = parseFloat(pending_budget.rows[0].sum)
+    console.log(userCurrentBudget - pendingBudget < exchangeAmount)
     if (userCurrentBudget - pendingBudget < exchangeAmount) {
-      return res.status(400).send("You don't have enough money to exchange! Check your pending budget!");
+      return res.status(403).send("You don't have enough money to exchange! Check your pending budget!");
     }
-    next()
-
-
-
+    next();
   }
 
   router.post('/exchange_approving', exchangeValidation, function(req, res) {
@@ -121,7 +116,7 @@ module.exports.set = function(router, pool) {
       timeCreated: Date.now(),
       person: req.user.fullName,
       email: req.user.email,
-      type: req.body.type,
+      type: req.body.exchangeType,
       amount: req.body.amount,
       result: req.body.result,
       reason: req.body.reason,
@@ -137,31 +132,41 @@ module.exports.set = function(router, pool) {
     var apptDate = exchangeLog.apptDate;
     var apptTime = 16;
 
-    var apptDate = moment(apptDate).tz("Asia/Bangkok");
+    var apptDate = moment(apptDate, 'DD MMMM, YYYY').tz("Asia/Bangkok");
     apptDate.hour(apptTime)
     apptDate = moment.utc(apptDate);
     apptDate = apptDate.format("YYYY-MM-DD HH:mm:ss");
 
     console.log("SQL DAte is: " + apptDate);
 
-
-    pool.query("INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate)\
-	  VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7);", [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate], function(err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        pool.query("SELECT role FROM account WHERE email = $1;", [req.user.email], function(err, result1) {
-          if (err) {
-            console.log('Error: ' + err);
+    const getApartment = {
+      text: "SELECT * FROM account WHERE email = $1;",
+      values: [exchangeLog.email]
+    }
+    pool.query(getApartment, function(apartmentErr, apartmentResult){
+      if(apartmentErr){console.log(apartmentErr);}
+      else{
+        var apartment = apartmentResult.rows[0].apartment;
+        const insertData = {
+          text: "INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate, apartment)\
+          VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7, $8);",
+          values: [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate, apartment]
+        };
+        pool.query(insertData, function(insertErr, insertResult) {
+          if (insertErr) {
+            console.log(insertErr);
           } else {
-            res.render('exchange_approving', {
-              user: req.user,
-              data: result1.rows
+            pool.query("SELECT role FROM account WHERE email = $1;", [req.user.email], function(err, result1) {
+              if (err) {
+                console.log('Error: ' + err);
+              } else {
+                res.send("Success!")
+              }
             });
           }
         });
       }
-    })
+    });
   });
 
   router.post('/exchange_list/approve/:id', function(req, res, next) {
@@ -193,7 +198,7 @@ module.exports.set = function(router, pool) {
         res.send("Error " + err);
       } else {
         if (result.rows[0].role == 're') {
-          pool.query("SELECT * FROM exchange_list WHERE type = 'Pedro to Dollar'\
+          pool.query("SELECT * FROM exchange_list WHERE type = 'pedro-dollar'\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
             if (err2) {
               console.log(err2)
