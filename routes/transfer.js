@@ -101,36 +101,47 @@ module.exports.set = function(router, pool) {
   	var recipientBudget;
 
   	//query to find both sender and recipent budget and await (until the query is done the next code will execute)
-  	const senderQuery = await pool.query("SELECT email, budget FROM account WHERE email = $1 or email = $2;", [senderEmail, recipientEmail]);
-  	
-  	//If it work correctly, it would return back with two elements in rows array
-  	if (senderQuery.rows.length == 2) {
-  		//the first element[0] should be for sender
-  		//the second element[1] should be for recipient
-  		senderBudget = parseFloat(senderQuery.rows[0].budget);
-  		recipientBudget = parseFloat(senderQuery.rows[1].budget);
-  	} else if (senderQuery.rows.length == 1) {
-  		// check which email is not found
-  		if(senderQuery.rows[0].email == recipientEmail) {
-  			return res.status(400).send("Bad Request! No such sender email found: " +  senderEmail)
-  		} else if(senderQuery.rows[0].email == senderEmail) {
-  			return res.status(400).send("Bad Request! No such recipient email found: " +  recipientEmail)
-  		}
-  		return res.status(400).send("Bad Request!")
-  	} else if (senderQuery.rows.length > 2) {
-  		return res.status(400).send("Something is wrong with our server!");
-  	} 
+  	const senderQuery = await pool.query("SELECT email, budget FROM account WHERE email = $1", [senderEmail]);
+  	const recipientQuery = await pool.query("SELECT email, budget FROM account WHERE email = $1;", [recipientEmail]);
+
+    if (senderQuery.rows.length == 0) {
+      return res.status(400).send("Bad Request! No such sender email found: " +  senderEmail)
+    } else if (senderQuery.rows.length > 1) {
+      return res.status(400).send("Something is wrong with our server!");
+    }
+
+    if (recipientQuery.rows.length == 0) {
+      return res.status(400).send("Bad Request! No such recipient email found: " +  recipientEmail)
+    } else if (recipientQuery.rows.length > 1) {
+      return res.status(400).send("Something is wrong with our server!");
+    }
+	
+		senderBudget = parseFloat(senderQuery.rows[0].budget);
+		recipientBudget = parseFloat(recipientQuery.rows[0].budget);
+    
+
+    const selectPendingBudget  = {
+      text: "SELECT COALESCE(SUM(amount), 0) AS sum FROM exchange_list WHERE pending = true AND type = 'pedro-dollar' AND email = $1;",
+      values: [senderEmail]
+    }
+
+    const senderPendingBudget = await pool.query(selectPendingBudget);
+    var pendingBudget = parseFloat(senderPendingBudget.rows[0].sum)
+
+    console.log("senderBudget", senderBudget);
+    console.log("recipientBudget", recipientBudget);
+    console.log("pendingBudget", senderPendingBudget.rows[0].sum);
 
   	//*important checking 
-  	if (senderBudget < transferBudget) {
+  	if (senderBudget - pendingBudget < transferBudget) {
   		return res.status(400).send("You don't have enough money")
   	} 
 
   	//Set the sessions for save time use for next middleware
   	//Next middleware don't need to query for sender or recipent budget
-	req.session.senderBudget = parseFloat(senderBudget)
-	req.session.recipientBudget = parseFloat(recipientBudget)
-	next() 	
+  	req.session.senderBudget = parseFloat(senderBudget)
+  	req.session.recipientBudget = parseFloat(recipientBudget)
+  	next() 	
   }
   
   //if the validateTransfer success, the middleware just call queries to database
