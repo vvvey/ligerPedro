@@ -7,7 +7,7 @@ module.exports.set = function(router, pool) {
 
   router.post('/keeper/d/p/:id', function(request, response, next){
     var id = request.params.id;
-    if(id === undefineds){
+    if(id === undefined){
       response.redirect('/keeper_list');
     }
     var status = request.body.status;
@@ -68,8 +68,12 @@ module.exports.set = function(router, pool) {
       var date = today.getDate();
       var mon = today.getMonth() + 1; 
       var year = today.getFullYear();
+      
+      if(mon < 10){
+        mon = "0" + String(mon); 
+      }
 
-      var wholeDate = String(mon + " " + date + ", " + year);
+      var wholeDate = String(year + "-" + mon  + "-" + date + " 9:00:00");
       
       return wholeDate;
     }
@@ -83,9 +87,12 @@ module.exports.set = function(router, pool) {
       if(accDataErr){console.log(accDataErr);}
       else{
         if(accDataResult.rows[0].role == 'keeper'){
+
+          var appoint = toDateMonth(Date.now());
+          console.log(appoint);
           const exchangeSelect = {
             text: "SELECT * FROM exchange_list WHERE approved = 'true' AND pending = 'true' AND type = 'pedro-dollar' AND apptdate = $1;",
-            values: [toDateMonth(Date.now())]
+            values: [appoint]
           };
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
@@ -151,7 +158,7 @@ module.exports.set = function(router, pool) {
     });
   });
 
-  router.post('/keeper/p/d/:id', ensureLoggedIn, async function(request, response) {
+  router.post('/keeper/p/d/:id', async function(request, response) {
     var status = request.body.status;
     var selection = request.body.selection;
     var email = request.user.email;
@@ -180,6 +187,7 @@ module.exports.set = function(router, pool) {
 
             } else if(status == 'cancel') {
               for(var i = 0; i < selection.length; i++){
+                var id = selection[i];
                 await pool.query("UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), \
                 exchanged = 'false' WHERE id = $1;", [id]);
               }
@@ -190,8 +198,22 @@ module.exports.set = function(router, pool) {
     });
   });
 
-  router.get('/keeper/d/p', function(request, response){
+  router.get('/keeper/d/p', ensureLoggedIn, function(request, response){
     var email = request.user.email;
+    var toDateMonth = function(dateZone){
+      var today = new Date(dateZone);
+      var date = today.getDate();
+      var mon = today.getMonth() + 1; 
+      var year = today.getFullYear();
+      
+      if(mon < 10){
+        mon = "0" + String(mon); 
+      }
+
+      var wholeDate = String(year + "-" + mon  + "-" + date + " 9:00:00");
+      
+      return wholeDate;
+    }
 
     const dataAcc = {
       text: "SELECT * FROM account WHERE email = $1;",
@@ -201,9 +223,13 @@ module.exports.set = function(router, pool) {
     pool.query(dataAcc, function (accDataErr, accDataResult) {
       if(accDataErr){console.log(accDataErr);}
       else{
+
         if(accDataResult.rows[0].role == 'keeper'){
+          var appoint = toDateMonth(Date.now());
+          console.log(appoint);
           const exchangeSelect = {
-            text: "SELECT * FROM exchange_list WHERE pending = 'true' AND type = 'dollar-pedro' ORDER BY timecreated DESC;"
+            text: "SELECT * FROM exchange_list WHERE pending = 'true' AND type = 'dollar-pedro' AND apptdate = $1 ORDER BY timecreated DESC;",
+            values: [appoint]
           };
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
