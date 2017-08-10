@@ -19,8 +19,10 @@ module.exports.set = function(router, pool) {
     };
     if(accCollection.role == 'senior_student'){
       var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [accCollection.ident.toUpperCase()]);
+      var apartmentEmail = apartmentData.rows[0].email;
+
       var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
-       WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]);
+       WHERE sender = $1 AND finished = 'f';", [apartmentEmail]);
       var emails = await pool.query("SELECT email FROM account;");
       var apartmentTransferBudget = 0;
       var emailsList = [];
@@ -98,8 +100,8 @@ module.exports.set = function(router, pool) {
       var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
       var apartmentEmail = apartmentData.rows[0].email;
 
-      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE email = $1 AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
-      var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE email = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]);
+      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
+      var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]);
      
       var apartmentTransferBudget = 0;
       if(dataTransferNot.rows){        
@@ -136,8 +138,10 @@ module.exports.set = function(router, pool) {
     if(accCollection.role == 'senior_student'){
 
       var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [accCollection.ident.toUpperCase()]);
+      var apartmentEmail = apartmentData.rows[0].email;
+
       var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
-        WHERE apartment = $1 AND finished = 'f';", [accCollection.ident]); 
+        WHERE sender = $1 AND finished = 'f';", [apartmentEmail]); 
       var apartmentTransferBudget = 0;
 
       if(apartmentTransfer.rows){        
@@ -148,7 +152,7 @@ module.exports.set = function(router, pool) {
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
 
       var exchangeInfro = await pool.query("SELECT * FROM exchange_list WHERE approved = 'true' \
-        AND pending = 'true' AND apartment = $1 AND type = 'pedro-dollar' ORDER BY date ASC;", [accCollection.ident]);
+        AND pending = 'true' AND apartment = $1 AND type = 'pedro-dollar';", [accCollection.ident]);
       var shr = exchangeInfro;
       var dataCollection = [];
 
@@ -225,7 +229,7 @@ module.exports.set = function(router, pool) {
         response.redirect('/apartment_approve');
       } 
     }
-    
+
     if(approved < 3 && denied < 2){
       console.log("Adding everyhing");
       await pool.query("UPDATE transfer_logs SET num_disapprove = $1, num_approve = $2,\
