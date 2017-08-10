@@ -80,8 +80,8 @@
 
                   <div class="modal-footer center">
                     <center>
-                      <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat amber">Disagree</a>
-                      <button class="green waves-effect waves-black btn-flat" type="submit" onclick="clearing()">Agree</button>
+                      <a href="#" class="modal-close waves-effect waves-black btn-flat amber">Disagree</a>
+                      <button class="green waves-effect waves-black btn-flat" type="submit">Agree</button>
                     </center>
                   </div>
                 </div>
@@ -103,10 +103,7 @@ function check(){
   document.getElementById('amountInput').innerHTML = "P 0" + amount;
   document.getElementById('emailInput').innerHTML = email;
 }
-function clearing(){
-  $("#transfer")[0].submit();
-  
-}
+
 $( document ).ready(function() {
   Materialize.updateTextFields();
 });
@@ -157,13 +154,15 @@ $(function() {
       }
     },
     submitHandler: function(form) {
+      $('button[type=submit').prop('disabled', true);
       $.ajax({
         url: form.action,
         type: form.method,
         data: $(form).serialize(),
         success: function(response) {
+          $('button[type=submit').prop('disabled', false);
           Materialize.toast(response, 4000)
-          if (response == "Sent") {
+          if (response == "Success") {
             $('.modal').modal('close');
             location.reload();
           } 
