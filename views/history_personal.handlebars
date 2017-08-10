@@ -1,5 +1,4 @@
 {{> simNav}}
-
 <div class="container-fluid">
 	<div class="row"><br />
 		<div class="col s12 l10 offset-l1">
@@ -17,7 +16,7 @@
 				<thead class="black">
 					<tr class="white-text">
 						<th>Date</th>
-						<th>Recipient</th>
+						<th>User</th>
 						<th>Amount</th>
 						<th>Remain Budget</th>
 						<th>Reason</th>
@@ -29,7 +28,11 @@
 					{{#each transferData}}
 					<tr>
 						<td>{{dateFormat this.date}}</td>
-						<td>{{this.recipient}}</td>
+						{{#ifCondA recipient '!=' ../email}}
+							<td> <span class="new badge red left" data-badge-caption="">Sends to</span> {{recipient}} </td>
+						{{else ifCondA this.sender '!=' ../email}}		
+							<td><span class="new badge blue left" data-badge-caption="">Sends from</span> {{this.sender}} </td>
+						{{/ifCondA}}
 						<td>P {{this.amount}}</td>
 						<td>P {{this.sender_resulting_budget}}</td>
 						<td class="left">{{this.reason}}</td>
@@ -57,9 +60,9 @@
 						    	</div>
 						    	<div class="col s4 m4">
 						    		{{#ifCondA this.type '==' 'pedro-dollar'}}
-						    			<span class="new badge red black-text left" data-badge-caption="">Pedro to Dollar</span>
+						    			<span class="new badge red left" data-badge-caption="">Pedro to Dollar</span>
 						    		{{else}}
-						    			<span class="new badge green black-text left" data-badge-caption="">Dollar to Pedro</span>
+						    			<span class="new badge blue left" data-badge-caption="">Dollar to Pedro</span>
 						    		{{/ifCondA}}
 						    	</div>
 						    	<div class="col s4 m3">
