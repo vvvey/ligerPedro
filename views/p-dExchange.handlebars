@@ -1,64 +1,72 @@
-{{> dashboard-nav}}
+{{> keeperNav}}
 <div class="row">
-    <div class="col s12 l9 offset-l3">
+    <div class="col s12 l10 offset-l1">
       <div class="card circle z-depth-2">
         <div class="card-content black-text center">
           <div class="row">
             <span class="card-title center"><h4>Exchange Request Pedro-Dollar</h4></span>
           </div>
           <div class="row">
-
-            <div class="col l4 m6 s12 z-depth-0">
-              <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
-                <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment A1<i class="material-icons right">more_vert</i></span>
-                  <div>
-                    <h1>P{{BudA1}}</h1>
-                  </div>
-                </div>
-
-                <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
-                  <table class="black-text">
-                  {{#each approvedDate}}
-                    {{#ifCondA this.apartment '==' 'a1'}}
-                      <tr>
-                        <td>{{this.person}}</td>
-                        <td>P{{this.amount}}</td>
-                      </tr>
-                    {{/ifCondA}}
-                  {{/each}}
-                  </table>
-                </div>
-                {{#if BudA1}}
-                  <div class="row">
-                    <div class="card-action">
-                      <form method="post" action="/keeper/p/d/{{ranVal}}">
-                        <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="doneA1">Done</button>
-
-                        <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancelA1">Cancel</button>
-                      </form>
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+            <input type="hidden" name="apartment" value="a1">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment A1<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudA1}}</h3>
                     </div>
                   </div>
-                {{else}}
-                  <div class="card-action white center"> 
-                    <span class="red-text">No exchange at A1!</span>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'a1'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.amount}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
                   </div>
-                {{/if}} 
+                  {{#if BudA1}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at A1!</span>
+                    </div>
+                  {{/if}} 
+                </div>
               </div>
-            </div>
+            </form>
 
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment A2<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment A2<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudA2}}</h1>
+                    <h3>P{{BudA2}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'a2'}}
@@ -93,14 +101,14 @@
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment B3<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment B3<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudB3}}</h1>
+                    <h3>P{{BudB3}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'b3'}}
@@ -135,14 +143,14 @@
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment B4<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment B4<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudB4}}</h1>
+                    <h3>P{{BudB4}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'b4'}}
@@ -183,9 +191,9 @@
               {{/if}}
 
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Totoal Cost</span>
+                  <span class="card-title activator white-text text-darken-1">Totoal Cost</span>
                   <div>
-                    <h1>P{{BudTotal}}</h1>
+                    <h3>P{{BudTotal}}</h3>
                   </div>
                 </div>
                 <div class="row">
@@ -199,14 +207,14 @@
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment C5<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment C5<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudC5}}</h1>
+                    <h3>P{{BudC5}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'c5'}}
@@ -242,14 +250,14 @@
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment C6<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment C6<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudC6}}</h1>
+                    <h3>P{{BudC6}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'c6'}}
@@ -285,14 +293,14 @@
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment D7<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment D7<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudD7}}</h1>
+                    <h3>P{{BudD7}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'd7'}}
@@ -328,14 +336,14 @@
             <div class="col l4 m6 s12 z-depth-0">
               <div class="card cardE blue-grey darken-3 z-depth-4 white-text">
                 <div class="card-content">
-                  <span class="card-title activator white-text text-darken-4">Apartment D8<i class="material-icons right">more_vert</i></span>
+                  <span class="card-title activator white-text text-darken-1">Apartment D8<i class="material-icons right">more_vert</i></span>
                   <div>
-                    <h1>P{{BudD8}}</h1>
+                    <h3>P{{BudD8}}</h3>
                   </div>
                 </div>
 
                 <div class="card-reveal">
-                  <span class="card-title grey-text text-darken-4">People<i class="material-icons right">close</i></span>
+                  <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
                   <table class="black-text">
                   {{#each approvedDate}}
                     {{#ifCondA this.apartment '==' 'd8'}}
