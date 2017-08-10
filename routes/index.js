@@ -133,11 +133,11 @@ router.get('/history_personal', async function(request, response){
   if(request.user){
     var email = request.user.email;
     
-    var getTransfer = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1 ORDER BY date DESC;", [email]);
+    var getTransfer = await pool.query("SELECT * FROM transfer_logs WHERE apartment IS NULL AND (sender = $1 OR recipient = $1) ORDER BY date ASC;", [email]);
     
     var getExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [email]);
 
-    response.render('history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows});
+    response.render('history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
   } else {
     response.redirect('/login');
   }
