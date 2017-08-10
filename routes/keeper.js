@@ -62,6 +62,17 @@ module.exports.set = function(router, pool) {
   router.get('/keeper/p/d', ensureLoggedIn, function(request,response) {
     
     var email = request.user.email;
+    
+    var toDateMonth = function(dateZone){
+      var today = new Date(dateZone);
+      var date = today.getDate();
+      var mon = today.getMonth() + 1; 
+      var year = today.getFullYear();
+
+      var wholeDate = String(mon + " " + date + ", " + year);
+      
+      return wholeDate;
+    }
 
     const dataAcc = {
       text: "SELECT * FROM account WHERE email = $1;",
@@ -73,7 +84,8 @@ module.exports.set = function(router, pool) {
       else{
         if(accDataResult.rows[0].role == 'keeper'){
           const exchangeSelect = {
-            text: "SELECT * FROM exchange_list WHERE approved = 'true' AND pending = 'true' AND type = 'pedro-dollar';"
+            text: "SELECT * FROM exchange_list WHERE approved = 'true' AND pending = 'true' AND type = 'pedro-dollar' AND apptdate = $1;",
+            values: [toDateMonth(Date.now())]
           };
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
@@ -139,83 +151,39 @@ module.exports.set = function(router, pool) {
     });
   });
 
-  router.post('/keeper/p/d/:id', ensureLoggedIn,function(request, response) {
-    if(id === undefined){
-      response.redirect('/keeper_list');
-    }
-
+  router.post('/keeper/p/d/:id', ensureLoggedIn, async function(request, response) {
+    var status = request.body.status;
+    var selection = request.body.selection;
     var email = request.user.email;
-    
+    if(!selection){
+      return response.status(400).send("Something wrong, maybe you not check any text box!");
+    }
     const checkingAcc = {
       text: "SELECT * FROM account WHERE email = $1;",
       values: [email] 
     };
 
-    pool.query(checkingAcc, function(accountErr, accountResult){
+    pool.query(checkingAcc, async (accountErr, accountResult) => {
       if(accountErr){
         console.log(accountErr);
       } else {
         if(accountResult.rows[0].role == 'keeper') {
-          var status = request.body.status;
-          var apartmentDone = ['doneA1', 'doneA2', 'doneB3', 'doneB4', 'doneC5', 'doneC6', 'doneD7', 'doneD8'];
-          var apartmentCancel = ['cancelA1', 'cancelA2', 'cancelB3', 'cancelB4', 'cancelC5', 'cancelC6', 'cancelD7', 'cancelD8'];
-          var apartment = ['a1', 'a2', 'b3', 'b4', 'c5', 'c6', 'd7', 'd8'];
-
-          _.each(apartmentDone, function (thatAparmtent) {
-            var i = _.indexOf(apartmentDone, thatAparmtent);
-
-            if(status == thatAparmtent){
-
-              const selectExchange = {
-                text: 'SELECT * FROM exchange_list WHERE approved = $1 AND pending = $2 AND apartment = $3;',
-                values: ["true", "true", apartment[i]]
+            if(status == 'done'){
+              for(var i = 0; i < selection.length; i++){
+                var id = selection[i];
+                console.log(id);
+                var emailExc = await pool.query("SELECT * FROM exchange_list WHERE id = $1", [id]);
+                await pool.query("UPDATE account SET budget = budget - $1 WHERE email = $2;", [parseInt(emailExc.rows[0].result), emailExc.rows[0].email]);
+                await pool.query("UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), \
+                  exchanged = 'true' WHERE id = $1;", [id]);
               }
 
-              pool.query(selectExchange, function (firSelectErr, firSelectResult) {
-                if(firSelectErr) {console.log(firSelectErr)} 
-                else {
-
-                  _.each(firSelectResult.rows, function(exchanger) {
-                    const updatingAccount = {
-                      text: "UPDATE account SET budget = budget - $1 WHERE email = $2;",
-                      values: [parseInt(exchanger.result), exchanger.email]
-                    }
-                    pool.query(updatingAccount, function(updateAccErr, updateAccResult){
-                      if(updateAccErr){console.log(updateAccErr);}
-                      else{
-                        const updateExhcange = {
-                          text: "UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), exchanged = $1 WHERE id = $2;",
-                          values: ['true', exchanger.id] 
-                        };
-                        pool.query(updateExhcange, function(exchangeUpErr){
-                          if(exchangeUpErr){console.log(exchangeUpErr);}
-                        });
-                      }
-                    });          
-                  });
-                }
-              });
-            } else if(status == apartmentCancel[i]) {
-              const getExchange = {
-                text: "SELECT * FROM exchange_list WHERE approved = $1 AND pending = $2 AND apartment = $3;",
-                values: ["true", "true", apartment[i]]
-              };
-              pool.query(getExchange, function (selectErr, selectResult) {
-                if(selectErr) {console.log(selectErr)} 
-                else {
-                  _.each(selectResult.rows, function(exCancel){
-                    const updateExhcange = {
-                      text: "UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), exchanged = $1 WHERE id = $2;",
-                      values: ['false', exCancel.id] 
-                    };
-                    pool.query(updateExhcange, function(updateExErr) {
-                      if(updateExErr){console.log(updateExErr);}
-                    });
-                  });
-                }
-              });
-            }
-          });
+            } else if(status == 'cancel') {
+              for(var i = 0; i < selection.length; i++){
+                await pool.query("UPDATE exchange_list SET pending = 'false', timeexchanged = CURRENT_TIMESTAMP(2), \
+                exchanged = 'false' WHERE id = $1;", [id]);
+              }
+            } 
           response.redirect('/keeper/p/d');
         } else {response.redirect('/notFound')}
       }
