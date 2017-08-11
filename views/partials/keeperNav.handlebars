@@ -1,7 +1,7 @@
 <div class="navbar">
 	<nav class="nav-extended">
 		<div class="nav-wrapper blue-grey black">
-			<a href="#" class="brand-logo center">Exhange Approve</a>
+			<a href="#" class="brand-logo center">{{#if keeper}}Keeper Approval{{/if}} RE's Approval</a>
 			<ul>
 				<li><a href="/transfer_personal">Return</a></li>
 			</ul>
@@ -9,6 +9,7 @@
 	</nav>
 </div>
 
+{{#if keeper}}
 <div class="fixed-action-btn toolbar">
 	<a class="btn-large black z-depth-0">
 	  <i class="large material-icons">menu</i>
@@ -18,3 +19,4 @@
 	  <li class="waves-effect waves-light"><a href="/keeper/d/p">Exchange Dollar to Pedro</a></li>
 	</ul>
 </div>	
+{{/if}}

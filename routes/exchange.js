@@ -129,7 +129,7 @@ module.exports.set = function(router, pool) {
     })
   })
 
-  router.get('/exchange_list', function(req, res) {
+  router.get('/exchange_list', ensureLoggedIn,function(req, res) {
     var email = req.user.email;
     var userName = req.user.fullName;
 
@@ -145,10 +145,7 @@ module.exports.set = function(router, pool) {
               console.log(err2)
             } else {
               res.render('exchange_list', {
-                requestRow: result2.rows,
-                requestCol: result2.fields,
-                user: req.user,
-                data: result.rows
+                exchangeData: result2.rows,
               });
             }
           })
