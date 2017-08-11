@@ -1,5 +1,6 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
+var Validator = require('../lib/validator')
 
 module.exports.set = function(router, pool) {
 	// Example of pool
@@ -238,12 +239,12 @@ module.exports.set = function(router, pool) {
     }
   });
 
-  router.post('/transferApartmentSucc', ensureLoggedIn, async function(request, response){
+  router.post('/transferApartmentSucc', ensureLoggedIn, Validator.apartmentTransfer, async function(request, response){
 
     var fromUser = {
-      amountSend: request.body.amountTrans,
-      emailSend: request.body.recipientTrans,
-      reasonSend: request.body.reasonTrans,
+      amountSend: request.body.amount,
+      emailSend: request.body.recipient,
+      reasonSend: request.body.reason,
       userName: request.user.displayName,
       email: request.user.email
     };
