@@ -16,12 +16,12 @@
                 <div class="row">
 
                   <div class="input-field col s6 l4 offset-l2">
-                    <input id="amount" type="number" class="validate marginLess" name="amountTrans" style="margin: 0;">
-                    <label for="amount" class="active">Amount</label>
+                    <input id="amount" type="number" min="0" class="validate marginLess" name="amount" style="margin: 0;">
+                    <label for="amount" class="active" data-error="Shdlfkdj">Amount</label>
                   </div>
 
                   <div class="input-field col s6 l4">
-                    <input id="email" type="email" class="validate" name="recipientTrans" list="liger_email" style="margin: 0;">
+                    <input id="email" type="email" class="validate" name="recipient" list="liger_email" style="margin: 0;">
                     <label for="email" class="active">e-mail</label>
 
                     <datalist id="liger_email">
@@ -32,38 +32,19 @@
                   </div>
                 </div>
 
-                <div class="row">
-                  <div class="col s6 l4 offset-l2">
-                    <center>  
-                    <label id="amount-error" class="error red-text" for="amount"></label>
-                    </center>
-                  </div>
-
-                  <div class="col s6 l4">
-                    <center>
-                      <label id="email-error" class="error red-text" for="email"></label>
-                    </center>
-                  </div>
-                </div>
+    
 
                 <div class="row">
                   <div class="input-field col s12 l8 offset-l2">
-                    <textarea id="reason" class="materialize-textarea validate" name="reasonTrans" data-length="200" data-error="Check it again" style="margin: 0;"></textarea>
+                    <textarea id="reason" class="materialize-textarea validate" name="reason" data-length="200" data-error="Check it again" style="margin: 0;"></textarea>
                     <label for="reason">Reason</label>
                   </div>
                 </div>
 
-                <div class="row">
-                  <div class="col s12 l8 offset-l2">
-                    <center>
-                      <label id="reason-error" class="error red-text" for="reason"></label>
-                    </center>
-                  </div>
-                </div>
 
                 <div class="row">
                   <div class="input-field col s6 m6 l4 offset-s2 offset-m3 offset-l4">
-                      <a class="waves-effect waves-light btn center" href="#comfirm" onclick="check()">Submit</a>
+                      <a disabled class="waves-effect waves-light btn center submit-button green" href="#comfirm" onclick="check()">Submit</a>
                   </div>
                 </div>
 
@@ -106,6 +87,15 @@ function check(){
 
 $( document ).ready(function() {
   Materialize.updateTextFields();
+
+  $('form :input').on("keyup blur paste input propertychange change", function() {
+    if (($(this).closest('form')).valid()) { // checks form for validity
+      $('a.submit-button').attr('disabled', false); // enables button
+    } else {
+      $('a.submit-button').attr('disabled', 'disabled'); // disables button
+    }
+  });
+
 });
 
 $('textarea#reason').characterCounter();
@@ -127,31 +117,42 @@ $(function() {
     return this.optional( element ) || wrong == 1;
   }, "Please write a better email!");
 
+
   $( "#transfer" ).validate({
     rules: {
-      amountTrans: {
+      amount: {
         required: true,
         min: 0,
         max: {{resultingBudget}},
         number: true
       },
-      recipientTrans: {
+      recipient: {
         required: true,
         email: true,
         list: true
       },
-      reasonTrans: {
+      reason: {
         maxlength: 200,
         required: true
       }
     },
+
     messages:{
       amount: {
-        required: "<span class='center'>Needed!<span>",
+        required: "Needed!",
         min: "Please add an integer!",
-        max: "It too much!",
+        max: "It's too much!",
         number: "Number please!"
       }
+    },
+
+    errorPlacement: function(error, element) {
+     
+      $(element)
+            .closest("form")
+            .find("label[for='" + element.attr("id") + "']")
+            .attr('data-error', error.text());
+
     },
     submitHandler: function(form) {
       $('button[type=submit').prop('disabled', true);
