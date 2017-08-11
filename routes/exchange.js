@@ -1,8 +1,6 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-var pg = require('pg');
 var moment = require('moment-timezone');
-var Async = require('async-next'); 
-var async = new Async(); 
+var Validator = require('../lib/validator')
 
 module.exports.set = function(router, pool) {
 
@@ -52,67 +50,10 @@ module.exports.set = function(router, pool) {
     
   })
 
-  async function exchangeValidation(req, res, next) {
-    const exchangeType = req.body.exchangeType;
-    const exchangeEmail = req.user.email;
-    const exchangeAmount = req.body.amount;
-    const exchangeResult = req.body.result;
-    const exchangeApptDate = req.body.apptDate;
-    const exchangeApptTime = req.body.apptTime;
+  
 
-    if (exchangeEmail.length == 0 ||
-      exchangeAmount.length == 0 ||
-      exchangeResult.length == 0 ||
-      exchangeApptDate.length == 0 ||
-      exchangeApptTime.length == 0) {
-      return res.status(400).send("Bad request!");
-    }
-    console.log(exchangeType);
-    if (exchangeType !== "pedro-dollar" && exchangeType !== "dollar-pedro") {
-      return res.status(400).send("Unsure what the exchange type is!");
-    }
-    if (exchangeAmount < 5) {
-      return res.status(400).send("Amount have to be greater or equal to 5");
-    }
-    if (exchangeAmount % 5 != 0) {
-      return res.status(400).send("Amount have to be mulitiple of 5");
-    }
-    if (exchangeAmount != exchangeResult) {
-      return res.status(400).send("Result and amount aren't the same");
-    }
-    console.log(exchangeApptDate)
-    // return res.send("Hello!")
-
-    const apptDate = moment(exchangeApptDate, 'DD MMMM, YYYY').tz("Asia/Bangkok");
-    console.log(apptDate)
-    const now = moment().tz("Asia/Bangkok")
-    const bankCloseTime = moment().tz("Asia/Bangkok").hours(15).minute(30)
-    const nowDate = moment().tz("Asia/Bangkok").startOf("day")
-
-    if (apptDate.day() == 0 || apptDate.day() > 4) {
-      return res.status(400).send("The appointment day is not valid on that day!");
-    } else if (apptDate.isBefore(nowDate)) {
-      return res.status(400).send("Sorry! You can't exchange from the past");
-    } else if (now.isSame(apptDate, 'd')) {
-      if (now.isAfter(bankCloseTime)) {
-        return res.status(400).send("Bank Closed! Exchange next open day!");
-      }
-    }
-
-    var userBudget = await pool.query("SELECT budget FROM account WHERE email = $1;", [req.user.email])
-    var pending_budget = await pool.query("SELECT sum(amount) FROM exchange_list WHERE email = $1 AND pending = true AND type = 'pedro-dollar';", [req.user.email])
-
-    const userCurrentBudget = parseFloat(userBudget.rows[0].budget);
-    const pendingBudget = parseFloat(pending_budget.rows[0].sum)
-    console.log(userCurrentBudget - pendingBudget < exchangeAmount)
-    if (userCurrentBudget - pendingBudget < exchangeAmount) {
-      return res.status(403).send("You don't have enough money to exchange! Check your pending budget!");
-    }
-    next();
-  }
-
-  router.post('/exchange_approving', exchangeValidation, function(req, res) {
-    var exchangeLog = {
+  router.post('/exchange_approving', Validator.exchange, function(req, res) {
+    var exchangeLog = { 
       timeCreated: Date.now(),
       person: req.user.fullName,
       email: req.user.email,
