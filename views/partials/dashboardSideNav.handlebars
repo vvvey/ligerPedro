@@ -66,8 +66,20 @@
     </li>
     {{#ifCondA role '==' 'admin'}}
       <li><a href="/admin/user"><i class="material-icons">people</i>User Profile</a></li>
-      <li><a href="/admin/exchange_data"><i class="material-icons"></i>All Exchange Logs</a></li>
+  
       <li><a href="/admin/transfer_data"><i class="material-icons">send</i>All Transfer Logs</a></li>
+       <ul class="collapsible collapsible-accordion">
+          <li>
+            <a class="collapsible-header"><i class="material-icons"></i>Exchanging</a>
+            <div class="collapsible-body">
+              <ul>
+                 <li><a href="/admin/exchange_data"><i class="material-icons">list</i>All Exchange Logs</a></li>
+                <li><a href="/exchange_list"><i class="material-icons">check_circle</i>Exchanging Approve</a></li>
+                <li><a href="/keeper/p/d"><i class="material-icons">schedule</i>Keeper Page</a></li>
+              </ul>
+            </div>
+          </li>
+          </ul>
       <li><div class="divider"></div></li>
 
       <li>
@@ -87,6 +99,7 @@
               <ul>
                 <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
                 <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+
               </ul>
             </div>
           </li>
@@ -111,6 +124,9 @@
       <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
       <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
     {{/ifCondA}}
+    <li><div class="divider"></div></li>
+    <li><a href="/"> <i class="material-icons">home</i>Return Home</a></li>
+   
   </ul>
 {{/with}}
 

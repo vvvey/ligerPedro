@@ -86,7 +86,7 @@ module.exports.set = function(router, pool) {
     pool.query(dataAcc, function (accDataErr, accDataResult) {
       if(accDataErr){console.log(accDataErr);}
       else{
-        if(accDataResult.rows[0].role == 'keeper'){
+        if(accDataResult.rows[0].role == 'keeper' || accDataResult.rows[0].role == 'admin'){
 
           var appoint = toDateMonth(Date.now());
           console.log(appoint);
@@ -224,7 +224,7 @@ module.exports.set = function(router, pool) {
       if(accDataErr){console.log(accDataErr);}
       else{
 
-        if(accDataResult.rows[0].role == 'keeper'){
+        if(accDataResult.rows[0].role == 'keeper' || accDataResult.rows[0].role == 'admin'){
           var appoint = toDateMonth(Date.now());
           console.log(appoint);
           const exchangeSelect = {

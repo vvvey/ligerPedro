@@ -116,7 +116,8 @@ module.exports.set = function(router, pool)  {
 		});
 
 		var recentTransfer  = {
-			text: "	SELECT * FROM transfer_logs \
+			text: "	SELECT transfer_logs.*, account.username as sender_username FROM transfer_logs \
+					JOIN account ON (transfer_logs.sender = account.email) \
 					WHERE recipient = 'residence@ligercambodia.org' \
 					ORDER BY date DESC LIMIT 4;"
 		}
