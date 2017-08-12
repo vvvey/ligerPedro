@@ -147,3 +147,7 @@
 .login-image-logo {
 	width: 100px;
 }
+
+.progress .indeterminate {
+    background-color: #4caf50;
+}

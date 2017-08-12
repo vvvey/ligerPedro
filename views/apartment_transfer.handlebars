@@ -16,12 +16,14 @@
                 <div class="row">
 
                   <div class="input-field col s6 l4 offset-l2">
-                    <input id="amount" type="number" min="0" class="validate marginLess" name="amount" style="margin: 0;">
-                    <label for="amount" class="active" data-error="Shdlfkdj">Amount</label>
+                    <i class="material-icons prefix">P</i>
+                    <input id="amount" type="number" class="marginLess" name="amount">
+                    <label for="amount" class="active">Amount</label>
                   </div>
 
                   <div class="input-field col s6 l4">
-                    <input id="email" type="email" class="validate" name="recipient" list="liger_email" style="margin: 0;">
+                  <i class="material-icons prefix">account_circle</i>
+                    <input id="email" type="email" name="recipient" list="liger_email" >
                     <label for="email" class="active">e-mail</label>
 
                     <datalist id="liger_email">
@@ -30,44 +32,34 @@
                       {{/each}}
                     </datalist>
                   </div>
-                </div>
-
-    
-
-                <div class="row">
+                      
                   <div class="input-field col s12 l8 offset-l2">
-                    <textarea id="reason" class="materialize-textarea validate" name="reason" data-length="200" data-error="Check it again" style="margin: 0;"></textarea>
+                  <i class="material-icons prefix">comment</i>
+                    <textarea id="reason" class="materialize-textarea validate" name="reason" data-length="200" data-error="Check it again"></textarea>
                     <label for="reason">Reason</label>
                   </div>
-                </div>
-
-
-                <div class="row">
+             
                   <div class="input-field col s6 m6 l4 offset-s2 offset-m3 offset-l4">
-                      <a disabled class="waves-effect waves-light btn center submit-button green" href="#comfirm" onclick="check()">Submit</a>
+                      <a disabled class="waves-effect waves-light btn center submit-button green" href="#confirm" onclick="check()">Submit</a>
                   </div>
                 </div>
+                <div id="confirm" class="modal">
+                      <div class="modal-content">
+                        <h4>Confirmation</h4>
+                        <span>Are you sure that you want to transfer <a href="#amount" class="" ass="modal-action modal-close" id="amountInput">x</a>  to e-mail: <a href="mailto:" id="emailInput">someone@ligercambodia.org</a>?</span>
+                      </div>
+               
+                        <div class="modal-footer">
+                            <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat">Cancel</a>
+                            <button class="waves-effect waves-black btn-flat" type="submit">Agree</button>
 
-                <div id="comfirm" class="modal bottom-sheet">
-                  <div class="modal-content hide-on-small-only">
-                    <h3>Comfirmation</h3>
-                    <h4 class="center">Are you sure that you want to transfer <a href="#amount" class="modal-action modal-close" id="amountInput">x</a>  to e-mail: <a href="mailto:" id="emailInput">someone@ligercambodia.org</a>?</h4>
-                  </div>
-
-                  <div class="modal-content show-on-small-only hide-on-med-and-up">
-                    <h5>Comfirmation</h5>
-                    <h6 class="center">Are you sure that you want to transfer <a href="#amount" class="modal-action modal-close" id="amountInput">x</a> to e-mail: <a href="mailto:" id="emailInput">someone@ligercambodia.org</a>?</h6>
-                  </div>
-
-                  <div class="modal-footer center">
-                    <center>
-                      <a href="#" class="modal-close waves-effect waves-black btn-flat amber">Disagree</a>
-                      <button class="green waves-effect waves-black btn-flat" type="submit">Agree</button>
-                    </center>
-                  </div>
+                        <div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+                            <div class="indeterminate"></div>
+              </div>
                 </div>
+              </div>
+                
               </form>
-
             </div>
           </div>
         </div>
@@ -77,6 +69,20 @@
 </div>
 
 <script type="text/javascript">  
+function changeModal() {
+  console.log("What the heck")
+  if ($(window).width() <= 600) {
+    $("#confirm").addClass('bottom-sheet')
+    $('#confirm').attr('style', '');
+    $('.modal').modal();
+
+  } else {
+    $("#confirm").removeClass('bottom-sheet')
+    $('#confirm').attr('style', '');
+    $('.modal').modal();
+  }
+}
+
 function check(){
   var amount = document.getElementById('amount').value;
   var email = document.getElementById('email').value;
@@ -88,20 +94,21 @@ function check(){
 $( document ).ready(function() {
   Materialize.updateTextFields();
 
-  $('form :input').on("keyup blur paste input propertychange change", function() {
-    if (($(this).closest('form')).valid()) { // checks form for validity
+  changeModal()
+  $(window).resize(changeModal);
+  $('textarea#reason').characterCounter();
+  $('.modal').modal();
+});
+
+
+$(function() {
+   $('form :input').on("keyup blur paste input propertychange change", function() {
+    if (($(this).closest('form')).validate().checkForm()) { // checks form for validity
       $('a.submit-button').attr('disabled', false); // enables button
     } else {
       $('a.submit-button').attr('disabled', 'disabled'); // disables button
     }
   });
-
-});
-
-$('textarea#reason').characterCounter();
-$('.modal').modal();
-
-$(function() {
 
   $.validator.addMethod('list', function(value, element){
     
@@ -136,26 +143,28 @@ $(function() {
         required: true
       }
     },
-
-    messages:{
-      amount: {
-        required: "Needed!",
-        min: "Please add an integer!",
-        max: "It's too much!",
-        number: "Number please!"
-      }
+    messages: {
+        amount: {
+          required: ""
+        },
+        recipient: {
+          required: ""
+        },
+        reason: {
+          required: ""
+        }
     },
-
-    errorPlacement: function(error, element) {
-     
-      $(element)
+    errorClass: 'invalid',
+    validClass: "valid",
+    errorPlacement: function (error, element) {
+        $(element)
             .closest("form")
             .find("label[for='" + element.attr("id") + "']")
             .attr('data-error', error.text());
-
     },
     submitHandler: function(form) {
-      $('button[type=submit').prop('disabled', true);
+      $('.progress').css("display", "block");
+      $('button[type=submit]').prop('disabled', true);
       $.ajax({
         url: form.action,
         type: form.method,
@@ -167,7 +176,13 @@ $(function() {
             $('.modal').modal('close');
             location.reload();
           } 
-
+           $('.progress').css("display", "none");
+        },
+        error: function(xhr, status, error) {
+          $('.progress').css("display", "none");
+          $('.modal').modal('close');
+          $('button[type=submit]').prop('disabled', false);
+          Materialize.toast(xhr.responseText, 4000)
         }
       });
     }
