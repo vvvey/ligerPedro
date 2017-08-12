@@ -24,7 +24,7 @@ module.exports.set = function(router, pool) {
 
       var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
        WHERE sender = $1 AND finished = 'f';", [apartmentEmail]);
-      var emails = await pool.query("SELECT email FROM account;");
+      var emails = await pool.query("SELECT email FROM account WHERE email != $1;", [apartmentEmail]);
       var apartmentTransferBudget = 0;
       var emailsList = [];
 
