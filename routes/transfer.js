@@ -19,7 +19,8 @@ module.exports.set = function(router, pool) {
         values: [email]
       };
       const getAccountAll = {
-        text: "SELECT * FROM account;"
+        text: "SELECT * FROM account WHERE email != $1;",
+        values: [email]
       };
 
       pool.query(getAccount, function(accErr, accresult) {
