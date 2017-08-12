@@ -17,7 +17,8 @@
 	<main>
 	<br>
 	<div class="container-fluid">
-		<div class="row">
+
+		<div class="row">	
 			<div class="col s12 l3">
 				<div class="row zero-margin">
 					<div class="col l12 s12 m4">
@@ -51,6 +52,7 @@
 				</div>
 			</div>
 			<div class="col s12 l9">
+			
 				<div class="card">
 					<div class="card-content amber">
 						<span class="card-title center">Exchange</span>
@@ -67,8 +69,8 @@
 								<form id="PDexchange" action="/exchange_approving" method="post">
 									<div class="input-field col l4 offset-l2 s12">
 										<i class="material-icons prefix">P</i>
-										<input type="number" name="amount" id="PDexchange_amount" step="5" min="5" max="{{validBudget}}" class="validate" required>
-										<label for="PDexchange_amount" data-error="Please enter a valid number!">Amount</label>
+										<input type="number" name="amount" id="PDexchange_amount">
+										<label for="PDexchange_amount">Amount</label>
 									</div>
 									<div class="input-field col l4 s12">
 										<i class="material-icons prefix">$</i>
@@ -87,8 +89,8 @@
 									</div>
 									<div class="input-field col l8 offset-l2 s12">
 										<i class="material-icons prefix">comment</i>
-										<textarea id="PDtextarea1" name="reason" class="materialize-textarea" data-length="120" required="required"></textarea>
-										<label for="PDtextarea1">Reason</label>
+										<textarea id="PDtextarea" name="reason" class="materialize-textarea" data-length="120"></textarea>
+										<label for="PDtextarea">Reason</label>
 									</div>
 									<input type="hidden" name="exchangeType" value="pedro-dollar">
 									<div class="col l4 offset-l4 m4 offset-m4 s8 offset-s2">
@@ -104,8 +106,8 @@
 								<form id="DPexchange" action="/exchange_approving" method="post">
 									<div class="input-field col l4 offset-l2 s12">
 										<i class="material-icons prefix">$</i>
-										<input type="number" name="amount" id="DPexchange_amount" step="5" min="5"  class="validate" required>
-										<label for="DPexchange_amount" data-error="Please enter a valid number!">Amount</label>
+										<input type="number" name="amount" id="DPexchange_amount">
+										<label for="DPexchange_amount">Amount</label>
 									</div>
 									<div class="input-field col l4 s12">
 										<i class="material-icons prefix">P</i>
@@ -157,13 +159,44 @@
 		</div>
 	</div>
 </main>
-<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-<script>
+
+
+<script type="text/javascript">
 	
-
-
 $(document).ready(function() {	
+	function changeModal() {
+		if ($(window).width() <= 600) {
+			$("#confirm").addClass('bottom-sheet')
+			$('#confirm').attr('style', '');
+			$('.modal').modal();
 
+		} else {
+			$("#confirm").removeClass('bottom-sheet')
+			$('#confirm').attr('style', '');
+			$('.modal').modal();
+		}
+	}
+			
+	$(window).resize(changeModal)
+	changeModal()
+		// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+	$('.modal').modal();
+
+
+	Materialize.updateTextFields();
+	$('#DPexchange_amount').on('keyup blur paste input propertychange change', function() {
+		$('#DPexchange_result').val($('#DPexchange_amount').val())
+		Materialize.updateTextFields();
+	});
+	$('#PDexchange_amount').on('keyup blur paste input propertychange change', function() {
+		$('#PDexchange_result').val($('#PDexchange_amount').val())
+		Materialize.updateTextFields();
+	});
+})
+
+
+
+$(function() {
 	$('.submit-button').on('click', function() {
 		var form = $(this).closest('form')
 		$('#confirm_button').attr('for', form.attr('id'))
@@ -184,36 +217,22 @@ $(document).ready(function() {
 	$('#confirm_button').on('click', function() {
 		var formID = $(this).attr('for')
 		var form = $('#'+formID);
-
 		form.submit()
 	})
 
-	
-	function changeModal() {
-	if ($(window).width() <= 600) {
-		$("#confirm").addClass('bottom-sheet')
-		$('#confirm').attr('style', '');
-		$('.modal').modal();
-
-	} else {
-		$("#confirm").removeClass('bottom-sheet')
-		$('#confirm').attr('style', '');
-		$('.modal').modal();
-	}
-}
 	$('form :input').on("keyup blur paste input propertychange change", function() {
-		if (($(this).closest('form')).valid()) { // checks form for validity
+		if (($(this).closest('form')).validate().checkForm()) { // checks form for validity
 			$('a.submit-button').attr('disabled', false); // enables button
 		} else {
 			$('a.submit-button').attr('disabled', 'disabled'); // disables button
 		}
 	});
 
-	$("#DPexchange, #PDexchange").each(function() {
-		$(this).validate({
+	$.validator.setDefaults({
+			errorClass: 'invalid',
 			errorPlacement: function(error, element) {
-				// Display none when there is error for input
-				return true;
+				$("label[for='" + $(element).attr("id") + "']")
+					.attr('data-error', error.text())
 			},
 			submitHandler: function(form) {
 				console.log("Hello")
@@ -232,45 +251,86 @@ $(document).ready(function() {
 							} else {
 								Materialize.toast('Your exchange request sent to Keeper succesfully!', 4000)
 							}
-
 							setTimeout(function() {
 								location.reload()
 							}, 2000)
-
 						}
 						$('.modal').modal('close');
-
 					},
 					error: function(xhr, status, error) {
-
 						$('.progress').css("display", "none");
 						$('.modal').modal('close');
 						Materialize.toast(xhr.responseText, 4000)
 					}
 				});
 			}
-		})
 	})
-	
+	$('#PDexchange').validate({
+		rules: {
+			amount: {
+				min: 5,
+				max: {{validBudget}},
+				required: true,
+				step: 5,
+				number: true
+			},
+			apptDate: {
+				required: true
+			},
+			reason: {
+				maxlength: 200,
+				required: true
+			},
+			exchangeType: "required"			
+		},
+		messages: {
+			amount: {
+				required: ""
+			},
+			apptDate: {
+				required: ""
+			},
+			reason: {
+				required: ""
+			}
+
+		},
+	})
+
+	$('#DPexchange').validate({
+		rules: {
+			amount: {
+				min: 5,
+				max: 200,
+				required: true,
+				step: 5,
+				number: true
+			},
+			apptDate: {
+				required: true,
+				date: true
+			},
+			reason: {
+				maxlength: 200,
+				required: true
+			},
+			exchangeType: "required"			
+		},
+		messages: {
+			amount: {
+				required: ""
+			},
+			apptDate: {
+				required: ""
+			},
+			reason: {
+				required: ""
+			}
+
+		},
+	})
+});
 		
-	$(window).resize(changeModal);
-
-	changeModal()
-		// the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
-	$('.modal').modal();
-
-
-	Materialize.updateTextFields();
-	$('#DPexchange_amount').on('keyup', function() {
-		$('#DPexchange_result').val($('#DPexchange_amount').val())
-		Materialize.updateTextFields();
-	});
-	$('#PDexchange_amount').on('keyup', function() {
-		$('#PDexchange_result').val($('#PDexchange_amount').val())
-		Materialize.updateTextFields();
-	});
-})
-
 $('.datepicker').pickadate({
 	selectMonths: true, // Creates a dropdown to control month
 	selectYears: 10, // Creates a dropdown of 15 years to control year
