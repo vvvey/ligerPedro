@@ -119,7 +119,8 @@ module.exports.set = function(router, pool)  {
 		});
 
 		var recentTransfer  = {
-			text: "	SELECT * FROM transfer_logs \
+			text: "	SELECT transfer_logs.*, account.username as sender_username FROM transfer_logs \
+					JOIN account ON (transfer_logs.sender = account.email) \
 					WHERE recipient = 'maintenance@ligercambodia.org' \
 					ORDER BY date DESC LIMIT 4;"
 		}
@@ -132,7 +133,7 @@ module.exports.set = function(router, pool)  {
 				recentTransferData = result.rows
 			}
 		})
-
+		console.log(recentTransferData)
 		var select = {
 			text: "	SELECT apartment, SUM(amount) \
 					FROM transfer_logs WHERE recipient = 'maintenance@ligercambodia.org' \
