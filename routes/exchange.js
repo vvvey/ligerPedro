@@ -42,7 +42,7 @@ module.exports.set = function(router, pool) {
             var budget = userResult.rows[0].budget;
             var pendingBudget = pendingResult.rows[0].sum;
             var validBudget = parseFloat(budget) - parseFloat(pendingBudget)
-            res.render('exchanging', {user: req.user, data: userResult.rows[0] ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
+            res.render('exchanging', {user: req.user, data: userResult.rows[0].role ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
           }
         })
       }
