@@ -110,7 +110,10 @@ module.exports.set = function(router, pool) {
     });
   });
 
-  router.post('/exchange_list/approve/:id', function(req, res, next) {
+  router.post('/exchange_list/approve/:id', ensureLoggedIn, function(req, res, next) {
+    if (req.user.role != 're') {
+      return res.status(500).send("Sorry you must be a RE!")
+    }
     var exchangeReq_id = req.params.id;
     console.log("Exhnage id: " + exchangeReq_id);
     if (exchangeReq_id === undefined) {
@@ -138,7 +141,7 @@ module.exports.set = function(router, pool) {
         console.error(err);
         res.send("Error " + err);
       } else {
-        if (result.rows[0].role == 're') {
+        if (result.rows[0].role == 're' || result.rows[0].role == 'admin') {
           pool.query("SELECT * FROM exchange_list WHERE type = 'pedro-dollar'\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
             if (err2) {
