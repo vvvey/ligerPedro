@@ -12,7 +12,7 @@
 		</div>
 		
 		{{#each user_info}}
-		<ul class="collection with-header" id="{{apartment}}">
+		<ul class="collection with-header">
 			<li class="collection-header amber" >
 				<div class="row zero-margin">
 					<div class="col l8 s6 zero-padding">
@@ -148,12 +148,13 @@
 						{{#each user_info}}
 						{{#ifCondA apartment "!=" null}}
 						<p class="col zero-padding l3 s6">
-							<input type="checkbox" class="filled-in" id="{{apartment}}" value="{{apartment}}"  name="apartment_list[]"/>
-							<label for="{{apartment}}">{{upperCase apartment}}</label>
+							<input type="checkbox" class="filled-in" id="{{apartment}}-option" value="{{apartment}}"  name="apartment_list[]"/>
+							<label for="{{apartment}}-option">{{upperCase apartment}}</label>
 						</p>
 						{{/ifCondA}}
 						{{/each}}
 					</div>
+				
 				</div>
 				<!-- Amount for each transaction -->
 				<div class="input-field col l6 m6 s12">
@@ -241,6 +242,7 @@
 						<option value="re">Residential Educator</option>
 						<option value="keeper">Keeper</option>
 						<option value="admin">Admin</option>
+						<option value="central_bank">Central Bank</option>
 						<option value="facilitator">Facilitator</option>
 						<option value="catering_manager">Catering Manager</option>
 						<option value="maintenance_manager">Maintenance Manager</option>
@@ -371,8 +373,9 @@ $(document).ready(function() {
 						$('#user-email').val(trigger.attr("email"));
 						Materialize.updateTextFields(); //Update so the label flexible
 					} else if (type == "apartment") {
+						console.log("Hi again")
 						// One input for auto check
-						var checkbox = $('#' + trigger.attr("apartment")); //Find checkbox by apartment name
+						var checkbox = $('#' + trigger.attr("apartment")+ '-option'); //Find checkbox by apartment name
 						checkbox.prop("checked", true)
 					} else if (type == "delete-user") {
 						// One element and two inputs for auto fill
