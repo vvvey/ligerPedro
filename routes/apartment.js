@@ -63,7 +63,7 @@ module.exports.set = function(router, pool) {
       var apartmentEmail = apartmentData.rows[0].email;
 
       var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
-        WHERE sender = $1 AND finished = 'f';", [apartmentEmail]); 
+        WHERE sender = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]); 
       var apartmentTransferBudget = 0;
       if(apartmentTransfer.rows){        
         for(var i = 0; i < apartmentTransfer.rows.length; i++){
