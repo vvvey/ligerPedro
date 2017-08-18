@@ -31,26 +31,22 @@ module.exports.set = function(router, pool)  {
 	    // This query should be faster than the next one
 	    // After next query is done, code will use row_number to calcuate the pagination system
 	    var paginateArray = []
-	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'maintenance@ligercambodia.org';", (err, result) => {
-	    	if (err) {return res.send(err)}
-	    	else {
-	    		var row_number = result.rows[0].count;
-		    	console.log("Row number is " + row_number)
-		    	// Generate array of object based on number of rows, limit and start
-				for (var i = 0; i < Math.ceil(row_number / limit); i++) {
-					paginateArray[i] = {
-						start: i * limit, // parms of link to start (offset)
-						display: i + 1, // number to display
-						active: Math.ceil(start/limit) == i ? true : false // active for CSS
-					}
+	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'maintenance@ligercambodia.org' AND finished = 'true';", (err, result) => {
+	    	var row_number = result.rows[0].count;
+	    	console.log("Row number is " + row_number)
+	    	// Generate array of object based on number of rows, limit and start
+			for (var i = 0; i < Math.ceil(row_number / limit); i++) {
+				paginateArray[i] = {
+					start: i * limit, // parms of link to start (offset)
+					display: i + 1, // number to display
+					active: Math.ceil(start/limit) == i ? true : false // active for CSS
 				}
+			}
 
-				// e.g. paginateArray = 
-				// [ 	{ start: 0, display: 1, active: false },
-				//  	{ start: 20, display: 2, active: true },
-				// 		{ start: 40, display: 3, active: false } ]
-	    	}
-	    	
+			// e.g. paginateArray = 
+			// [ 	{ start: 0, display: 1, active: false },
+			//  	{ start: 20, display: 2, active: true },
+			// 		{ start: 40, display: 3, active: false } ]
 
 	    })
 		
@@ -69,7 +65,7 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN account AS sender on (transfer_logs.sender = sender.email) \
 					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
-					WHERE transfer_logs.recipient = 'maintenance@ligercambodia.org' \
+					WHERE transfer_logs.recipient = 'maintenance@ligercambodia.org' AND finished = 'true' \
 					ORDER BY date DESC, recipient_username DESC  OFFSET $1 LIMIT $2;",
 			values: [start, limit]
 		}
@@ -107,11 +103,11 @@ module.exports.set = function(router, pool)  {
 	})
 
 	router.get('/maintenance/overview', ensureLoggedIn, isAdminOrMaintenanceManager, (req, res) => {
-		var selectBankBudget =  {
+		var selectmaintenance =  {
 			text: "SELECT budget FROM account WHERE email = 'maintenance@ligercambodia.org';"
 		}
 		var bankBudget; 
-		pool.query(selectBankBudget, (err, result) => {
+		pool.query(selectmaintenance, (err, result) => {
 			if(err) {return res.send(err)}
 			else {
 				bankBudget = result.rows[0].budget;
@@ -121,7 +117,7 @@ module.exports.set = function(router, pool)  {
 		var recentTransfer  = {
 			text: "	SELECT transfer_logs.*, account.username as sender_username FROM transfer_logs \
 					JOIN account ON (transfer_logs.sender = account.email) \
-					WHERE recipient = 'maintenance@ligercambodia.org' \
+					WHERE recipient = 'maintenance@ligercambodia.org' AND finished = 'true' \
 					ORDER BY date DESC LIMIT 4;"
 		}
 
@@ -133,12 +129,16 @@ module.exports.set = function(router, pool)  {
 				recentTransferData = result.rows
 			}
 		})
-		console.log(recentTransferData)
+
 		var select = {
-			text: "	SELECT apartment, SUM(amount) \
-					FROM transfer_logs WHERE recipient = 'maintenance@ligercambodia.org' \
-					GROUP BY apartment ORDER BY apartment;"
+			text: "	 SELECT account.apartment, SUM(transfer_logs.amount) \
+					FROM transfer_logs \
+					JOIN (SELECT email, username, CASE WHEN role != 'apartment' THEN null ELSE username END AS apartment FROM account) AS account \
+					ON (transfer_logs.sender = account.email) \
+					WHERE transfer_logs.recipient = 'maintenance@ligercambodia.org' AND transfer_logs.finished = 'true' \
+					GROUP BY account.apartment ORDER BY account.apartment;"
 		}
+
 		pool.query(select, (err, result) => {
  			if (err) {res.send(err)}
  			else {
