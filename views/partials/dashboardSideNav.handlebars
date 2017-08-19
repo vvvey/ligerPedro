@@ -94,21 +94,21 @@
             </div>
           </li>
           <li>
-            <a class="collapsible-header"><i class="material-icons">build</i>Maintenance</a>
-            <div class="collapsible-body">
-              <ul>
-                <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a class="collapsible-header"><i class="material-icons">store</i>Residence</a>
             <div class="collapsible-body">
               <ul>
                 <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
                 <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
 
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a class="collapsible-header"><i class="material-icons">build</i>Maintenance</a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
               </ul>
             </div>
           </li>
@@ -121,39 +121,8 @@
       <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
       <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
     {{else ifCondA role '==' 'maintenance_manager'}}
-      <li>
-        <ul class="collapsible collapsible-accordion">
-          <li>
-            <a class="collapsible-header"><i class="material-icons">shopping_cart</i>Catering</a>
-            <div class="collapsible-body">
-              <ul>
-                <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a class="collapsible-header"><i class="material-icons">build</i>Maintenance</a>
-            <div class="collapsible-body">
-              <ul>
-                <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a class="collapsible-header"><i class="material-icons">store</i>Residence</a>
-            <div class="collapsible-body">
-              <ul>
-                <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
-
-              </ul>
-            </div>
-          </li>
-          
-        </ul>
-      </li>
+      <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
+      <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
     {{/ifCondA}}
     <li><div class="divider"></div></li>
     <li><a href="/"> <i class="material-icons">home</i>Return Home</a></li>
