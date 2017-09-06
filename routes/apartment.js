@@ -101,7 +101,7 @@ module.exports.set = function(router, pool) {
       var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
       var apartmentEmail = apartmentData.rows[0].email;
 
-      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
+      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE (sender = $1 OR recipient = $1) AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
       var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]);
      
       var apartmentTransferBudget = 0;
@@ -218,7 +218,7 @@ module.exports.set = function(router, pool) {
         pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingRecipient, approveSystem.recipient]);
         
         await pool.query("UPDATE transfer_logs SET num_approve = $1, finished = 't',\
-        email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = $2;", [approved, fromUser.id]);
+        email_logs = email_logs || '{ "+ fromUser.userEmail +" }', moment_budget = $2 WHERE id = $3;", [approved, approveSystem.monApartment, fromUser.id]);
         response.redirect('/apartment_approve');
       } 
     } else if (fromUser.status == 'deny'){
