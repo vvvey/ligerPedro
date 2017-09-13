@@ -19,6 +19,7 @@
 						<th>User</th>
 						<th>Amount</th>
 						<th>Remain Budget</th>
+						<th>Moment Budget</th>
 						<th>Reason</th>
 
 					</tr>
@@ -38,6 +39,11 @@
 							<td>P {{this.sender_resulting_budget}}</td>
 						{{else}}
 							<td>P {{this.recipient_resulting_budget}}</td>
+						{{/ifCondA}}
+						{{#ifCondA sender '==' ../email}}
+							<td>P {{this.moment_budget}}</td>
+						{{else}}
+							<td>Sorry</td>
 						{{/ifCondA}}
 						<td class="left">{{this.reason}}</td>
 					</tr>
