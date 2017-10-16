@@ -7,7 +7,7 @@ module.exports.set = function(router, pool) {
     response.redirect('/transfer_personal')
   });
 
-  router.get('/transfer_personal', function(request, response){
+  router.get('/transfer_personal', ensureLoggedIn, function(request, response){
     if(request.user){
       var email = request.user.email;
       const getAccount = {
@@ -46,7 +46,7 @@ module.exports.set = function(router, pool) {
                   }
                   console.log("money: " + (accresult.rows[0].budget - moneyExchange));
 
-                  response.render('transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
+                  response.render('personal/transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
                 }
               });
             }
@@ -56,10 +56,6 @@ module.exports.set = function(router, pool) {
     }else{
       response.redirect('/login');
     }
-  });
-
-  router.get('/transfer_success', function(req, res) {
-    res.render('transfer');
   });
 
   router.post('/transfer_confirmation', function(req, res) {
@@ -78,8 +74,6 @@ module.exports.set = function(router, pool) {
       }
     })
   });
-  
-  
   
   //if the validateTransfer success, the middleware just call queries to database
   router.post('/transfer_success', Validator.individualTransfer , function (req, res) {

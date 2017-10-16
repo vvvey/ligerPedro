@@ -93,7 +93,7 @@ module.exports.set = function(router, pool)  {
 					nextStart = start + limit;
 				}
 				// Render to client
-				res.render('banks_transferLog', {
+				res.render('catering/banks_transferLog', {
 					transfer_data: result.rows, 
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -144,7 +144,7 @@ module.exports.set = function(router, pool)  {
 		pool.query(select, (err, result) => {
  			if (err) {res.send(err)}
  			else {
-				res.render('overview', {bankName: 'Catering', 
+				res.render('catering/overview', {bankName: 'Catering', 
 										bankBudget: bankBudget, 
 										apartmentData: result.rows, 
 										recentTransfer: recentTransferData,

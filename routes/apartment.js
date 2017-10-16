@@ -37,7 +37,7 @@ module.exports.set = function(router, pool) {
         }
       }
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
-      response.render('apartment_transfer', {
+      response.render('apartment/apartment_transfer', {
         emails: emailsList, 
         user: request.user, 
         data: accCollection.role,
@@ -71,7 +71,7 @@ module.exports.set = function(router, pool) {
         }
       }
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
-      response.render('apartment_approve', {
+      response.render('apartment/apartment_approve', {
         email: email, 
         user: request.user, 
         data: accCollection.role,
@@ -111,7 +111,7 @@ module.exports.set = function(router, pool) {
         }
       }
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
-      response.render('apartment_history', {
+      response.render('apartment/apartment_history', {
         user: request.user, 
         data: personality.rows[0].role, 
         transferData: dataTransferFinish.rows,
@@ -161,7 +161,7 @@ module.exports.set = function(router, pool) {
         dataCollection.push([]);
         dataCollection[i].push(shr.rows[i].person, parseFloat(shr.rows[i].result), shr.rows[i].id, exportDate(shr.rows[i].apptdate));
       }
-      response.render('apartment_memberExchange', {
+      response.render('apartment/apartment_memberExchange', {
         exData: dataCollection,
         user: request.user, 
         data: accountData.rows[0].role, 
@@ -187,6 +187,7 @@ module.exports.set = function(router, pool) {
     if(fromUser.id === undefined){
       response.redirect('/apartment_list');
     }
+
     var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [fromUser.userEmail]);
     var apartment = accountData.rows[0].apartment;
     var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [apartment.toUpperCase()]);
@@ -209,11 +210,14 @@ module.exports.set = function(router, pool) {
     console.log(fromUser.status);
     if(fromUser.status == 'accept'){
       approved += 1;
+      //approved >= 3 and that transfer has only one
+
       if(approved >= 3){
         //sustract from apartment
         var resultingApartment = approveSystem.monApartment - approveSystem.monTransfer;
         //add to recipient
         var resultingRecipient = approveSystem.monRecipient + approveSystem.monTransfer;
+
         pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingApartment, apartmentEmail]);
         pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingRecipient, approveSystem.recipient]);
         
