@@ -103,7 +103,7 @@ module.exports.set = function(router, pool) {
 				}
 				console.log(result.rows[0].date)
 				// Render to client
-				res.render('admin_transfer_logs', {
+				res.render('admin/admin_transfer_logs', {
 					transfer_data: result.rows, 
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -189,7 +189,7 @@ module.exports.set = function(router, pool) {
 					nextStart = start + limit;
 				}
 
-				res.render("admin_exchange_logs", {
+				res.render("admin/admin_exchange_logs", {
 					exchange_data: result.rows,
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -219,7 +219,7 @@ module.exports.set = function(router, pool) {
 		pool.query(query, (err, result) => {
 			if (err) {res.send(err)} 
 			else {
-				res.render("admin_user_profile", {user_info: result.rows, userData: req.user});
+				res.render("admin/admin_user_profile", {user_info: result.rows, userData: req.user});
 				
 			}
 		})		

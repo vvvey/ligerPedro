@@ -1,8 +1,15 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-var User = require('../lib/user');
+
+function isAdminOrMaintenanceManager (req, res, next) {
+	if (req.user.role == 'admin' || req.user.role == 'maintenance_manager') {
+		next();
+	} else {
+		return res.status(404).render('notFound');
+	}
+}
 
 module.exports.set = function(router, pool)  {
-	router.get('/maintenance/transfer_logs', ensureLoggedIn, User.isRole('admin', 'maintenance_manager'), (req, res) => {
+	router.get('/maintenance/transfer_logs', ensureLoggedIn, isAdminOrMaintenanceManager, (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
 	      start = 0 
@@ -84,7 +91,7 @@ module.exports.set = function(router, pool)  {
 					nextStart = start + limit;
 				}
 				// Render to client
-				res.render('banks_transferLog', {
+				res.render('catering/banks_transferLog', {
 					transfer_data: result.rows, 
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -95,7 +102,7 @@ module.exports.set = function(router, pool)  {
 		});		
 	})
 
-	router.get('/maintenance/overview', ensureLoggedIn, User.isRole('admin', 'maintenance_manager'), (req, res) => {
+	router.get('/maintenance/overview', ensureLoggedIn, isAdminOrMaintenanceManager, (req, res) => {
 		var selectmaintenance =  {
 			text: "SELECT budget FROM account WHERE email = 'maintenance@ligercambodia.org';"
 		}
@@ -135,14 +142,13 @@ module.exports.set = function(router, pool)  {
 		pool.query(select, (err, result) => {
  			if (err) {res.send(err)}
  			else {
-				res.render('overview', {bankName: 'Maintenance', 
+				res.render('catering/overview', {bankName: 'Maintenance', 
 										bankBudget: bankBudget, 
 										apartmentData: result.rows, 
 										recentTransfer: recentTransferData,
 										userData: req.user})
 			}
 		})
-
 	})
 		
 }
