@@ -12,6 +12,7 @@ var admin          = require('./admin');
 var catering       = require('./catering')
 var residence      = require('./residence')
 var maintenance    = require('./maintenance')
+var utilities       = require('./utilities')
 
 apartments.set(router, pool);
 exchange.set(router, pool);
@@ -21,6 +22,7 @@ admin.set(router, pool);
 catering.set(router, pool);
 residence.set(router, pool);
 maintenance.set(router, pool);
+utilities.set(router, pool);
 /*router.get('/', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp
   // if we store the user's role in cookies, no longer necessary to query the database
