@@ -3,14 +3,7 @@ var pg = require('pg');
 var Validator = require('../lib/validator')
 
 module.exports.set = function(router, pool) {
-	// Example of pool
-	router.get('/testme', function(request, response){
-		pool.query('SELECT * from account where email = $1', ['visal.s@ligercambodia.org'], function (err, res) {
-  			console.log(res.rows[0])
-		});
-		response.end();
-	});
-  //hello
+
   router.get('/apartment_transfer', ensureLoggedIn, async function(request, response){
     var email = request.user.email;
     var accountData = await pool.query("SELECT * FROM account WHERE email = $1;", [email]); 
