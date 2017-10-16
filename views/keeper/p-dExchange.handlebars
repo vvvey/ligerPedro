@@ -1,0 +1,450 @@
+{{> keeperNav}}
+<div class="row">
+    <div class="col s12 l10 offset-l1">
+      <div class="card circle z-depth-2">
+        <div class="card-content black-text center">
+          <div class="row">
+            <span class="card-title center"><h4>Exchange Request Pedro-Dollar</h4></span>
+          </div>
+          <div class="row">
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment A1<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudA1}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'a1'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudA1}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at A1!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment A2<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudA2}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'a2'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudA2}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at A2!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment B3<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudB3}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'b3'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudB3}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at B3!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment B4<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudB4}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'b4'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudB4}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at B4!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <div class="col l4 m6 s12 z-depth-0">
+              {{#if BudTotal}}
+              <div class="card cardE red lighten-1 z-depth-4 white-text">
+              {{else}}
+              <div class="card cardE green z-depth-4 white-text">
+              {{/if}}
+
+                <div class="card-content">
+                  <span class="card-title activator white-text text-darken-1">Totoal Cost</span>
+                  <div>
+                    <h3>P{{BudTotal}}</h3>
+                  </div>
+                </div>
+                  <div class="card-action">
+                    <span class="white-text">This week exchange!</span>
+                  </div>
+                </div>
+            </div>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment C5<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudC5}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'c5'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudC5}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at C5!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment C6<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudC6}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'c6'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudC6}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at C6!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment D7<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudD7}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'd7'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudD7}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at D7!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+            <form method="post" action="/keeper/p/d/{{ranVal}}">
+              <div class="col l4 m6 s12 z-depth-0">
+                <div class="card cardE blue-grey darken-3 z-depth-2 white-text">
+                  <div class="card-content">
+                    <span class="card-title activator white-text text-darken-1">Apartment D8<i class="material-icons right">more_vert</i></span>
+                    <div>
+                      <h3>P{{BudD8}}</h3>
+                    </div>
+                  </div>
+
+                  <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-1">People<i class="material-icons right">close</i></span>
+                    <table class="black-text">
+                    {{#each approvedDate}}
+                      {{#ifCondA this.apartment '==' 'd8'}}
+                        <tr>
+                          <td>{{this.person}}</td>
+                          <td>P{{this.result}}</td>
+                          <td>
+                            <p>
+                              <input type="checkbox" id="{{this.id}}" name="selection[]" checked="checked" value="{{this.id}}" />
+                              <label for="{{this.id}}"></label>
+                            </p>
+                          </td>
+                        </tr>
+                      {{/ifCondA}}
+                    {{/each}}
+                    </table>
+                  </div>
+                  {{#if BudD8}}
+                    <div class="row">
+                      <div class="card-action">
+                        
+                          <button class="col l4 m5 s12 offset-l1 transparent btn-flat orange-text" type="submit" name="status" value="done">Done</button>
+
+                          <button class="col l4 m5 s12 offset-l2 offset-m1 transparent btn-flat orange-text" type="submit" name="status" value="cancel">Cancel</button>
+                        
+                      </div>
+                    </div>
+                  {{else}}
+                    <div class="card-action white center"> 
+                      <span class="red-text">No exchange at D8!</span>
+                    </div>
+                  {{/if}} 
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".button-collapse").sideNav();
+
+  $(".clicker").on("click", function(){
+    if($(this).next().hasClass("down")){
+        $(this).next().slideUp("normal").removeClass("down");
+    }
+    else{
+       $(this).next().slideDown("normal").addClass("down");
+    }
+  });
+
+});
+
+
+
+</script>
+
+<style type="text/css">
+.cardE {
+  position: relative;
+  overflow: hidden;
+  margin: 0.5rem 0.1rem 0.5rem 0.1rem;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.no-magin{
+  padding: 0px;
+}
+</style>

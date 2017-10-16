@@ -1,0 +1,132 @@
+{{> simNav}}
+<div class="container-fluid">
+	<div class="row"><br />
+		<div class="col s12 l10 offset-l1">
+			<div class="card">
+				<div class="card-content">
+					<span class="card-title">Info</span>
+					<p>These are all the datas that we got about the exchange that you have made so far and hopefuly you happy with it! Thank you.</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col s12 l10 offset-l1" id="transfer">
+		{{#if transferData}}
+			<table class="responsive-table centered z-depth-1">
+				<thead class="black">
+					<tr class="white-text">
+						<th>Date</th>
+						<th>User</th>
+						<th>Amount</th>
+						<th>Remain Budget</th>
+						<th>Moment Budget</th>
+						<th>Reason</th>
+
+					</tr>
+				</thead>
+
+				<tbody>
+					{{#each transferData}}
+					<tr>
+						<td>{{dateFormat this.date}}</td>
+						{{#ifCondA recipient '!=' ../email}}
+							<td> <span class="new badge red left" data-badge-caption="">Sends to</span> {{recipient}} </td>
+						{{else ifCondA this.sender '!=' ../email}}		
+							<td><span class="new badge blue left" data-badge-caption="">Sends from</span> {{this.sender}} </td>
+						{{/ifCondA}}
+						<td>P {{this.amount}}</td>
+						{{#ifCondA sender '==' ../email}}
+							<td>P {{this.sender_resulting_budget}}</td>
+						{{else}}
+							<td>P {{this.recipient_resulting_budget}}</td>
+						{{/ifCondA}}
+						{{#ifCondA sender '==' ../email}}
+							<td>P {{this.moment_budget}}</td>
+						{{else}}
+							<td>Sorry</td>
+						{{/ifCondA}}
+						<td class="left">{{this.reason}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+		{{else}}
+			<h2 class="center">Nothing Collected</h2>
+		{{/if}}
+		</div>
+
+		<div class="col s12 l10 offset-l1" id="exchange">				
+	    	{{#if exchangeData}}
+		    	<ul class="collection">
+		    		<li class="collection-item">
+		    			<h5 class="">History</h5>
+		    		</li>
+		    		{{#each exchangeData}}
+			    		<li class="collection-item">
+			    			<div class="row" style="margin-bottom: 0;">
+						    	<div class="col s4 m5">
+						    		<span class="collections-title">{{dateFormat this.timecreated}}</span> <br>
+						    		<span class="collections-content red-text" data-badge-caption="">Exchange: P {{this.result}}</span>
+						    	</div>
+						    	<div class="col s4 m4">
+						    		{{#ifCondA this.type '==' 'pedro-dollar'}}
+						    			<span class="new badge red left" data-badge-caption="">Pedro to Dollar</span>
+						    		{{else}}
+						    			<span class="new badge blue left" data-badge-caption="">Dollar to Pedro</span>
+						    		{{/ifCondA}}
+						    	</div>
+						    	<div class="col s4 m3">
+						    		<a href="#{{this.id}}" class="secondary-content blue-text">More...</a>
+						    	</div>
+					    	</div>
+					    	<div id="{{this.id}}" class="modal black-text">
+							    <div class="modal-content">
+							      <h4 class="center">{{dateFormat this.timecreated}}</h4>
+							      <p class="blue-text">
+							      	  Date Exchanging: {{dateFormat this.timecreated}} <br />
+
+								      Type: {{#ifCondA this.type '==' 'pedro-dollar'}}Pedro to Dollar{{else}}Dollar to Pedro{{/ifCondA}} <br />
+
+								      Initial Exchange: P {{this.amount}} <br /> 
+
+								      Amount: P {{this.result}} <br /> 
+
+								      Reason: {{this.reason}} <br /> <br /> 
+
+								      RE Approve: {{#ifCondA this.approved '==' 'true'}} Yes {{else ifCondA this.approve '==' "false"}} No {{else}} Pendding {{/ifCondA}}<br /> 
+
+								      RE Approve Date: {{dateFormat this.timeapproved}} <br /> <br /> 
+
+								      Keeper Approve: {{#ifCondA this.exchanged '==' 'true'}} Success Exchagned {{else ifCondA this.exchanged '==' "false"}} Fail Exchange {{else}} Not yet arrive! {{/ifCondA}} <br /> 
+
+								      Keeper Approve Date: {{dateFormat this.timeexchanged}} <br /> 
+
+							      </p>
+							    </div>
+							    <div class="modal-footer">
+							      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+							    </div>
+						  	</div>
+			    		</li>
+		    		{{/each}}
+		    	</ul>
+	    	{{else}}
+	    		<h2 class="center">Nothing Collected</h2>
+			{{/if}}
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	
+  $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+          
+</script>
+
+<style type="text/css">
+.marginLes{
+	margin-top: 0px;
+}
+</style>

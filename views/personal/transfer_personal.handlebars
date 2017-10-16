@@ -1,0 +1,202 @@
+{{> mainNav}}
+
+</br>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col s12 l3">
+			<div class="card amber">
+				<div class="card-content">
+					<span class="card-title">Total Budget: </span>
+					<h3 class="center white-text">P {{budget}}</h3>
+				</div>
+			</div>
+		</div>
+
+		<div class="col s12 l8">
+		  <div class="card circle z-depth-2">
+		    <div class="card-content black-text center">
+		      <span class="card-title center">Personal Transfer</span>
+		      <div class="container-fluid">
+
+		        <form id="transfer" method="post" action="/transfer_success">
+		          <div class="row">
+		          <br>
+
+		            <div class="input-field col s12 m6 l4 offset-l2">
+		            <i class="material-icons prefix">P</i>
+		              <input id="amount" type="number" name="amount" >
+		              <label for="amount" class="active">Amount</label>
+		            </div>
+
+		            <div class="input-field col s12 m6 l4">
+		            <i class="material-icons prefix">account_circle</i>	
+		              <input id="email" type="email"  name="recipient" list="liger_email">
+		              <label for="email" class="active">e-mail</label>
+
+		              <datalist id="liger_email">
+		         	    {{#each emails}}
+						  <option>{{this}}</option>
+						{{/each}}
+					  </datalist>
+
+		            </div>
+		         		         
+		            <div class="input-field col s12 l8 offset-l2">
+		            <i class="material-icons prefix">comment</i>	
+		              <textarea id="reason" class="materialize-textarea " name="reason" data-length="200" ></textarea>
+		              <label for="reason">Reason</label>
+		            </div>
+		          </div>
+		        
+		          <div class="row">
+		            <div class="input-field col s12 m6 l4 offset-m3 offset-l4">
+		                <a disabled class="waves-effect waves-light btn center submit-button green" href="#confirm" onclick="check()"><i class="material-icons left">send</i>Send</a>
+		            </div>
+		          </div>
+
+				  <div id="confirm" class="modal">
+				  <div class="modal-content">
+						<h4>Confirmation</h4>
+				      <span>Are you sure that you want to transfer <a href="#amount" class="" ass="modal-action modal-close" id="amountInput">x</a>  to e-mail: <a href="mailto:" id="emailInput">someone@ligercambodia.org</a>?</span>
+					</div>
+				   
+				    <div class="modal-footer">
+					      <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat">Cancel</a>
+					      <button class="waves-effect waves-black btn-flat" type="submit">Agree</button>
+
+						<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+						<div class="indeterminate"></div>
+					</div>
+				    </div>
+				  </div>
+		        </form>
+		      </div>
+		  </div>
+		</div>
+	</div>
+</div>
+
+{{> mainFooter}}
+
+
+<script type="text/javascript">
+function changeModal() {
+	console.log("What the heck")
+	if ($(window).width() <= 600) {
+		$("#confirm").addClass('bottom-sheet')
+		$('#confirm').attr('style', '');
+		$('.modal').modal();
+
+	} else {
+		$("#confirm").removeClass('bottom-sheet')
+		$('#confirm').attr('style', '');
+		$('.modal').modal();
+	}
+}
+
+function check(){
+	var amount = document.getElementById('amount').value;
+	var email = document.getElementById('email').value;
+
+	document.getElementById('amountInput').innerHTML = "P 0" + amount;
+	document.getElementById('emailInput').innerHTML = email;
+}
+
+$(document).ready(function() {	
+	changeModal()
+	$(window).resize(changeModal);
+	$('textarea#reason').characterCounter();
+	$('.modal').modal();
+});
+
+$(function() {
+	$.validator.addMethod('list', function(value, element){
+		var	email= [{{#each emails}} "{{this}}", {{/each}}];
+		
+		var wrong = 0;
+		for(var i = 0; i < email.length; i++){
+			if(value == email[i]){
+				wrong = 1;
+				break;
+			}
+		}
+		return this.optional( element ) || wrong == 1;
+	}, "Please write a better email!");
+
+	$('form :input').on("keyup blur paste input propertychange change", function() {
+		if (($(this).closest('form')).validate().checkForm()) { // checks form for validity
+			$('a.submit-button').attr('disabled', false); // enables button
+		} else {
+			$('a.submit-button').attr('disabled', 'disabled'); // disables button
+		}
+	});
+
+	$( "#transfer" ).validate({
+		rules: {
+			amount: {
+				required: true,
+				min: 0.01,
+				max: {{budget}},
+				number: true,
+				step: 0.01
+			},
+			recipient: {
+				required: true,
+				email: true,
+				list: true
+			},
+			reason: {
+				maxlength: 200,
+				required: true
+			}
+		},
+		messages:{
+			amount: {
+				required: "",
+				min: "Sorry! That's not possible!",
+				max: "You don't have any enough Pedro!",
+				number: "Number please!",
+				step: "Two decimal place, please!"
+			},
+			recipient: {
+				required: ""
+			},
+			reason: {
+				maxlength: "",
+				required: ""
+			}
+		},
+
+		errorClass: 'invalid',
+		errorPlacement: function(error, element) {
+			$("label[for='" + $(element).attr("id") + "']")
+				.attr('data-error', error.text())
+		},
+		submitHandler: function(form) {
+			$('.progress').css("display", "block");
+			$('button[type=submit').prop('disabled', true);
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					$('button[type=submit').prop('disabled', false);
+					Materialize.toast(response, 4000)
+					if (response == "Sent") {
+						$('.modal').modal('close');
+						location.reload();
+					} 
+					$('.progress').css("display", "none");
+				},
+				error: function(xhr, status, error) {
+					$('.progress').css("display", "none");
+					$('.modal').modal('close');
+					$('button[type=submit').prop('disabled', false);
+					Materialize.toast(xhr.responseText, 4000)
+				}
+			});
+		}
+	});
+});
+</script>
