@@ -19,7 +19,12 @@
                 </div>
 
                 <div class="col s4 m4">
-                    <span class="new badge green black-text left" data-badge-caption="">{{this.recipient}}</span>
+                  {{#if this.receive}}
+                    <span class="new badge green black-text left" data-badge-caption="">{{this.sender}}</span>
+
+                  {{else}}
+                    <span class="new badge yellow black-text left" data-badge-caption="">{{this.recipient}}</span>
+                  {{/if}}
                 </div>
 
                 <div class="col s4 m3">

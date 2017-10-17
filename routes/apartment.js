@@ -89,7 +89,6 @@ module.exports.set = function(router, pool) {
   });
         
   router.get('/apartment_history', ensureLoggedIn, async function(request, response){
-
     var email = request.user.email;
     var personality = await pool.query("SELECT * FROM account WHERE email = $1;", [email]);
     var apartment = {
@@ -101,9 +100,21 @@ module.exports.set = function(router, pool) {
       var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [apartment.ident.toUpperCase()]);
       var apartmentEmail = apartmentData.rows[0].email;
 
-      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
+      var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE recipient=$1 OR sender = $1 AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
       var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]);
-     
+      
+      for(var i = 0; i < dataTransferFinish.rows.length; i++){
+        if(dataTransferFinish.rows[i].recipient == apartmentEmail){
+
+          dataTransferFinish.rows[i].receive = true;
+          console.log("for recipient: "+dataTransferFinish.rows[i].recipient+" receive: "+dataTransferFinish.rows[i].receive);
+        }else{
+          dataTransferFinish.rows[i].receive = false;
+          console.log("for recipient: "+dataTransferFinish.rows[i].recipient+" receive: "+dataTransferFinish.rows[i].receive)
+        }
+      }
+
+
       var apartmentTransferBudget = 0;
       if(dataTransferNot.rows){        
         for(var i = 0; i < dataTransferNot.rows.length; i++){
@@ -274,3 +285,5 @@ module.exports.set = function(router, pool) {
                   }); 
   });
 }
+
+
