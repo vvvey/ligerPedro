@@ -12,6 +12,7 @@ var admin          = require('./admin');
 var catering       = require('./catering')
 var residence      = require('./residence')
 var maintenance    = require('./maintenance')
+var utilities       = require('./utilities')
 
 apartments.set(router, pool);
 exchange.set(router, pool);
@@ -21,6 +22,7 @@ admin.set(router, pool);
 catering.set(router, pool);
 residence.set(router, pool);
 maintenance.set(router, pool);
+utilities.set(router, pool);
 /*router.get('/', function(req, res) {
   // necessary to get the role of the user to find out what the menu should disp
   // if we store the user's role in cookies, no longer necessary to query the database
@@ -80,55 +82,6 @@ router.get('/login',
   });
 
 
-router.get('/tutorials', ensureLoggedIn, function(req, res) {
-  res.render('tutorials');
-});
-
-
-router.get('/contact_us', function(req, res) {
-  res.render('contact_us', {
-    user: req.user,
-    env: env
-  });
-});
-
-router.get('/history', ensureLoggedIn, function(request, response) {
-  var userEmail = request.user.email;
-
-  pool.query("SELECT * FROM transfer_logs WHERE sender = $1 OR recipient = $1 ORDER BY date DESC;", [userEmail], function(transferErr, transferHis) {
-    if (transferErr) {
-      console.error(transferErr);
-      response.send("Error " + transferErr);
-    } else {
-      pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [userEmail], function(exchangeErr, exchangeHis) {
-        if (exchangeErr) {
-          console.error(exchangeErr);
-          response.send("Error " + exchangeErr);
-        } else {
-          pool.query("SELECT * FROM account WHERE email = $1;", [userEmail], function(accountErr, accountResult) {
-            if (accountErr) {
-              response.send("Error " + accountErr);
-            } else {
-              for (var count = 0; count < transferHis.rows.length; count++) {
-                transferHis.rows[count].userEmail = userEmail;
-                transferHis.rows[count]
-              }
-              response.render('history', {
-                data: accountResult.rows,
-                transferHis: transferHis.rows,
-                exchangeHis: exchangeHis.rows,
-                accountInfo: accountResult.rows,
-                user: request.user,
-                userEmail: request.user.email
-              });
-            }
-          });
-        }
-      });
-    }
-  });
-});
-
 router.get('/history_personal', async function(request, response){
   if(request.user){
     var email = request.user.email;
@@ -137,73 +90,10 @@ router.get('/history_personal', async function(request, response){
     
     var getExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [email]);
 
-    response.render('history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
+    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
   } else {
     response.redirect('/login');
   }
-});
-
-
-router.get('/about_us', function(req, res) {
-  // necessary to get the role of the user to find out what the menu should disp
-  // if we store the user's role in cookies, no longer necessary to query the database
-  if (req.user) {
-    pool.query("SELECT * FROM account WHERE email = $1;",[req.user.email], function(err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        res.render('about_us', {
-          user: req.user,
-          data: result.rows
-        });
-      }
-    });
-  } else {
-    res.render('about_us', {
-      user: req.user
-    });
-  }
-});
-
-router.get('/tutorial', function(req, res) {
-  // necessary to get the role of the user to find out what the menu should disp
-  // if we store the user's role in cookies, no longer necessary to query the database
-  if (req.user) {
-    pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        res.render('tutorial', {
-          user: req.user,
-          data: result.rows
-        });
-      }
-    });
-  } else {
-    res.render('tutorial', {
-      user: req.user
-    });
-  }
-});
-
-router.get('/settings', ensureLoggedIn, function(req, res) {
-  pool.query("SELECT * FROM account WHERE email = $1;", [req.user.email], function(err, result) {
-    if (err) {
-      console.error(err);
-    } else {
-      res.render('settings', {
-        user: req.user,
-        data: result.rows
-      });
-    }
-  });
-});
-
-router.post('/db', function(request, response) {
-  var text = request.body.transfer;
-  response.render('db', {
-    transfer: text
-  });
 });
 
 function sqlEscape(text) {

@@ -44,7 +44,7 @@
 
                     Transfer Amount: P {{this.amount}} <br />
 
-                    Left Over: P {{this.sender_resulting_budget}} <br />
+                    Left Over: {{#if moment_budget}}P {{this.moment_budget}}{{else}}So sorry that we didn't collect your data!{{/if}}<br />
 
                     Number Approve: {{this.num_approve}} <br />
 
