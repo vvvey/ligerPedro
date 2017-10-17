@@ -148,7 +148,7 @@ module.exports.set = function(router, pool) {
               } else {
                 totalExchange = 0;
               }
-              response.render('p-dExchange', {keeper: 'true', BudA1: totalExchA1, BudA2: totalExchA2, BudB3: totalExchB3, BudB4: totalExchB4, BudC5: totalExchC5, BudC6: totalExchC6, BudD7: totalExchD7, BudD8: totalExchD8, BudTotal: totalExchange, approvedDate:exchangeResult.rows, ranVal: uuidv4()});
+              response.render('keeper/p-dExchange', {keeper: 'true', BudA1: totalExchA1, BudA2: totalExchA2, BudB3: totalExchB3, BudB4: totalExchB4, BudC5: totalExchC5, BudC6: totalExchC6, BudD7: totalExchD7, BudD8: totalExchD8, BudTotal: totalExchange, approvedDate:exchangeResult.rows, ranVal: uuidv4()});
             }
           });
         } else{
@@ -234,7 +234,7 @@ module.exports.set = function(router, pool) {
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
             else{
-              response.render('d-pExchange', {approvedDate: exchangeResult.rows, keeper: 'true'});
+              response.render('keeper/d-pExchange', {approvedDate: exchangeResult.rows, keeper: 'true'});
             }//approved = 'true'
           });
         } else{

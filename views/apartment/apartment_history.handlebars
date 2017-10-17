@@ -19,7 +19,12 @@
                 </div>
 
                 <div class="col s4 m4">
-                    <span class="new badge green black-text left" data-badge-caption="">{{this.recipient}}</span>
+                  {{#if this.receive}}
+                    <span class="new badge green black-text left" data-badge-caption="">{{this.sender}}</span>
+
+                  {{else}}
+                    <span class="new badge yellow black-text left" data-badge-caption="">{{this.recipient}}</span>
+                  {{/if}}
                 </div>
 
                 <div class="col s4 m3">
@@ -39,7 +44,7 @@
 
                     Transfer Amount: P {{this.amount}} <br />
 
-                    Left Over: P {{this.sender_resulting_budget}} <br />
+                    Left Over: {{#if moment_budget}}P {{this.moment_budget}}{{else}}So sorry that we didn't collect your data!{{/if}}<br />
 
                     Number Approve: {{this.num_approve}} <br />
 

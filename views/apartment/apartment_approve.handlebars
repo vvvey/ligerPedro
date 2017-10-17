@@ -1,0 +1,80 @@
+{{> mainNav}}
+{{> bottonNavigation}}
+<div class="container-fluid">
+	<div class="row">
+		{{> apartmentValue}}
+		<div class="col s12 m10  offset-m1">
+			<ul class="collapsible" data-collapsible="accordion">
+				<li>
+					<div class="collapsible-header center" style="padding: 1em;padding-left: 2.5em;">
+						<h5>Apartment Approving</h5>
+					</div>
+				</li>
+				{{#if transferData}}
+					{{#each transferData}}
+						<li>
+						  <div class="collapsible-header">
+						  	<div class="row" style="margin: 0;">
+						  		<div class="col s12 m4 l4">
+						  			<span>{{dateFormat this.date}}</span>
+						  		</div>
+						  		<div class="col s12 m4 l4">
+						  			<span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
+						  		</div>
+						  		<div class="col s12 m4 l4">
+						  			<span class="new badge right red" data-badge-caption="">{{SUM this.num_approve this.num_disapprove}}</span>
+						  		</div>
+						  	</div>
+						  </div>
+						  <div class="collapsible-body">
+						  	<div class="row">
+						  		<div class="col s12 m6">
+						  			<p>
+						  				Date Transfering: {{dateFormat this.date}} <br />
+										Sender: {{this.sender}} <br />
+										Recipient: {{this.recipient}}<br />
+										Transfer Amount: P {{this.amount}}<br />
+										Left Over: P {{this.sender_resulting_budget}}<br />
+						  			</p>
+						  		</div>
+						  		<div class="col s12 m6">
+						  			<p>
+						  				Number Approve: {{this.num_approve}} <br />
+										Number Disapprove: {{this.num_disapprove}} <br />
+										Responses:	{{this.email_logs}}<br />
+										Reason: {{this.reason}} <br> 
+						  			</p>
+						  			{{#ifCondA this.num_approve '>=' 3}} 
+						  				<br>
+				                    	<h5 class="blue-text center">Transfer Success!</h5>
+				                  	{{else ifCondA this.num_disapprove '>=' 2}}
+				                  		<br>
+				                  		<h5 class="red-text center">Transfer Fails!</h5>
+				                  	{{else}}
+				                    	{{#finding this.email_logs ../email }}
+						                 	<br>
+						                 	<h5 class="green-text center">Submited!</h5>
+				                    	{{else}}
+				                    	<br />
+				                    	<center>
+						                    <form method="post" action="/apartment_list/approve/{{this.id}}">
+						                      <button type="submit" name="status" value="accept" class="btn blue">Approve</button>
+						                      <button type="submit" name="status" value="deny" class="btn red">Disapprove</button>
+						                    </form>
+						                </center>
+				                    	{{/finding}}
+				                  	{{/ifCondA}}
+						  		</div>
+						  	</div>
+						  </div>
+						</li>
+					{{/each}}
+				{{else}}
+				<div class="row">
+					<h2 class="center">Nothing Collected</h2>
+				</div>
+				{{/if}}
+			</ul>
+		</div>
+	</div>
+</div>
