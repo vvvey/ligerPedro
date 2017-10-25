@@ -1,16 +1,9 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var User = require('../lib/user');
 
-function isAdminOrRE (req, res, next) {
-	if (req.user.role == 'admin' || req.user.role == 're') {
-		next();
-	} else {
-		return res.status(404).render('notFound');
-	}
-}
 
 module.exports.set = function(router, pool)  {
-	router.get('/residence/transfer_logs', ensureLoggedIn, isAdminOrRE, (req, res) => {
+	router.get('/residence/transfer_logs', ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 're'), (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
 	      start = 0 
@@ -103,7 +96,7 @@ module.exports.set = function(router, pool)  {
 		});		
 	})
 
-	router.get('/residence/overview', ensureLoggedIn, isAdminOrRE, (req, res) => {
+	router.get('/residence/overview', ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 're'), (req, res) => {
 		var selectresidence =  {
 			text: "SELECT budget FROM account WHERE email = 'residence@ligercambodia.org';"
 		}
