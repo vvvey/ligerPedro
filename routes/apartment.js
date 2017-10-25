@@ -185,7 +185,7 @@ module.exports.set = function(router, pool) {
     var apartment = accountData.rows[0].apartment;
     var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1", [apartment.toUpperCase()]);
     var apartmentEmail = apartmentData.rows[0].email;
-    var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs WHERE id = $1;", [fromUser.id]); //crate another row that calculate is the request finish or not yet
+    var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs WHERE id = $1;", [fromUser.id]); //create another row that calculate is the request finish or not yet
     var recipientData = await pool.query("SELECT * FROM account WHERE email = $1", [apartmentTransfer.rows[0].recipient]);
  
     var approveSystem = {
@@ -194,7 +194,8 @@ module.exports.set = function(router, pool) {
       monRecipient: parseFloat(recipientData.rows[0].budget),
       recipient: apartmentTransfer.rows[0].recipient,
       approve: parseFloat(apartmentTransfer.rows[0].num_approve),
-      disapprove: parseFloat(apartmentTransfer.rows[0].num_disapprove)
+      disapprove: parseFloat(apartmentTransfer.rows[0].num_disapprove),
+      
     }
 
     var approved = approveSystem.approve; 
@@ -204,8 +205,9 @@ module.exports.set = function(router, pool) {
     if(fromUser.status == 'accept'){
       approved += 1;
       //approved >= 3 and that transfer has only one
-
-      if(approved >= 3){
+      
+      // and if there no my name in the email
+      if(approved >= 3) {
         //sustract from apartment
         var resultingApartment = approveSystem.monApartment - approveSystem.monTransfer;
         //add to recipient
@@ -215,7 +217,8 @@ module.exports.set = function(router, pool) {
         pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingRecipient, approveSystem.recipient]);
         
         await pool.query("UPDATE transfer_logs SET num_approve = $1, finished = 't',\
-        email_logs = email_logs || '{ "+ fromUser.userEmail +" }', moment_budget = $2 WHERE id = $3;", [approved, approveSystem.monApartment, fromUser.id]);
+        email_logs = email_logs || '{ "+ fromUser.userEmail +" }' WHERE id = $3;", [approved, fromUser.id]);
+        
         response.redirect('/apartment_approve');
       } 
     } else if (fromUser.status == 'deny'){
@@ -237,7 +240,7 @@ module.exports.set = function(router, pool) {
   });
 
   router.post('/transferApartmentSucc', ensureLoggedIn, Validator.apartmentTransfer, async function(request, response){
-
+    console.log("You calling me?");
     var fromUser = {
       amountSend: request.body.amount,
       emailSend: request.body.recipient,
@@ -246,6 +249,7 @@ module.exports.set = function(router, pool) {
       email: request.user.email
     };
 
+    /*INSERT INTO transfer_logs VALUES('10-18-2017', 'c6@ligercambodia.org', 'catering@ligercambodia.org', 50, 150, 90, 'order food for friday', 'c2cefe04-911c-44ea-8a28-79c4f0a0f6a9', 2, 0,'c5', 'false', '{{"hongly.p@ligercambodia.org", "10-19-2017", "approve"},{"somphors.y@ligercambodia.org", "10-20-2017", "approve"}}');*/
     var recipientCurrentBudget;
  
     // Get apartment from user info
@@ -253,21 +257,42 @@ module.exports.set = function(router, pool) {
     var ident = userApartment.rows[0].apartment;
     // e.g. ident = c6
 
+    console.log("Email: " + fromUser.email);
+
     // Get apartment info
     var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [ident.toUpperCase()]);
+    var objFormate = JSON.stringify( [ {email: fromUser.email,
+                    status: 'approve', time: Date.now()} ] );
 
     console.log("recipientCurrentBudget", recipientCurrentBudget)
     console.log("apartmentDataEmail", apartmentData.rows[0].email)
     var apartmentEmail = apartmentData.rows[0].email;
 
-    const insertQuery = {
-      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason,\
-                  date, email_logs, num_approve) VALUES($1::text, $2, $3, $4, CURRENT_TIMESTAMP(2), $5, 1::int);",
-      values:   [apartmentEmail, fromUser.emailSend, fromUser.amountSend, 
-                  fromUser.reasonSend, [fromUser.email]]
+    //PROBLEM
+    const insertQuery = {//email_logs || '{ "+ fromUser.userEmail +" }'
+    /*INSERT INTO transfer_logs (sender, recipient, amount, reason, date, approvedata, approve_info, apartment)\
+            VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), JSON.stringify({{'email': 'visal.s@ligercambodia.org', \
+                    'status': 'approve', 'time': CURRENT_TIMESTAMP(2)}}), 1::int, $7);*/
+      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason, date, approve_info, num_approve, apartment)\
+              VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), $5, 1::int, $6);",
+      values: [apartmentEmail, fromUser.emailSend, fromUser.amountSend, fromUser.reasonSend, objFormate, ident]
+      //[apartmentEmail, fromUser.emailSend, fromUser.amountSend, 
+                  //fromUser.reasonSend, ident], //[[$5::text, CURRENT_TIMESTAMP(2), $6::text]]
     }
+
     pool.query(insertQuery, (err, result) => {
-                      response.send('Success'); 
-                  }); 
+      if(err){
+        console.log(err);
+      }
+      response.send('Success'); 
+    }); 
   });
+
+  //SELECT x.approve_info as pro, y.amount FROM transfer_logs as x join in exchange_list as y where x.sender == y.email;
+
+  /*router.get('/name', async function(request, response){
+    var arrayList = await pool.query("SELECT approve_info as pro FROM transfer_logs");
+    console.log(arrayList.rows[0].pro[1].name);
+    response.render('testing_file/table');
+  });*/
 }
