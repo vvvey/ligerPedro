@@ -1,18 +1,9 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var User = require('../lib/user')
 
-function isAdminOrCateringManager (req, res, next) {
-	console.log(req.user.role != 'catering_manager')
-	console.log(req.user.role)
-	if (req.user.role == 'admin' || req.user.role == 'catering_manager') {
-		next();
-	} else {
-		return res.status(404).render('notFound');
-	}
-}
 
 module.exports.set = function(router, pool)  {
-	router.get('/catering/transfer_logs', ensureLoggedIn, isAdminOrCateringManager, (req, res) => {
+	router.get('/catering/transfer_logs', ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 'catering_manager'), (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
 	      start = 0 
@@ -94,7 +85,7 @@ module.exports.set = function(router, pool)  {
 					nextStart = start + limit;
 				}
 				// Render to client
-				res.render('catering/banks_transferLog', {
+				res.render('banks_transferLog', {
 					transfer_data: result.rows, 
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -105,7 +96,7 @@ module.exports.set = function(router, pool)  {
 		});		
 	})
 
-	router.get('/catering/overview', ensureLoggedIn, isAdminOrCateringManager, (req, res) => {
+	router.get('/catering/overview', ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 'catering_manager'), (req, res) => {
 		var selectCatering =  {
 			text: "SELECT budget FROM account WHERE email = 'catering@ligercambodia.org';"
 		}
@@ -145,7 +136,7 @@ module.exports.set = function(router, pool)  {
 		pool.query(select, (err, result) => {
  			if (err) {res.send(err)}
  			else {
-				res.render('catering/overview', {bankName: 'Catering', 
+				res.render('overview', {bankName: 'Catering', 
 										bankBudget: bankBudget, 
 										apartmentData: result.rows, 
 										recentTransfer: recentTransferData,
