@@ -61,7 +61,40 @@ module.exports.set = function(router, pool) {
     } 
   });
 
-  router.get('/keeper/p/d', ensureLoggedIn, User.isRole("keeper", "admin"), async function(request,response) {
+  router.get('/keeper/p/d', ensureLoggedIn, User.isRole("keeper", "admin"), async function(request,response) { 
+    // Query to SELECT exchange list group by apartment and apptdate if pending is true and approve is true
+    // Sample result
+    // [{
+    //   apptdate: 2017-11-01T02:00:00.000Z,
+    //   apartment: 'c5',
+    //   count: '1',
+    //   total: '15.00',
+    //   picker: 'Vuthy Vey',
+    //   row_number: 0,
+    //   info: [ { id: '365d75d1-d5cb-4614-8c94-d2030d44f97e',
+    //              timecreated: '2017-10-28T06:07:01.94',
+    //              person: 'Vuthy Vey',
+    //              email: 'vuthy.v@ligercambodia.org',
+    //              type: 'pedro-dollar',
+    //              amount: 15,
+    //              result: 15,
+    //              reason: 'Cool',
+    //              re: 'Theary Ou',
+    //              approved: 'true',
+    //              timeapproved: '2017-10-28T06:09:04.1',
+    //              timeexchanged: null,
+    //              apptdate: '2017-11-01T09:00:00',
+    //              apartment: 'c5' }, {.......},{.....} ] 
+    //  },
+    //  {
+    //   apptdate: 2017-11-06T02:00:00.000Z,
+    //   apartment: 'c5',
+    //   count: '1',
+    //   total: '5.00',
+    //   picker: 'Mengthong Long',
+    //   row_number: 1,
+    //   info: [ [Object] ]
+    //   }]
     var query = "SELECT \
                   apptdate, \
                   apartment, \
@@ -93,105 +126,9 @@ module.exports.set = function(router, pool) {
         console.log(err)
       } else {
         response.render('keeper/PDKeeper', {data: data.rows, userData: request.user})
-        console.log(data.rows)
+        console.log(data.rows[0].info)
       }
     });
-
-    // var email = request.user.email;
-    
-    // var toDateMonth = function(dateZone){
-    //   var today = new Date(dateZone);
-    //   var date = today.getDate();
-    //   var mon = today.getMonth() + 1; 
-    //   var year = today.getFullYear();
-      
-    //   if(mon < 10){
-    //     mon = "0" + String(mon); 
-    //   }
-
-    //   var wholeDate = String(year + "-" + mon  + "-" + date + " 9:00:00");
-      
-    //   return wholeDate;
-    // }
-
-    // const dataAcc = {
-    //   text: "SELECT * FROM account WHERE email = $1;",
-    //   values: [email]
-    // };
-
-    // pool.query(dataAcc, function (accDataErr, accDataResult) {
-    //   if(accDataErr){console.log(accDataErr);}
-    //   else{
-    //     if(accDataResult.rows[0].role == 'keeper' || accDataResult.rows[0].role == 'admin'){
-
-    //       var appoint = toDateMonth(Date.now());
-    //       console.log(appoint);
-    //       const exchangeSelect = {
-    //         text: "SELECT * FROM exchange_list WHERE approved = 'true' AND pending = 'true' AND type = 'pedro-dollar' AND apptdate = $1;",
-    //         values: [appoint]
-    //       };
-    //       pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
-    //         if (exchangeErr) {console.log(exchangeErr);} 
-    //         else{
-    //           var totalExchange = 0;
-    //           var totalExchA1 = 0;
-    //           var totalExchA2 = 0;
-    //           var totalExchB3 = 0;
-    //           var totalExchB4 = 0;
-    //           var totalExchC5 = 0;
-    //           var totalExchC6 = 0;
-    //           var totalExchD7 = 0;
-    //           var totalExchD8 = 0;
-
-    //           if(exchangeResult.rows){
-    //             //total money for
-    //             for(var i = 0; i < exchangeResult.rows.length; i++) {
-    //               totalExchange += parseFloat(exchangeResult.rows[i].result);
-
-    //               //total money and people for apartment A1
-    //               if(exchangeResult.rows[i].apartment == 'a1'){
-    //                 totalExchA1 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment A2
-    //               if(exchangeResult.rows[i].apartment == 'a2'){
-    //                 totalExchA2 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment B3
-    //               if(exchangeResult.rows[i].apartment == 'b3'){
-    //                 totalExchB3 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment B4
-    //               if(exchangeResult.rows[i].apartment == 'b4'){
-    //                 totalExchB4 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment C5
-    //                if(exchangeResult.rows[i].apartment == 'c5'){
-    //                 totalExchC5 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment C6
-    //                if(exchangeResult.rows[i].apartment == 'c6'){
-    //                 totalExchC6 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment D7
-    //                if(exchangeResult.rows[i].apartment == 'd7'){
-    //                 totalExchD7 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //               //total money and people for apartment D8
-    //                if(exchangeResult.rows[i].apartment == 'd8'){
-    //                 totalExchD8 += parseFloat(exchangeResult.rows[i].result);
-    //               }
-    //             }
-    //           } else {
-    //             totalExchange = 0;
-    //           }
-    //           response.render('keeper/PDKeeper', {keeper: 'true', BudA1: totalExchA1, BudA2: totalExchA2, BudB3: totalExchB3, BudB4: totalExchB4, BudC5: totalExchC5, BudC6: totalExchC6, BudD7: totalExchD7, BudD8: totalExchD8, BudTotal: totalExchange, approvedDate:exchangeResult.rows, ranVal: uuidv4()});
-    //         }
-    //       });
-    //     } else{
-    //       response.redirect('/notFound');
-    //     }
-      // }
-    // });
   });
 
   router.post('/keeper/p/d', async function(request, response) {
