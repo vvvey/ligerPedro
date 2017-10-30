@@ -279,6 +279,47 @@ module.exports.set = function(router, pool) {
     console.log("apartmentDataEmail", apartmentData.rows[0].email)
     var apartmentEmail = apartmentData.rows[0].email;
 
+    //Send email to apartment members
+    //get user's email
+    var userEmail = request.user.email;
+
+    //get amount requesting to send
+    var amountRequest = request.body.amount;
+
+    //get intended recipient
+    var transferRecipient = request.body.recipient;
+
+    //get reason
+    var reason = request.body.reason;
+
+    //get user's data
+    var userData = await pool.query("SELECT * FROM account WHERE email = $1",[userEmail]);
+
+    var apartmentName = userData.rows[0].apartment;
+    //get user's apartment
+    console.log("Apartment name:"+apartmentName.toUpperCase());
+
+    //get apartment members' data
+    var apartmentMembersData = await pool.query("SELECT * FROM account WHERE apartment = $1",[apartmentName.toLowerCase()]);
+
+    //save all apartment members' emails / recipients' emails
+    console.log("Aparmtent Members data : "+apartmentMembersData.rows[0]);
+    var apartmentEmailList = [];
+
+    //get all apartment members email
+    for (var i = 0; i < apartmentMembersData.rows.length; i++){
+      apartmentEmailList.push(apartmentMembersData.rows[i].email);
+      console.log("i = " +apartmentMembersData.rows[i].email);
+    }
+
+    //get content
+    //var contentToTransferer = "";
+    var contentToApartmentMembers = "Transfer Request by: "+userEmail+"<br>Transfer Recipient: "+transferRecipient+"<br>AmountRequest: "+amountRequest+"<br>Reason: "+reason;
+
+    var email = require('../lib/email.js');
+    email.sendEmail(apartmentEmailList,"Transfer Request",contentToApartmentMembers);
+    // email.sendEmail("ketya.n@ligercambodia.org","Transfer Request",contentToApartmentMembers+"<br>target: "+apartmentEmailList);
+
     //PROBLEM
     const insertQuery = {//email_logs || '{ "+ fromUser.userEmail +" }'
     /*INSERT INTO transfer_logs (sender, recipient, amount, reason, date, approvedata, approve_info, apartment)\
