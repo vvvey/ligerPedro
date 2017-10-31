@@ -116,8 +116,8 @@ module.exports.set = function(router, pool) {
 
     //get content
     var contentToTransferer = "Recipient: "+recipientEmail+"<br>amount: "+amount+"<br>reason: "+reason;
-    var contentToRecipient = "Sender: "+senderEmail+"<br>Amount Sent: "+amount+"<br>Recipient: "+recipientEmail+"<br>Reason:"+reason;
-
+    var contentToRecipient = "Sender: "+senderEmail+"<br><a href=\"http://ligerpedro.herokuapp.com/apartment_history\">Amount Sent:</a> "+amount+"<br>Recipient: "+recipientEmail+"<br>Reason:"+reason;
+    var contentToPersonalRecipient = "Sender: "+senderEmail+"<br><a href=\"http://ligerpedro.herokuapp.com/history_personal\">Amount Sent:</a> "+amount+"<br>Recipient: "+recipientEmail+"<br>Reason:"+reason;
 
     var email = require('../lib/email.js');
 
@@ -149,7 +149,7 @@ module.exports.set = function(router, pool) {
 	    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Receive",contentToRecipient+"<br>Target: "+apartmentEmailList);
     }else //if recipient is not apartment
     {
-    	email.sendEmail(recipientEmail,"Personal Transfer Receive",contentToRecipient);
+    	email.sendEmail(recipientEmail,"Personal Transfer Receive",contentToPersonalRecipient);
     	// email.sendEmail("ketya.n@ligercambodia.org","Personal Transfer Receive",contentToRecipient+"<br>Target: "+recipientEmail);
     }
 
