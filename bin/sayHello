@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+function sayHello() {
+	console.log("Hello! I'm Vuthy! What you want")
+}
+
+sayHello();
