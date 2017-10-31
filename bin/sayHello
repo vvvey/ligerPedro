@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 function sayHello() {
-	console.log("Hello! I'm Vuthy! What you want")
+	console.log("Hello! I'm Vuthy! What you want! It has been 10mins")
 }
 
 sayHello();
