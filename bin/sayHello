@@ -18,18 +18,18 @@ async function sayHello() {
 		if(err) {console.log(err)} else {console.log(data.rows)}
 	});
 
-	var Keeperquery = "UPDATE exchange_list \
-						SET \
-							exchanged = 'false', \
-							Timeexchanged = CURRENT_TIMESTAMP(2), \ 
-							pending = 'false' \
-						WHERE \
-							(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2) \
-							AND approved = 'true' \
-							AND pending = 'true';";
-	pool.query(Keeperquery, (err, data) =>{
-		if(err) {console.log(err)} else {console.log(data.rows)}
-	})
+	// var Keeperquery = "UPDATE exchange_list \
+	// 					SET \
+	// 						exchanged = 'false', \
+	// 						Timeexchanged = CURRENT_TIMESTAMP(2), \ 
+	// 						pending = 'false' \
+	// 					WHERE \
+	// 						(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2) \
+	// 						AND approved = 'true' \
+	// 						AND pending = 'true';";
+	// pool.query(Keeperquery, (err, data) =>{
+	// 	if(err) {console.log(err)} else {console.log(data.rows)}
+	// })
 }
 
 sayHello();
