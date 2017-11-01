@@ -4,7 +4,7 @@
 var pool = require('../lib/pool-config');
 
 async function sayHello() {
-	var REquery = "UPDATE exchange_list SET approved = 'false' WHERE (apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) and approved IS NULL and pending = 'true' ;"
+	var REquery = "UPDATE exchange_list SET approved = 'false', re = 'SYSTEM', pending = 'false' WHERE (apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) and approved IS NULL and pending = 'true' ;"
 	pool.query(REquery, (err, data) => {
 		if(err) {console.log(err)} else {console.log(data.rows)}
 	})
