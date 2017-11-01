@@ -8,7 +8,7 @@ async function sayHello() {
 					SET \
 						approved = 'false', \
 						re = 'SYSTEM', \
-						pending = 'false' \
+						pending = 'false', \
 						Timeapproved = CURRENT_TIMESTAMP(2) \
 					WHERE \
 						(apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
