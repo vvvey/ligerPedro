@@ -1,5 +1,12 @@
 #!/usr/bin/env node
+
+
+var pool = require('../lib/pool-config');
+
 function sayHello() {
+	pool.query("SELECT * FROM exchange_list WHERE pending = 'true';", (err, data) => {
+		if(err) {console.log(err)} else {console.log(data.rows)}
+	})
 	console.log("Hello! I'm Vuthy! What you want! It has been 10mins")
 }
 
