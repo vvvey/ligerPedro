@@ -15,7 +15,9 @@ async function sayHello() {
 						AND approved IS NULL \
 						AND pending = 'true' ;"
 	pool.query(REquery, (err, data) => {
-		if(err) {console.log(err)} else {console.log(data.rows)}
+		if(err) {console.log(err)} else {
+			console.log("Scanned late approves! Done!")
+		}
 	});
 
 	var Keeperquery = "UPDATE exchange_list \
@@ -29,7 +31,9 @@ async function sayHello() {
 							AND pending = 'true' ;"
 
 	pool.query(Keeperquery, (err, data) => {
-		if(err) {console.log(err)} else {console.log(data.rows)};
+		if(err) {console.log(err)} else {
+			console.log("Scanned late exchanges! Done")
+		};
 	})
 }
 
