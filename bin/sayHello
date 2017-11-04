@@ -13,10 +13,11 @@ async function sayHello() {
 					WHERE \
 						(apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
 						AND approved IS NULL \
-						AND pending = 'true' ;"
+						AND pending = 'true' \
+					RETURNING count(*);"
 	pool.query(REquery, (err, data) => {
 		if(err) {console.log(err)} else {
-			console.log("Scanned late approves! Done!")
+			console.log("Scanned late approves! Done! " + data.rows[0].count + " late approve found!")
 		}
 	});
 
@@ -28,11 +29,12 @@ async function sayHello() {
 						WHERE \
 							(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
 							AND approved = 'true' \
-							AND pending = 'true' ;"
+							AND pending = 'true' \
+						RETURNING count(*);;"
 
 	pool.query(Keeperquery, (err, data) => {
 		if(err) {console.log(err)} else {
-			console.log("Scanned late exchanges! Done")
+			console.log("Scanned late exchanges! Done" +  data.rows[0].count + " late exchanges found!")
 		};
 	})
 }
