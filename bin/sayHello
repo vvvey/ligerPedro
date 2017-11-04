@@ -25,8 +25,8 @@ async function sayHello() {
 							Timeexchanged = CURRENT_TIMESTAMP(2) \
 						WHERE \
 							(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
-							AND approved IS 'true' \
-							AND pending IS 'true' ;"
+							AND approved = 'true' \
+							AND pending = 'true' ;"
 
 	pool.query(Keeperquery, (err, data) => {
 		if(err) {console.log(err)} else {console.log(data.rows)};
