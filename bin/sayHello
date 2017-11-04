@@ -30,7 +30,7 @@ async function sayHello() {
 							(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
 							AND approved = 'true' \
 							AND pending = 'true' \
-						RETURNING count(*);;"
+						RETURNING count(*);"
 
 	pool.query(Keeperquery, (err, data) => {
 		if(err) {console.log(err)} else {
