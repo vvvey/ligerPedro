@@ -67,7 +67,8 @@
               <ul>
                  <li><a href="/admin/exchange_data"><i class="material-icons">list</i>All Exchange Logs</a></li>
                 <li><a href="/exchange_list"><i class="material-icons">check_circle</i>Exchanging Approve</a></li>
-                <li><a href="/keeper/p/d"><i class="material-icons">schedule</i>Keeper Page</a></li>
+                <li><a href="/keeper/p/d"><i class="material-icons">schedule</i>Keeper Page: P to D</a></li>
+                <li><a href="/keeper/p/d"><i class="material-icons">schedule</i>Keeper Page: D to P</a></li>
               </ul>
             </div>
           </li>
@@ -113,6 +114,7 @@
     {{else ifCondA role '==' 're'}}
       <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
       <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+      <li><a href="/exchange_list"><i class="material-icons">check_circle</i>Exchanging Approve</a></li>
     {{else ifCondA role '==' 'maintenance_manager'}}
       <li>
         <ul class="collapsible collapsible-accordion">

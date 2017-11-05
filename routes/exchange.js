@@ -139,6 +139,7 @@ module.exports.set = function(router, pool) {
             } else {
               res.render('re/exchange_list', {
                 exchangeData: result2.rows,
+                userData: req.user
               });
             }
           })
