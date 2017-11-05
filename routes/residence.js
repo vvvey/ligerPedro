@@ -3,6 +3,11 @@ var User = require('../lib/user');
 
 
 module.exports.set = function(router, pool)  {
+
+	router.get('/residence', (req, res) => {
+		res.redirect('/residence/overview');
+
+	});
 	router.get('/residence/transfer_logs', ensureLoggedIn, User.isRole('re', 'admin', 'maintenance_manager'), (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
