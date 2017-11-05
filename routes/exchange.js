@@ -110,8 +110,9 @@ module.exports.set = function(router, pool) {
     }
     var status = req.body.status;
     var re = req.user.displayName;
+    var pending = status; //(status == true) ? true : false
 
-    pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", [re, status, exchangeReq_id], function(err, result) {
+    pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2), pending = $3 WHERE id = $4;", [re, status, pending, exchangeReq_id], function(err, result) {
       if (err) {
         console.log(err)
       } else {
