@@ -1,6 +1,7 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var User = require('../lib/user');
 
+
 module.exports.set = function(router, pool)  {
 	router.get('/residence/transfer_logs', ensureLoggedIn, User.isRole('re', 'admin', 'maintenance_manager'), (req, res) => {
 		var start;

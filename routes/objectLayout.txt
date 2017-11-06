@@ -1,0 +1,21 @@
+INSERT INTO transfer_logs(approve_info) VALUES('
+	{
+		"body": 
+		{
+			"person1": 
+				{
+					"email" : "visal.s@ligercambodia.org", 
+					"status" : "approv", 
+					"time" : "10-12- 2016"
+				}
+		}, 	
+		{
+			"person2" : 
+				{
+					"email" : "visal.s@ligercambodia.org", 
+					"status" : "approv", 
+					"time" : "10-12- 2016"
+				}
+		}
+	}'
+);

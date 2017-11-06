@@ -5,22 +5,13 @@ var Validator = require('../lib/validator')
 module.exports.set = function(router, pool) {
 
   router.post('/exchange_confirmation', function(req, res) {
-    res.render('exchange_confirmation', {
+    res.render('personal/exchange_confirmation', {
       amount: req.body.amount,
       result: req.body.result,
       reason: req.body.reason
     });
   });
 
-  router.get('/exchange_approving', ensureLoggedIn, function(req, res) {
-    res.render('exchange');
-  });
-
-  router.get('/exchanging_system', function(req, res) {
-    res.render('exchanging_system');
-  });
-
- 
   router.get('/exchange', ensureLoggedIn, (req, res) => {
     var selectUserInfo = {
       text: 'SELECT * FROM account WHERE email = $1;',
@@ -42,15 +33,12 @@ module.exports.set = function(router, pool) {
             var budget = userResult.rows[0].budget;
             var pendingBudget = pendingResult.rows[0].sum;
             var validBudget = parseFloat(budget) - parseFloat(pendingBudget)
-            res.render('exchanging', {user: req.user, data: userResult.rows[0].role ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
+            res.render('personal/exchanging', {user: req.user, data: userResult.rows[0].role ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
           }
         })
       }
     })
-    
   })
-
-  
 
   router.post('/exchange_approving', Validator.exchange, function(req, res) {
     var exchangeLog = { 
@@ -122,8 +110,9 @@ module.exports.set = function(router, pool) {
     }
     var status = req.body.status;
     var re = req.user.displayName;
+    var pending = status; //(status == true) ? true : false
 
-    pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2) WHERE id = $3;", [re, status, exchangeReq_id], function(err, result) {
+    pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2), pending = $3 WHERE id = $4;", [re, status, pending, exchangeReq_id], function(err, result) {
       if (err) {
         console.log(err)
       } else {
@@ -132,6 +121,7 @@ module.exports.set = function(router, pool) {
     })
   })
 
+  //RE's page
   router.get('/exchange_list', ensureLoggedIn,function(req, res) {
     var email = req.user.email;
     var userName = req.user.fullName;
@@ -147,7 +137,7 @@ module.exports.set = function(router, pool) {
             if (err2) {
               console.log(err2)
             } else {
-              res.render('exchange_list', {
+              res.render('re/exchange_list', {
                 exchangeData: result2.rows,
               });
             }

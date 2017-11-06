@@ -1,5 +1,6 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-var User = require('../lib/user');
+var User = require('../lib/user') 
+
 
 module.exports.set = function(router, pool)  {
 	router.get('/maintenance/transfer_logs', ensureLoggedIn, User.isRole('admin', 'maintenance_manager'), (req, res) => {
@@ -142,7 +143,6 @@ module.exports.set = function(router, pool)  {
 										userData: req.user})
 			}
 		})
-
 	})
 		
-}
+}	

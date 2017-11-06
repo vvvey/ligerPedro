@@ -7,7 +7,7 @@ module.exports.set = function(router, pool) {
     response.redirect('/transfer_personal')
   });
 
-  router.get('/transfer_personal', function(request, response){
+  router.get('/transfer_personal', ensureLoggedIn, function(request, response){
     if(request.user){
       var email = request.user.email;
       const getAccount = {
@@ -46,7 +46,7 @@ module.exports.set = function(router, pool) {
                   }
                   console.log("money: " + (accresult.rows[0].budget - moneyExchange));
 
-                  response.render('transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
+                  response.render('personal/transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
                 }
               });
             }
@@ -56,10 +56,6 @@ module.exports.set = function(router, pool) {
     }else{
       response.redirect('/login');
     }
-  });
-
-  router.get('/transfer_success', function(req, res) {
-    res.render('transfer');
   });
 
   router.post('/transfer_confirmation', function(req, res) {
@@ -79,10 +75,8 @@ module.exports.set = function(router, pool) {
     })
   });
   
-  
-  
   //if the validateTransfer success, the middleware just call queries to database
-  router.post('/transfer_success', Validator.individualTransfer , function (req, res) {
+  router.post('/transfer_success', Validator.individualTransfer , async function (req, res) {
     const senderEmail = req.user.email;
     const recipientEmail = req.body.recipient;
     const reason = req.body.reason;
@@ -100,6 +94,65 @@ module.exports.set = function(router, pool) {
     console.log("Sender New Budget: " + senderNewBudget)
     console.log("Recipient New Budget: " + recipientNewBudget)
 
+	/*
+    	send email
+	*/
+
+    //get sender email
+    //senderEmail
+
+    //get amount
+    var amount = req.body.amount;
+
+    //get recipient
+    //recipientEmail
+
+    //get reason
+    //reason
+
+    //get apartment emails array
+    var apartmentEmail = ["a1@ligercambodia.org", "a2@ligercambodia.org", "b3@ligercambodia.org", "b4@ligercambodia.org", "c5@ligercambodia.org", "c6@ligercambodia.org", "d7@ligercambodia.org", "d8@ligercambodia.org"];
+    //var apartmentEmail = await pool.query("SELECT * FROM account WHERE role = $1", ["apartment"]);
+
+    //get content
+    var contentToTransferer = "Recipient: "+recipientEmail+"<br>amount: "+amount+"<br>reason: "+reason;
+    var contentToRecipient = "Sender: "+senderEmail+"<br>Amount Sent: "+amount+"<br>Recipient: "+recipientEmail+"<br>Reason:"+reason;
+
+
+    var email = require('../lib/email.js');
+
+    //send email to trasferer
+    email.sendEmail(senderEmail,"Transfer Succesful",contentToTransferer);
+    // email.sendEmail("ketya.n@ligercambodia.org","Transfer Succesful",contentToTransferer+"<br>Target: "+senderEmail);
+
+    //send email to transfer recipient
+
+    //check if recipient is apartment account
+    if (apartmentEmail.includes(recipientEmail))
+    {
+    	//get apartment data
+    	var apartmentData = await pool.query("SELECT * FROM account WHERE email = $1",[recipientEmail]);
+    	//get apartment name
+    	var apartmentName = apartmentData.rows[0].username;
+    	//get apartment members' data
+	    var apartmentMembersData = await pool.query("SELECT * FROM account WHERE apartment = $1",[apartmentName.toLowerCase()]);
+	    //save all apartment members' emails / recipients' emails
+	    console.log("Apartment Members data : "+apartmentMembersData.rows[0]);
+	    var apartmentEmailList = [];
+
+	    //get all apartment members email
+	    for (var i = 0; i < apartmentMembersData.rows.length; i++){
+	      apartmentEmailList.push(apartmentMembersData.rows[i].email);
+	      console.log("i = " +apartmentMembersData.rows[i].email);
+	    }
+	    email.sendEmail(apartmentEmailList,"Apartment Transfer Receive",contentToRecipient);
+	    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Receive",contentToRecipient+"<br>Target: "+apartmentEmailList);
+    }else //if recipient is not apartment
+    {
+    	email.sendEmail(recipientEmail,"Personal Transfer Receive",contentToRecipient);
+    	// email.sendEmail("ketya.n@ligercambodia.org","Personal Transfer Receive",contentToRecipient+"<br>Target: "+recipientEmail);
+    }
+
     //Update new budget to the sender and recipient
     pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [senderNewBudget, senderEmail]);
     pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [recipientNewBudget, recipientEmail])
@@ -109,7 +162,7 @@ module.exports.set = function(router, pool) {
     	if (err) {
     		res.send(err)
     	} else {
-        res.send('Sent')
+	      res.send('Sent')
     	}
     });
   });
