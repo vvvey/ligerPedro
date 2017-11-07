@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+
+
+var pool = require('../lib/pool-config');
+
+function scanExpireApptDate() {
+	var REquery = "	UPDATE exchange_list \
+					SET \
+						approved = 'false', \
+						re = 'SYSTEM', \
+						pending = 'false', \
+						Timeapproved = CURRENT_TIMESTAMP(2) \
+					WHERE \
+						(apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
+						AND approved IS NULL \
+						AND pending = 'true' \
+					RETURNING id;"
+	pool.query(REquery, (err, data) => {
+		if(err) {console.log(err)} else {
+			console.log("Scanned late approves! Done! " + data.rows.length + " late approve found!")
+		}
+	});
+
+	var Keeperquery = "UPDATE exchange_list \
+						SET \
+							exchanged = 'false', \
+							pending = 'false', \
+							Timeexchanged = CURRENT_TIMESTAMP(2) \
+						WHERE \
+							(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
+							AND approved = 'true' \
+							AND pending = 'true' \
+						RETURNING id;"
+
+	pool.query(Keeperquery, (err, data) => {
+		if(err) {console.log(err)} else {
+			console.log("Scanned late exchanges! Done " +  data.rows.length + " late exchanges found!")
+		};
+	})
+}
+
+scanExpireApptDate();
