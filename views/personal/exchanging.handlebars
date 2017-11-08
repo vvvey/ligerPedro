@@ -24,14 +24,14 @@
 					<div class="col l12 s12 m4">
 						<div class="card">
 							<div class="card-content">
-								<span class="card-title">Exchanging Rate:</span>
-								<h4 class="center">P1 = $1</h4>
+								<span class="card-title black-text">Exchanging Rate:</span>
+								<h4 class="center black-text">P1 = $1</h4>
 							</div>
 						</div>
 					</div>
 					<div class="col l12 s12 m4">
 						
-						<div class="card amber">
+						<div class="card" style="background-color: #3498DB">
 							<div class="card-content">
 								<span class="card-title">Total Budget: </span>
 								<h4 class="center white-text">P {{budget}}</h4>
@@ -40,7 +40,7 @@
 					</div>
 					{{#ifCondA pendingBudget '!=' 0}}
 					<div class="col l12 s12 m4">
-						<div class="card amber">
+						<div class="card" style="background-color: #3498DB">
 							<div class="card-content">
 								<span class="card-title">Pending Budget: </span>
 								<h4 class="center white-text">P {{pendingBudget}}</h4>
@@ -54,7 +54,7 @@
 			<div class="col s12 l9">
 			
 				<div class="card">
-					<div class="card-content amber">
+					<div class="card-content" style="background-color: #3498DB">
 						<span class="card-title center">Exchange</span>
 					</div>
 					<div class="card-tabs">
@@ -356,4 +356,3 @@ function giveValidDate(closeTime) {
 	}
 }
 </script>
-{{> mainFooter}}
