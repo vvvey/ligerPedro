@@ -126,7 +126,6 @@ module.exports.set = function(router, pool) {
         console.log(err)
       } else {
         response.render('keeper/PDKeeper', {data: data.rows, userData: request.user})
-        console.log(data.rows[0].info)
       }
     });
   });
@@ -207,7 +206,7 @@ module.exports.set = function(router, pool) {
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
             else{
-              response.render('keeper/d-pExchange', {approvedDate: exchangeResult.rows, keeper: 'true'});
+              response.render('keeper/d-pExchange', {approvedDate: exchangeResult.rows, keeper: 'true', userData: request.user});
             }//approved = 'true'
           });
         } else{
