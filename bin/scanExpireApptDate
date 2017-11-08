@@ -14,6 +14,7 @@ function scanExpireApptDate() {
 						(apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
 						AND approved IS NULL \
 						AND pending = 'true' \
+						AND type = 'pedro-dollar' \
 					RETURNING id;"
 	pool.query(REquery, (err, data) => {
 		if(err) {console.log(err)} else {
@@ -28,7 +29,6 @@ function scanExpireApptDate() {
 							Timeexchanged = CURRENT_TIMESTAMP(2) \
 						WHERE \
 							(apptdate + '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
-							AND approved = 'true' \
 							AND pending = 'true' \
 						RETURNING id;"
 

@@ -64,6 +64,40 @@ router.get("/", function(request, response){
     }
 });
 
+router.get("/personal", function(request, response){
+    if(request.user){
+      var email = request.user.email;
+      const getAccount = {
+        text: "SELECT * FROM account WHERE email = $1;",
+        values: [email]
+      };
+      
+      pool.query(getAccount, function(accErr, accresult) {
+        if(accErr){console.log(accErr);}
+        else{
+          response.render('partials/personal_page', {user: request.user, data: accresult.rows[0].role});
+        }
+      });
+    }else{
+      response.render('partials/personal_page');
+    }
+});
+
+
+// router.get("/personal", ensureLoggedIn, function(req, res) {
+//   var email = req.user.email;
+//   const getAccount = {
+//         text: "SELECT * FROM account WHERE email = $1;",
+//         values: [email]
+//       };
+//   pool.query(getAccount, function(accErr, accresult) {
+//     if(accErr){console.log(accErr);}
+//     else{
+//       res.render('partials/personal_page', {user: req.user, data: accresult.rows[0].role});
+//     }
+//   });
+// })
+
 router.get('/login',
   function(req, res) {
     if (req.user) {
@@ -82,7 +116,7 @@ router.get('/login',
   });
 
 
-router.get('/history_personal', async function(request, response){
+router.get('/history_personal', ensureLoggedIn, async function(request, response){
   if(request.user){
     var email = request.user.email;
     
