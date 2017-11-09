@@ -58,7 +58,8 @@ module.exports.set = function(router, pool) {
                      resultingBudget = resultingBudget.concat("0");
                   } 
 
-                  pendingBudget = resultingBudget.toString();
+                  pendingBudget = Math.round((pendingBudget * 100))/100;
+                  pendingBudget = pendingBudget.toString();
                   if (pendingBudget[pendingBudget.indexOf(".")+2] == undefined){
                      pendingBudget = pendingBudget.concat("0");
                   } 
