@@ -1,7 +1,8 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
-var Validator = require('../lib/validator');
 var createdFun = require('../lib/objFuns');
+var Validator = require('../lib/validator');
+var moment = require('moment-timezone')
 
 module.exports.set = function(router, pool) {
 
@@ -31,6 +32,19 @@ module.exports.set = function(router, pool) {
         }
       }
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+      
+      budgetRemain = Math.round((budgetRemain * 100))/100;
+
+      budgetRemain = budgetRemain.toString();
+      if (budgetRemain[budgetRemain.indexOf(".")+2] == undefined){
+         budgetRemain = budgetRemain.concat("0");
+      } 
+
+      apartmentTransferBudget = Math.round((apartmentTransferBudget * 100))/100;
+      apartmentTransferBudget = apartmentTransferBudget.toString();
+      if (apartmentTransferBudget[apartmentTransferBudget.indexOf(".")+2] == undefined){
+         apartmentTransferBudget = apartmentTransferBudget.concat("0");
+      } 
       response.render('apartment/apartment_transfer', {
         emails: emailsList, 
         user: request.user, 
@@ -188,7 +202,7 @@ module.exports.set = function(router, pool) {
     }
   });
 
-  router.post('/apartment_list/approve/:id', async function(request, response) {
+  router.post('/apartment_list/approve/:id', ensureLoggedIn, async function(request, response) {
     var fromUser = {
       status: request.body.status,
       userName: request.user.displayName,
@@ -362,19 +376,35 @@ module.exports.set = function(router, pool) {
     console.log("Aparmtent Members data : "+apartmentMembersData.rows[0]);
     var apartmentEmailList = [];
 
+    //get recipient data
+    var recipientData = await pool.query("SELECT * FROM account WHERE email = $1",[transferRecipient]);
+
+    //get recipientName
+    var recipientName = recipientData.rows[0].username;
+
     //get all apartment members email
     for (var i = 0; i < apartmentMembersData.rows.length; i++){
       apartmentEmailList.push(apartmentMembersData.rows[i].email);
       console.log("i = " +apartmentMembersData.rows[i].email);
     }
 
-    //get content
+    //get content 
     //var contentToTransferer = "";
-    var contentToApartmentMembers = "Transfer Request by: "+userEmail+"<br>Transfer Recipient: "+transferRecipient+"<br>AmountRequest: "+amountRequest+"<br>Reason: "+reason;
+    var contentToApartmentMembers = "Hello, "+apartmentName.toUpperCase()+"<br><br>"+userData.rows[0].username+" requests to send "+amountRequest+" P to "+recipientName+".<br><br>Reason: "+reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com/apartment_approve\"><button class=\"button button1\" style=\"\
+    background-color: #4CAF50;\
+    /* Green */\
+    border: none;\
+    color: white;\
+    padding: 2% 2%;\
+    text-align: center;\
+    text-decoration: none;\
+    display: inline-block;\
+    font-size: 100%;\
+    cursor: pointer;\">Check it out</button>"; //#sjkfksa
 
     var email = require('../lib/email.js');
-    email.sendEmail(apartmentEmailList,"Transfer Request",contentToApartmentMembers);
-    // email.sendEmail("ketya.n@ligercambodia.org","Transfer Request",contentToApartmentMembers+"<br>target: "+apartmentEmailList);
+    email.sendEmail(apartmentEmailList,"Apartment Transfer Request",contentToApartmentMembers);
+    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Request",contentToApartmentMembers+"<br>target: "+apartmentEmailList);
 
     //PROBLEM
     const insertQuery = {//email_logs || '{ "+ fromUser.userEmail +" }'

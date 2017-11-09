@@ -124,6 +124,15 @@ router.get('/history_personal', ensureLoggedIn, async function(request, response
     
     var getExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [email]);
 
+    for(var i = 0; i < getTransfer.rows.length; i++){
+      getTransfer.rows[i].sender_resulting_budget = Math.round((getTransfer.rows[i].sender_resulting_budget * 100))/100;
+      getTransfer.rows[i].sender_resulting_budget = getTransfer.rows[i].sender_resulting_budget.toString();
+      if (getTransfer.rows[i].sender_resulting_budget[getTransfer.rows[i].sender_resulting_budget.indexOf(".")+2] == undefined){
+         getTransfer.rows[i].sender_resulting_budget = getTransfer.rows[i].sender_resulting_budget.concat("0");
+      } 
+      
+    }
+
     response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
   } else {
     response.redirect('/login');

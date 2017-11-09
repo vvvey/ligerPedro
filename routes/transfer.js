@@ -46,7 +46,25 @@ module.exports.set = function(router, pool) {
                   }
                   console.log("money: " + (accresult.rows[0].budget - moneyExchange));
 
-                  response.render('personal/transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
+                  //proof read 2 decimal places
+                  var resultingBudget = accresult.rows[0].budget - moneyExchange;
+                  // resultingBudget = resultingBudget.toString(); //If it's not already a String
+                  // resultingBudget = resultingBudget.slice(0, (resultingBudget.indexOf("."))+3); //With 3 exposing the hundredths place
+                  // Number(resultingBudget); //If you need it back as a Number
+                  resultingBudget = Math.round((resultingBudget * 100))/100;
+
+                  resultingBudget = resultingBudget.toString();
+                  if (resultingBudget[resultingBudget.indexOf(".")+2] == undefined){
+                     resultingBudget = resultingBudget.concat("0");
+                  } 
+
+                  pendingBudget = Math.round((pendingBudget * 100))/100;
+                  pendingBudget = pendingBudget.toString();
+                  if (pendingBudget[pendingBudget.indexOf(".")+2] == undefined){
+                     pendingBudget = pendingBudget.concat("0");
+                  } 
+
+                  response.render('personal/transfer_personal', {pendingBudget: moneyExchange,budget: resultingBudget, user: request.user, data: accresult.rows[0].role, emails: emailsList});
                 }
               });
             }
@@ -107,21 +125,43 @@ module.exports.set = function(router, pool) {
     //get recipient
     //recipientEmail
 
+    //get recipient data
+    var recipientData = await pool.query("SELECT * FROM account WHERE email = $1",[recipientEmail]);
+
+    //get recipient name
+    var recipientName = recipientData.rows[0].username;
+
     //get reason
     //reason
+
+    //get sender data
+    var senderData = await pool.query("SELECT * FROM account WHERE email = $1",[senderEmail]);
+
+    //get sender name 
+    var senderName = senderData.rows[0].username;
 
     //get apartment emails array
     var apartmentEmail = ["a1@ligercambodia.org", "a2@ligercambodia.org", "b3@ligercambodia.org", "b4@ligercambodia.org", "c5@ligercambodia.org", "c6@ligercambodia.org", "d7@ligercambodia.org", "d8@ligercambodia.org"];
     //var apartmentEmail = await pool.query("SELECT * FROM account WHERE role = $1", ["apartment"]);
 
-    //get content
-    var contentToTransferer = "Recipient: "+recipientEmail+"<br>amount: "+amount+"<br>reason: "+reason;
-    var contentToRecipient = "Sender: "+senderEmail+"<br>Amount Sent: "+amount+"<br>Recipient: "+recipientEmail+"<br>Reason:"+reason;
-
+    //get content 
+    var contentToTransferer = "Hello, "+senderName+"<br><br>You have succesfully transffered "+amount+" P to "+recipientName+".<br><br>Reason: "+reason;
+    var contentToRecipient = "Hello, "+recipientName+"<br><br>You have recieved "+amount+" P from "+senderName+"<br><br>Reason: "+reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com/apartment_personal\"><button class=\"button button1\" style=\"\
+    background-color: #4CAF50;\
+    /* Green */\
+    border: none;\
+    color: white;\
+    padding: 2% 2%;\
+    text-align: center;\
+    text-decoration: none;\
+    display: inline-block;\
+    font-size: 100%;\
+    cursor: pointer;\">Check it out</button>";
+    var contentToPersonalRecipient = "Hello, "+recipientName+"<br><br>You have recieved "+amount+" P from "+senderName+"<br><br>Reason: "+reason;
 
     var email = require('../lib/email.js');
 
-    //send email to trasferer
+    //send email to trasferer #shudsdf
     email.sendEmail(senderEmail,"Transfer Succesful",contentToTransferer);
     // email.sendEmail("ketya.n@ligercambodia.org","Transfer Succesful",contentToTransferer+"<br>Target: "+senderEmail);
 
@@ -145,12 +185,13 @@ module.exports.set = function(router, pool) {
 	      apartmentEmailList.push(apartmentMembersData.rows[i].email);
 	      console.log("i = " +apartmentMembersData.rows[i].email);
 	    }
-	    email.sendEmail(apartmentEmailList,"Apartment Transfer Receive",contentToRecipient);
-	    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Receive",contentToRecipient+"<br>Target: "+apartmentEmailList);
-    }else //if recipient is not apartment
+      //send email to apartment members #slfjjsl
+	    email.sendEmail(apartmentEmailList,"Apartment Transfer Received",contentToRecipient);
+	    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Received",contentToRecipient+"<br>Target: "+apartmentEmailList);
+    }else //if recipient is not apartment send email to personal account #lsdhf
     {
-    	email.sendEmail(recipientEmail,"Personal Transfer Receive",contentToRecipient);
-    	// email.sendEmail("ketya.n@ligercambodia.org","Personal Transfer Receive",contentToRecipient+"<br>Target: "+recipientEmail);
+    	email.sendEmail(recipientEmail,"Personal Transfer Received",contentToPersonalRecipient);
+    	// email.sendEmail("ketya.n@ligercambodia.org","Personal Transfer Received",contentToPersonalRecipient+"<br>Target: "+recipientEmail);
     }
 
     //Update new budget to the sender and recipient
