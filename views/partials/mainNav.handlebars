@@ -2,15 +2,15 @@
 	<div class="nav-wrapper z-depth-3" style="background-color:	#D0D3D4 !important">
 		<a href="#" data-activates="mobile" class="button-collapse hide-on-med-only"><i class="material-icons">view_headline</i></a>
 
-		<ul id="apartmentButton" class="dropdown-content hide-on-med-and-down">
+		<ul id="apartmentButton" class="dropdown-content">
 			<li class="divider white"></li>
-			<li class="red valign-wrapper" style ="color: rgb(255,255,255)"><a href="/apartment_transfer">Transfer<i class="material-icons right">send</i></a></li>
+			<li class="red"><a href="/apartment_transfer" class="white-text">Transfer<i class="material-icons right">send</i></a></li>
 		 	<li class="divider white"></li>
-		 	<li class="red valign-wrapper" style ="color: rgb(255,255,255)"><a href="/apartment_members">Exchange<i class="material-icons right">autorenew</i></a></li>
+		 	<li class="red"><a href="/apartment_members" class="white-text">Exchange<i class="material-icons right">autorenew</i></a></li>
 		 	<li class="divider white"></li>
-		 	<li class="red valign-wrapper" style ="color: rgb(255,255,255)"><a href="/apartment_approve">Approve<i class="material-icons right">check</i></a></li>
+		 	<li class="red"><a href="/apartment_approve" class="white-text">Approve<i class="material-icons right">check</i></a></li>
 		 	<li class="divider white"></li>
-		 	<li class="red valign-wrapper" style ="color: rgb(255,255,255)"><a href="/apartment_history">History<i class="material-icons right">view_list</i></a></li>
+		 	<li class="red"><a href="/apartment_transfer" class="white-text">History<i class="material-icons right">view_list</i></a></li>
 		</ul>
 
 		<ul class="hide-on-small-and-down">
@@ -94,6 +94,7 @@
     -webkit-transform: scaleX(-1);
     -ms-transform: scaleX(-1);
 }
+
 </style>
 <script type="text/javascript">
 $( document ).ready(function() {
@@ -104,13 +105,14 @@ $( document ).ready(function() {
 	});
         
 	$('.button-collapse').sideNav({
-	  menuWidth: 300, // Default is 300
+	  menuWidth: 445, // Default is 300
 	  edge: 'left', // Choose the horizontal origin
 	  closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
 	  draggable: true, // Choose whether you can drag to open on touch screens,
 	});
 
-	$(".dropdown-button").dropdown();
+    $(".button-collapse").sideNav();
+    
 });
         
 </script>
