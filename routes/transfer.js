@@ -58,10 +58,10 @@ module.exports.set = function(router, pool) {
                      resultingBudget = resultingBudget.concat("0");
                   } 
 
-                  pendingBudget = Math.round((pendingBudget * 100))/100;
-                  pendingBudget = pendingBudget.toString();
-                  if (pendingBudget[pendingBudget.indexOf(".")+2] == undefined){
-                     pendingBudget = pendingBudget.concat("0");
+                  moneyExchange = Math.round((moneyExchange * 100))/100;
+                  moneyExchange = moneyExchange.toString();
+                  if (moneyExchange[moneyExchange.indexOf(".")+2] == undefined){
+                     moneyExchange = moneyExchange.concat("0");
                   } 
 
                   response.render('personal/transfer_personal', {pendingBudget: moneyExchange,budget: resultingBudget, user: request.user, data: accresult.rows[0].role, emails: emailsList});
