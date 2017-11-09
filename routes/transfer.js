@@ -46,7 +46,24 @@ module.exports.set = function(router, pool) {
                   }
                   console.log("money: " + (accresult.rows[0].budget - moneyExchange));
 
-                  response.render('personal/transfer_personal', {budget: accresult.rows[0].budget - moneyExchange, user: request.user, data: accresult.rows[0].role, emails: emailsList});
+                  //proof read 2 decimal places
+                  var resultingBudget = accresult.rows[0].budget - moneyExchange;
+                  // resultingBudget = resultingBudget.toString(); //If it's not already a String
+                  // resultingBudget = resultingBudget.slice(0, (resultingBudget.indexOf("."))+3); //With 3 exposing the hundredths place
+                  // Number(resultingBudget); //If you need it back as a Number
+                  resultingBudget = Math.round((resultingBudget * 100))/100;
+
+                  resultingBudget = resultingBudget.toString();
+                  if (resultingBudget[resultingBudget.indexOf(".")+2] == undefined){
+                     resultingBudget = resultingBudget.concat("0");
+                  } 
+
+                  pendingBudget = resultingBudget.toString();
+                  if (pendingBudget[pendingBudget.indexOf(".")+2] == undefined){
+                     pendingBudget = pendingBudget.concat("0");
+                  } 
+
+                  response.render('personal/transfer_personal', {pendingBudget: moneyExchange,budget: resultingBudget, user: request.user, data: accresult.rows[0].role, emails: emailsList});
                 }
               });
             }
