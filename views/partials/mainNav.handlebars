@@ -1,17 +1,29 @@
+<div class="navbar">
 <nav class="nav-extended">
 	<div class="nav-wrapper z-depth-3" style="background-color:	#D0D3D4 !important">
 		<a href="#" data-activates="mobile" class="button-collapse hide-on-med-only"><i class="material-icons">view_headline</i></a>
 
 		<ul id="apartmentButton" class="dropdown-content">
 			<li class="divider white"></li>
-			<li class="red"><a href="/apartment_transfer" class="white-text">Transfer<i class="material-icons right">send</i></a></li>
+			<li class="red"><a href="/apartment_transfer" class="white-text center-align">Transfer</a></li>
 		 	<li class="divider white"></li>
-		 	<li class="red"><a href="/apartment_members" class="white-text">Exchange<i class="material-icons right">autorenew</i></a></li>
+		 	<li class="red"><a href="/apartment_approve" class="white-text center-align">Approve</a></li>
 		 	<li class="divider white"></li>
-		 	<li class="red"><a href="/apartment_approve" class="white-text">Approve<i class="material-icons right">check</i></a></li>
+		 	<li class="red"><a href="/apartment_history" class="white-text center-align">History</a></li>
 		 	<li class="divider white"></li>
-		 	<li class="red"><a href="/apartment_transfer" class="white-text">History<i class="material-icons right">view_list</i></a></li>
+		 	<li class="red"><a href="/apartment_members" class="white-text center-align">Collector</a></li>
 		</ul>
+
+		<ul id="personalButton" class="dropdown-content">
+			<li class="divider white"></li>
+			<li class="amber"><a href="/transfer_personal" class="white-text center-align">Transfer</a></li>
+		 	<li class="divider white"></li>
+		 	<li class="amber"><a href="/exchanging" class="white-text center-align">Exchange</a></li>
+		 	<li class="divider white"></li>
+		 	<li class="amber"><a href="/history_personal" class="white-text center-align">History</a></li>
+		</ul>
+
+		<ul i
 
 		<ul class="hide-on-small-and-down">
 			{{#if user}}
@@ -20,15 +32,11 @@
 				<li style="background-color:#E74C3C"><center><a href="/" style="font-family: Calibri; width: 400px; font-size: 25px;">Liger Digital Currency</a></center></li>
 			<ul class="right hide-on-med-and-down">
 
-				<li class="right" style="background-color:#3498DB"><a href="/logout">Logout<i class="material-icons right">pan_tool</i></a></li>
+				<li class="amber right"><a href="/logout">Logout<i class="material-icons right">lock</i></a></li>
 
 				<li class="red right"><a class="dropdown-button" href="#!" data-activates="apartmentButton">Apartment<i class="material-icons right">store</i></a></li>
 
-				<li class="right" style="background-color:#3498DB"><a href="/history_personal">History<i class="material-icons right">view_list</i></a></li>
-
-				<li class="red right"><a href="/exchange">Exchange<i class="material-icons right">autorenew</i></a></li>
-
-			  	<li class="right" style="background-color:#3498DB"><a href="/transfer_personal">Transfer<i class="material-icons right">send</i></a></li>
+				<li class="amber right"><a class="dropdown-button" href="#!" data-activates="personalButton">Personal<i class="material-icons right">store</i></a></li>
 			</ul>
 			</div>
 				{{else ifCond data 'keeper'}}
@@ -45,7 +53,7 @@
 				
 				
 			{{else}}
-				<li style="background-color:#E74C3C;" class="right"><a href="/login" style=" font-size: 20px; font-family: Calibri;">Login<i class="material-icons right">lock</i></a></li>
+				<li style="background-color:#E74C3C;" class="right"><a href="/login" style=" font-size: 20px; font-family: Calibri;">Login<i class="material-icons right">vpn_key</i></a></li>
 
 				<!-- <li class="right" style="background-color:#E74C3C"><center><a href="/#login" style="font-family: Calibri; width:200px; font-size: 25px;">Login<i class="material-icons">lock</i></a></center></li> -->
 				<!-- <li class="amber right"><a href="http://www.ligerlearning.org/"><i class="material-icons">http</i></a></li> --> 
@@ -87,6 +95,7 @@
 		</ul>
 	</div>
 </nav>
+</div>
 <style type="text/css">
 .flipped {
     transform: scaleX(-1);
@@ -101,11 +110,13 @@ $( document ).ready(function() {
 
 	$(".dropdown-button").dropdown({
 		belowOrigin: true,
-		constrainWidth: false
-	});
+		constrainWidth: false,
+		menuWidth: 400,
+
+	})
         
 	$('.button-collapse').sideNav({
-	  menuWidth: 445, // Default is 300
+	  menuWidth: 415, // Default is 300
 	  edge: 'left', // Choose the horizontal origin
 	  closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
 	  draggable: true, // Choose whether you can drag to open on touch screens,
