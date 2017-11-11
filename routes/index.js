@@ -64,7 +64,7 @@ router.get("/", function(request, response){
     }
 });
 
-router.get("/personal", function(request, response){
+router.get("/personal", ensureLoggedIn, function(request, response){
     if(request.user){
       var email = request.user.email;
       const getAccount = {
@@ -84,7 +84,7 @@ router.get("/personal", function(request, response){
 });
 
 
-// router.get("/personal", ensureLoggedIn, function(req, res) {
+// router.get("/history_personal", ensureLoggedIn, function(req, res) {
 //   var email = req.user.email;
 //   const getAccount = {
 //         text: "SELECT * FROM account WHERE email = $1;",
@@ -142,7 +142,7 @@ router.get('/history_personal', ensureLoggedIn, async function(request, response
       
     }
 
-    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
+    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email, user: request.user, data: request.user.role});
   } else {
     response.redirect('/login');
   }
