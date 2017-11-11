@@ -32,6 +32,19 @@ module.exports.set = function(router, pool) {
         }
       }
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+      
+      budgetRemain = Math.round((budgetRemain * 100))/100;
+
+      budgetRemain = budgetRemain.toString();
+      if (budgetRemain[budgetRemain.indexOf(".")+2] == undefined){
+         budgetRemain = budgetRemain.concat("0");
+      } 
+
+      apartmentTransferBudget = Math.round((apartmentTransferBudget * 100))/100;
+      apartmentTransferBudget = apartmentTransferBudget.toString();
+      if (apartmentTransferBudget[apartmentTransferBudget.indexOf(".")+2] == undefined){
+         apartmentTransferBudget = apartmentTransferBudget.concat("0");
+      } 
       response.render('apartment/apartment_transfer', {
         emails: emailsList, 
         user: request.user, 
