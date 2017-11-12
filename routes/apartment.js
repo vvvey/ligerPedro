@@ -2,6 +2,7 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var Validator = require('../lib/validator');
 var createdFun = require('../lib/objFuns');
+var moment = require('moment');
 
 module.exports.set = function(router, pool) {
 
@@ -62,7 +63,7 @@ module.exports.set = function(router, pool) {
 
       //getting an array of result from trasfer_logs where that it fit to the account
       var apartmentTransfer = await pool.query("SELECT * FROM transfer_logs \
-        WHERE sender = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]); 
+        WHERE sender = $1 AND finished = 'f' AND apartment = $2 ORDER BY date DESC;", [apartmentEmail, accCollection.ident]); 
       
 
       var apartmentTransferBudget = 0; //the total amount of transfer in that apartment
@@ -224,7 +225,7 @@ module.exports.set = function(router, pool) {
     var childObj = {
       "email":fromUser.userEmail,
       "status":fromUser.status,
-      "time":Date.now()
+      "time": moment.utc().format()
     };
 
 
@@ -329,7 +330,7 @@ module.exports.set = function(router, pool) {
 
     // Get apartment info
     var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [ident.toUpperCase()]);
-    var objFormate = JSON.stringify({body:{person1: {email: fromUser.email, status: 'approve', time: Date.now()}}});
+    var objFormate = JSON.stringify({body:{person1: {email: fromUser.email, status: 'approve', time: moment.utc()}}});
 
     console.log("recipientCurrentBudget", recipientCurrentBudget)
     console.log("apartmentDataEmail", apartmentData.rows[0].email)
@@ -381,8 +382,8 @@ module.exports.set = function(router, pool) {
     /*INSERT INTO transfer_logs (sender, recipient, amount, reason, date, approvedata, approve_info, apartment)\
             VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), JSON.stringify({{'email': 'visal.s@ligercambodia.org', \
                     'status': 'approve', 'time': CURRENT_TIMESTAMP(2)}}), 1::int, $7);*/
-      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason, date, approve_info, num_approve, apartment)\
-              VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), $5, 1::int, $6);",
+      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason, date, approve_info, apartment)\
+              VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), $5, $6);",
       values: [apartmentEmail, fromUser.emailSend, fromUser.amountSend, fromUser.reasonSend, objFormate, ident]
       //[apartmentEmail, fromUser.emailSend, fromUser.amountSend, 
                   //fromUser.reasonSend, ident], //[[$5::text, CURRENT_TIMESTAMP(2), $6::text]]
@@ -466,13 +467,18 @@ module.exports.set = function(router, pool) {
     //   console.log("----------------------Global--------------------------");
     //   console.log(globalObj);
     // } */
-    var approve_info_obj = apartmentTransfer.rows[0].approve_info;
-    var x = createdFun.eventCounter(approve_info_obj); //return number of events
-    x = Promise.resolve(x);
-    x.then(function(v) {
-      console.log("approve: "  + v.approve);
-      console.log("disapprove: " + v.disapprove);
-    });
-    response.send("Success!");
+    var now = moment().format("YYYY-MM-DD HH:mm");
+    var utc = moment.utc().format("YYYY-MM-DD HH:mm Z");
+    var pastTime = moment("2017-11-08T07:47:42Z", "YYYY-MM-DD HH:mm Z");
+    var timeZone =  moment.utc().tz("Asia/Bangkok").format("YYYY-MM-DD HH:mm Z");
+    a
+
+    console.log("moment: " + now);
+    console.log("utc: " + utc);
+    console.log("pastTime: " + pastTime);
+    console.log("timeZone: " + timeZone);
+    console.log("a " +  a.format())
+
+    response.send(pastTime);
   });
 }
