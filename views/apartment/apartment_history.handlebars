@@ -5,12 +5,106 @@
     {{> apartmentValue}}
     <div class="col s12 m10 l10 offset-l1 l10 offset-m1">       
       {{#if transferData}}
-        <ul class="collection z-depth-1">
+
+      <ul class="collapsible" data-collapsible="accordion">
+        <li>
+          <div class="collapsible-header center" style="padding: 1em;padding-left: 2.5em;">
+            <h5>Apartment History</h5>
+          </div>
+        </li>
+        {{#each transferData}}
+          <li>
+            <div class="collapsible-header">
+              <div class="row" style="margin: 0;">
+                <div class="col s12 m4 l4">
+                  <span>{{formatDate this.date 'standard'}}</span>
+                </div>
+                <div class="col s12 m4 l4">
+                  <span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
+                </div>
+                <div class="col s12 m4 l4">
+                  <span class="new badge right red" data-badge-caption="">P {{this.amount}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="collapsible-body">
+              <div class="row">
+                <div class="col s12 m6">
+                  <p>
+                    Transferring Date: {{formatDate this.date 'standard'}} <br />
+                    Recipient: {{this.recipient}}<br />
+                    Amount Transfer: P {{this.amount}}<br />
+                    Reason: {{this.reason}} <br> <!--{#countDisapprove this.approve_info}}-->
+                  </p>
+                </div>
+                <div class="col s12 m6">
+                  <p>
+                    Main-submitter: {{this.approve_info.body.person1.email}}<br />
+                    Number Approve: {{countApprove this.approve_info}} <br /> 
+                    Number Disapprove: {{countDisapprove this.approve_info}} <br />
+                    Responses:  <a class="waves-effect waves-light modal-trigger" href="#{{this.id}}">More detail...</a><br /> <!--NEED TO CHECK-->
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <div id="{{this.id}}" class="modal">
+            <div class="modal-content">
+                <h4>Approve Information</h4>
+                <table class="striped responsive-table">
+                  <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {{#each this.approve_info}} 
+                      {{#each this}}                    
+                          <tr>
+                            <td>{{email}}</td>
+                            <td>{{status}}</td>
+                            <td>{{toFormalDate time}}</td>
+                          </tr>
+                      {{/each}}
+                    {{/each}}
+                  </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+              <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+            </div>
+          </div>
+        {{/each}}
+      </ul>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       <!--  <ul class="collection z-depth-1">
           <li class="collection-item">
             <h5 class="center">Appartment History</h5>
           </li>
           {{#each transferData}}
             <li class="collection-item">
+
               <div class="row" style="margin-bottom: 0;">
                 
                 <div class="col s4 m5">
@@ -59,9 +153,10 @@
                   <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
                 </div>
               </div>
+
             </li>
           {{/each}}
-        </ul>
+        </ul>-->
       {{else}}
         <h2 class="center">Nothing Collected</h2>
       {{/if}}
