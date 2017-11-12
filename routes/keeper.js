@@ -100,7 +100,7 @@ module.exports.set = function(router, pool) {
                   apartment, \
                   count(*), \
                   sum(amount) AS total, \
-                  first(person) AS picker, \
+                  first(person) AS money_collector, \
                   row_number() OVER (ORDER BY apptdate)::int -1 as row_number, \
                   array_agg(json_build_object(\
                     'id', id, \
@@ -126,7 +126,6 @@ module.exports.set = function(router, pool) {
         console.log(err)
       } else {
         response.render('keeper/PDKeeper', {data: data.rows, userData: request.user})
-        console.log(data.rows[0].info)
       }
     });
   });
@@ -207,7 +206,7 @@ module.exports.set = function(router, pool) {
           pool.query(exchangeSelect, function(exchangeErr, exchangeResult){
             if (exchangeErr) {console.log(exchangeErr);} 
             else{
-              response.render('keeper/d-pExchange', {approvedDate: exchangeResult.rows, keeper: 'true'});
+              response.render('keeper/d-pExchange', {approvedDate: exchangeResult.rows, keeper: 'true', userData: request.user});
             }//approved = 'true'
           });
         } else{

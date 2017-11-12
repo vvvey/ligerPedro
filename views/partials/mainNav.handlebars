@@ -1,94 +1,133 @@
 <nav class="nav-extended">
-	<div class="nav-wrapper grey darken-4 z-depth-3">
+	<div class="nav-wrapper z-depth-3" style="background-color:	#D0D3D4 !important">
 		<a href="#" data-activates="mobile" class="button-collapse hide-on-med-only"><i class="material-icons">view_headline</i></a>
 
+		<ul id="apartmentButton" class="dropdown-content hide-on-med-and-down">
+			<li class="divider white"></li>
+			<li class="white center-align" style ="color: rgb(255,255,255); padding: 6%;"><a href="/apartment_transfer">Transfer<i class="material-icons right">send</i></a></li>
+		 	<li class="divider white"></li>
+		 	<li class="white center-align" style ="color: rgb(255,255,255); padding: 4%;"><a href="/apartment_members">Exchange<i class="material-icons right">autorenew</i></a></li>
+		 	<li class="divider white"></li>
+		 	<li class="white center-align" style ="color: rgb(255,255,255); padding: 6%;"><a href="/apartment_approve">Approve<i class="material-icons right">check</i></a></li>
+		 	<li class="divider white"></li>
+		 	<li class="white center-align" style ="color: rgb(255,255,255); padding: 6%"><a href="/apartment_history">History<i class="material-icons right">view_list</i></a></li>
+		</ul>
+
 		<ul class="hide-on-small-and-down">
-			<li class="green"><a href="/#home" style="font-family: Calibri;">Liger Digital Currency</a></li>
+			<li style="background-color:#E74C3C"><center><a href="/#home" style="font-family: Calibri; width: 400px; font-size: 25px;">Liger Digital Currency</a></center></li>
 			{{#if user}}
 				{{#ifCond data 'senior_student'}}
-					<li class="green right"><a href="/apartment_transfer"><i class="material-icons">store</i></a></li>
-				{{else ifCond data 'keeper'}}
-					<li class="green right"><a href="/keeper/p/d"><i class="material-icons">store</i></a></li>
-				{{else ifCond data 're'}}
-					<li class="green right"><a href="/residence/overview"><i class="material-icons">store</i></a></li> 	
-				{{else ifCond data 'catering_manager'}}
-					<li class="green right"><a href="/catering/overview"><i class="material-icons">shopping_cart</i></a></li>
-				{{else ifCond data 'maintenance_manager'}}
-					<li class="green right"><a href="/maintenance/overview"><i class="material-icons">build</i></a></li>
-				{{else ifCond data 'admin'}}
-						<li class="green right"><a href="/admin/user">Admin</a></li>
-				{{/ifCond}}
-				
-				<li class="amber right"><a href="/logout"><i class="material-icons flipped">input</i></a></li>
-				<li class="amber right"><a href="http://www.ligerlearning.org/"><i class="material-icons">http</i></a></li>
+			<div class="nav-wrapper">
+			<ul class="right hide-on-med-and-down">
 
-			  	<li class="right"><a href="/transfer_personal">Transfer</a></li>
-			  	<li class="right"><a href="/exchange">Exchange</a></li>
-			  	<li class="right"><a href="/history_personal">History</a></li>
-			  	<li class="right"><a href="#!">Info</a></li>
-			{{else}}
-				<li class="amber right"><a href="/login"><i class="material-icons">input</i></a></li>
-				<li class="amber right"><a href="http://www.ligerlearning.org/"><i class="material-icons">http</i></a></li> 
+				<li class="right" style="background-color:#3498DB"><a href="/logout">Logout<i class="material-icons right">pan_tool</i></a></li>
 
-				<li class="right"><a href="#contact" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#contact')">Contact</a></li>
+				<li class="red right center-text"><a class="dropdown-button" href="#!" data-activates="apartmentButton" style="width: 165px;">Apartment<i class="material-icons right">store</i></a></li>
 
-				<li class="right"><a href="#tutorial" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#tutorial')">Tutorial</a></li>
+				<li class="right" style="background-color:#3498DB"><a href="/history_personal">History<i class="material-icons right">view_list</i></a></li>
 
-				<li class="right"><a href="#about" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#about')">About</a></li>
-			{{/if}}
-		</ul>
+				<li class="red right"><a href="/exchange">Exchange<i class="material-icons right">autorenew</i></a></li>
 
-		<ul id="mobile" class="side-nav grey darken-4">
-			<li>
-	          <div class="userView center">
-	            <img width="100" src="logo.png">
-	            <h5 class="white-text center">Liger Digital Currency</h5>
-	          </div>
-	        </li>
-			{{#if user}}
-			  	<li><a href="/transfer_personal" class="white-text">Transfer</a></li>
-			  	<li><a href="/exchange" class="white-text">Exchange</a></li>
-			  	<li><a href="#!" class="white-text">History</a></li>
-			  	<li><a href="#!" class="white-text">Info</a></li>
+			  	<li class="right" style="background-color:#3498DB"><a href="/transfer_personal">Transfer<i class="material-icons right">send</i></a></li>
+			</ul>
+			<ul id="personalButton" class="dropdown-content">
+				<li class="divider white"></li>
+				<li class="red"><a href="/transfer_personal" class="white-text center-align">Transfer</a></li>
+				<li class="divider white"></li>
+				<li class="red"><a href="/exchange" class="white-text center-align">Exchange</a></li>
+				<li class="divider white"></li>
+				<li class="red"><a href="/history_personal" class="white-text center-align">History</a></li>
+			</ul>
+			<ul class="hide-on-small-and-down">
 
-			  	<li><a href="/apartment_transfer" class="white-text"><i class="material-icons green-text">store</i>Apartment</a></li>
-				<li><a href="/logout" class="white-text"><i class="material-icons flipped amber-text">input</i>Logout</a></li>
-				<li><a href="http://www.ligerlearning.org/" class="white-text"><i class="material-icons amber-text">http</i>Visit Liger</a></li>
-			{{else}}
-				<li><a href="/#about" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE865;</i>About</a></li> 
+					{{#if user}}
+						{{#ifCond data 'senior_student'}}
+						<div class="nav-wrapper">
+								<li style="background-color:#E74C3C"><center><a href="/" style="font-family: Calibri; width: 400px; font-size: 25px;">Liger Digital Currency</a></center>
+								</li>
+							<ul class="right hide-on-med-and-down">
+								<li class="red right"><a href="/logout">Logout<i class="material-icons right">lock</i></a></li>
+								<li class="transparent right"><a class="dropdown-button black-text" href="#!" data-activates="apartmentButton">Apartment<i class="material-icons right">store</i></a></li>
+								<li class="red right"><a class="dropdown-button" href="#!" data-activates="personalButton">Personal<i class="material-icons right">face</i></a></li>
+							</ul>
+						</div>
+						{{else ifCond data 'keeper'}}
+							<li class="green right"><a href="/keeper/p/d"><i class="material-icons">store</i></a></li>
+						{{else ifCond data 're'}}
+							<li class="green right"><a href="/residence/overview"><i class="material-icons">store</i></a></li>
+						{{else ifCond data 'catering_manager'}}
+							<li class="green right"><a href="/catering/overview"><i class="material-icons">shopping_cart</i></a></li>
+						{{else ifCond data 'maintenance_manager'}}
+							<li class="green right"><a href="/maintenance/overview"><i class="material-icons">build</i></a></li>
+						{{else ifCond data 'admin'}}
+							<li class="green right"><a href="/admin/user">Admin</a></li>
+						{{/ifCond}}
+					
+						
+				{{else}}
 
-		      	<li><a href="/#tutorial" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE913;</i>Tutorial</a></li> 
+					<li style="background-color:#E74C3C"><center><a href="/" style="font-family: Calibri; width: 400px; font-size: 25px;">Liger Digital Currency</a></center>
 
-		      	<li><a href="/#contact" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE0BA;</i>Contact</a></li> 
 
-				<li><a href="/login" class="white-text"><i class="material-icons amber-text">input</i>Login</a></li>
-				<li><a href="http://www.ligerlearning.org/" class="white-text"><i class="material-icons amber-text">http</i>Visit Liger</a></li>
-			{{/if}}
-		</ul>
+					<li style="background-color:#E74C3C;" class="right"><a href="/login" style=" font-size: 20px; font-family: Calibri;">Login<i class="material-icons right">vpn_key</i></a></li>
+					<!-- <li class="right" style="background-color:#E74C3C"><center><a href="/#login" style="font-family: Calibri; width:200px; font-size: 25px;">Login<i class="material-icons">lock</i></a></center></li> -->
+					<!-- <li class="amber right"><a href="http://www.ligerlearning.org/"><i class="material-icons">http</i></a></li> -->
+					<!--
+									<li class="right"><a href="#contact" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#contact')">Contact</a></li>
+									<li class="right"><a href="#tutorial" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#tutorial')">Tutorial</a></li>
+					<li class="right"><a href="#about" class="white-text" style="font-family: sans-serif;" onclick="Materialize.fadeInImage('#about')">About</a></li> -->
+					{{/if}}
+				</ul>
+				<ul id="mobile" class="side-nav grey darken-4">
+					<li>
+						<div class="userView center">
+							<img width="100" src="logo.png">
+							<h5 class="white-text center">Liger Digital Currency</h5>
+						</div>
+					</li>
+					{{#if user}}
+					<li><a href="/transfer_personal" class="white-text">Transfer</a></li>
+					<li><a href="/exchange" class="white-text">Exchange</a></li>
+					<li><a href="#!" class="white-text">History</a></li>
+					<li><a href="#!" class="white-text">Info</a></li>
+					<li><a href="/apartment_transfer" class="white-text">Apartment</a></li>
+					<li><a href="/logout" class="white-text"><i class="material-icons flipped amber-text">input</i>Logout</a></li>
+					<li><a href="http://www.ligerlearning.org/" class="white-text"><i class="material-icons amber-text">http</i>Visit Liger</a></li>
+					{{else}}
+					<!-- <li><a href="/#about" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE865;</i>About</a></li>
+					<li><a href="/#tutorial" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE913;</i>Tutorial</a></li>
+					<li><a href="/#contact" class="white-text" style="font-family: sans-serif;"><i class="material-icons amber-text">&#xE0BA;</i>Contact</a></li>  -->
+					<li><a href="/login" class="white-text"><i class="material-icons amber-text">input</i>Login</a></li>
+					<!-- <li><a href="http://www.ligerlearning.org/" class="white-text"><i class="material-icons amber-text">http</i>Visit Liger</a></li> -->
+					{{/if}}
+				</ul>
+			</div>
+		</nav>
 	</div>
-</nav>
-<style type="text/css">
-.flipped {
-    transform: scaleX(-1);
-    -moz-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    -ms-transform: scaleX(-1);
-}
-</style>
-<script type="text/javascript">
-$( document ).ready(function() {
-
-	$(".dropdown-button").dropdown({
-		belowOrigin: true,
-		constrainWidth: false
-	});
-        
-	$('.button-collapse').sideNav({
-	  menuWidth: 300, // Default is 300
-	  edge: 'left', // Choose the horizontal origin
-	  closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-	  draggable: true, // Choose whether you can drag to open on touch screens,
-	});
-});
-        
-</script>
+	<style type="text/css">
+	.flipped {
+	transform: scaleX(-1);
+	-moz-transform: scaleX(-1);
+	-webkit-transform: scaleX(-1);
+	-ms-transform: scaleX(-1);
+	}
+	</style>
+	<script type="text/javascript">
+	$( document ).ready(function() {
+		$(".dropdown-button").dropdown({
+			belowOrigin: true,
+			constrainWidth: false,
+			menuWidth: 400,
+		})
+	
+		$('.button-collapse').sideNav({
+		menuWidth: 415, // Default is 300
+		edge: 'left', // Choose the horizontal origin
+		closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+			draggable: true, // Choose whether you can drag to open on touch screens,
+			});
+		$(".button-collapse").sideNav();
+		
+		});
+		
+		</script>

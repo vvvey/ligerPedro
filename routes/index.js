@@ -64,6 +64,40 @@ router.get("/", function(request, response){
     }
 });
 
+router.get("/personal", ensureLoggedIn, function(request, response){
+    if(request.user){
+      var email = request.user.email;
+      const getAccount = {
+        text: "SELECT * FROM account WHERE email = $1;",
+        values: [email]
+      };
+      
+      pool.query(getAccount, function(accErr, accresult) {
+        if(accErr){console.log(accErr);}
+        else{
+          response.render('partials/personal_page', {user: request.user, data: accresult.rows[0].role});
+        }
+      });
+    }else{
+      response.render('partials/personal_page');
+    }
+});
+
+
+// router.get("/history_personal", ensureLoggedIn, function(req, res) {
+//   var email = req.user.email;
+//   const getAccount = {
+//         text: "SELECT * FROM account WHERE email = $1;",
+//         values: [email]
+//       };
+//   pool.query(getAccount, function(accErr, accresult) {
+//     if(accErr){console.log(accErr);}
+//     else{
+//       res.render('partials/personal_page', {user: req.user, data: accresult.rows[0].role});
+//     }
+//   });
+// })
+
 router.get('/login',
   function(req, res) {
     if (req.user) {
@@ -82,7 +116,7 @@ router.get('/login',
   });
 
 
-router.get('/history_personal', async function(request, response){
+router.get('/history_personal', ensureLoggedIn, async function(request, response){
   if(request.user){
     var email = request.user.email;
     
@@ -90,7 +124,25 @@ router.get('/history_personal', async function(request, response){
     
     var getExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [email]);
 
-    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
+    for(var i = 0; i < getTransfer.rows.length; i++){
+      getTransfer.rows[i].sender_resulting_budget = Math.round((getTransfer.rows[i].sender_resulting_budget * 100))/100;
+      getTransfer.rows[i].sender_resulting_budget = getTransfer.rows[i].sender_resulting_budget.toString();
+      if (getTransfer.rows[i].sender_resulting_budget[getTransfer.rows[i].sender_resulting_budget.indexOf(".")+2] == undefined){
+         getTransfer.rows[i].sender_resulting_budget = getTransfer.rows[i].sender_resulting_budget.concat("0");
+      } 
+      
+    }
+
+    for(var i = 0; i < getTransfer.rows.length; i++){
+      getTransfer.rows[i].amount = Math.round((getTransfer.rows[i].amount * 100))/100;
+      getTransfer.rows[i].amount = getTransfer.rows[i].amount.toString();
+      if (getTransfer.rows[i].amount[getTransfer.rows[i].amount.indexOf(".")+2] == undefined){
+         getTransfer.rows[i].amount = getTransfer.rows[i].amount.concat("0");
+      } 
+      
+    }
+
+    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email, user: request.user, data: request.user.role});
   } else {
     response.redirect('/login');
   }

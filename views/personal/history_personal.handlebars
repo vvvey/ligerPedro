@@ -1,3 +1,4 @@
+{{> mainNav}}
 {{> simNav}}
 <div class="container-fluid">
 	<div class="row"><br />
@@ -5,7 +6,7 @@
 			<div class="card">
 				<div class="card-content">
 					<span class="card-title">Info</span>
-					<p>These are all the datas that we got about the exchange that you have made so far and hopefuly you happy with it! Thank you.</p>
+					<p>These are the collected datas about your exchanges and transactions.</p>
 				</div>
 			</div>
 		</div>
@@ -18,10 +19,9 @@
 						<th>Date</th>
 						<th>User</th>
 						<th>Amount</th>
-						<th>Remain Budget</th>
+						<th>Initial Budget</th>
+						<th>Remaining Budget</th>
 						<th>Reason</th>
-						<th>Moment Budget</th>
-
 					</tr>
 				</thead>
 
@@ -30,9 +30,9 @@
 					<tr>
 						<td>{{dateFormat this.date}}</td>
 						{{#ifCondA recipient '!=' ../email}}
-							<td> <span class="new badge red left" data-badge-caption="">Sends to</span> {{recipient}} </td>
+							<td> <span class="new badge red left" data-badge-caption="">Sent to</span> {{recipient}} </td>
 						{{else ifCondA this.sender '!=' ../email}}		
-							<td><span class="new badge blue left" data-badge-caption="">Sends from</span> {{this.sender}} </td>
+							<td><span class="new badge blue left" data-badge-caption="">Sent from</span> {{this.sender}} </td>
 						{{/ifCondA}}
 						<td>P {{this.amount}}</td>
 						{{#ifCondA sender '==' ../email}}
