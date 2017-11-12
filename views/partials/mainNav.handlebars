@@ -4,21 +4,21 @@
 			<a href="#" data-activates="mobile" class="button-collapse hide-on-med-only"><i class="material-icons">view_headline</i></a>
 			<ul id="apartmentButton" class="dropdown-content">
 				<li class="divider white"></li>
-				<li class="red"><a href="/apartment_transfer" class="white-text center-align">Transfer</a></li>
+				<li style="background-color:#D0D3D4"><a href="/apartment_transfer" class="black-text center-align">Transfer</a></li>
 				<li class="divider white"></li>
-				<li class="red"><a href="/apartment_approve" class="white-text center-align">Approve</a></li>
+				<li style="background-color:#D0D3D4"><a href="/apartment_approve" class="black-text center-align">Approve</a></li>
 				<li class="divider white"></li>
-				<li class="red"><a href="/apartment_history" class="white-text center-align">History</a></li>
+				<li style="background-color:#D0D3D4"><a href="/apartment_history" class="black-text center-align">History</a></li>
 				<li class="divider white"></li>
-				<li class="red"><a href="/apartment_members" class="white-text center-align">Collector</a></li>
+				<li style="background-color:#D0D3D4"><a href="/apartment_members" class="black-text center-align">Collector</a></li>
 			</ul>
 			<ul id="personalButton" class="dropdown-content">
 				<li class="divider white"></li>
-				<li class="amber"><a href="/transfer_personal" class="white-text center-align">Transfer</a></li>
+				<li class="red"><a href="/transfer_personal" class="white-text center-align">Transfer</a></li>
 				<li class="divider white"></li>
-				<li class="amber"><a href="/exchange" class="white-text center-align">Exchange</a></li>
+				<li class="red"><a href="/exchange" class="white-text center-align">Exchange</a></li>
 				<li class="divider white"></li>
-				<li class="amber"><a href="/history_personal" class="white-text center-align">History</a></li>
+				<li class="red"><a href="/history_personal" class="white-text center-align">History</a></li>
 			</ul>
 			<ul class="hide-on-small-and-down">
 
@@ -28,9 +28,9 @@
 								<li style="background-color:#E74C3C"><center><a href="/" style="font-family: Calibri; width: 400px; font-size: 25px;">Liger Digital Currency</a></center>
 								</li>
 							<ul class="right hide-on-med-and-down">
-								<li class="amber right"><a href="/logout">Logout<i class="material-icons right">lock</i></a></li>
-								<li class="red right"><a class="dropdown-button" href="#!" data-activates="apartmentButton">Apartment<i class="material-icons right">store</i></a></li>
-								<li class="amber right"><a class="dropdown-button" href="#!" data-activates="personalButton">Personal<i class="material-icons right">store</i></a></li>
+								<li class="red right"><a href="/logout">Logout<i class="material-icons right">lock</i></a></li>
+								<li class="transparent right"><a class="dropdown-button black-text" href="#!" data-activates="apartmentButton">Apartment<i class="material-icons right">store</i></a></li>
+								<li class="red right"><a class="dropdown-button" href="#!" data-activates="personalButton">Personal<i class="material-icons right">face</i></a></li>
 							</ul>
 						</div>
 						{{else ifCond data 'keeper'}}
@@ -47,6 +47,8 @@
 					
 						
 				{{else}}
+
+					<li style="background-color:#E74C3C"><center><a href="/" style="font-family: Calibri; width: 400px; font-size: 25px;">Liger Digital Currency</a></center>
 
 
 					<li style="background-color:#E74C3C;" class="right"><a href="/login" style=" font-size: 20px; font-family: Calibri;">Login<i class="material-icons right">vpn_key</i></a></li>
