@@ -64,7 +64,7 @@ router.get("/", function(request, response){
     }
 });
 
-router.get("/personal", function(request, response){
+router.get("/personal", ensureLoggedIn, function(request, response){
     if(request.user){
       var email = request.user.email;
       const getAccount = {
@@ -84,7 +84,7 @@ router.get("/personal", function(request, response){
 });
 
 
-// router.get("/personal", ensureLoggedIn, function(req, res) {
+// router.get("/history_personal", ensureLoggedIn, function(req, res) {
 //   var email = req.user.email;
 //   const getAccount = {
 //         text: "SELECT * FROM account WHERE email = $1;",
@@ -124,7 +124,25 @@ router.get('/history_personal', ensureLoggedIn, async function(request, response
     
     var getExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 ORDER BY timecreated DESC;", [email]);
 
-    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email});
+    for(var i = 0; i < getTransfer.rows.length; i++){
+      getTransfer.rows[i].sender_resulting_budget = Math.round((getTransfer.rows[i].sender_resulting_budget * 100))/100;
+      getTransfer.rows[i].sender_resulting_budget = getTransfer.rows[i].sender_resulting_budget.toString();
+      if (getTransfer.rows[i].sender_resulting_budget[getTransfer.rows[i].sender_resulting_budget.indexOf(".")+2] == undefined){
+         getTransfer.rows[i].sender_resulting_budget = getTransfer.rows[i].sender_resulting_budget.concat("0");
+      } 
+      
+    }
+
+    for(var i = 0; i < getTransfer.rows.length; i++){
+      getTransfer.rows[i].amount = Math.round((getTransfer.rows[i].amount * 100))/100;
+      getTransfer.rows[i].amount = getTransfer.rows[i].amount.toString();
+      if (getTransfer.rows[i].amount[getTransfer.rows[i].amount.indexOf(".")+2] == undefined){
+         getTransfer.rows[i].amount = getTransfer.rows[i].amount.concat("0");
+      } 
+      
+    }
+
+    response.render('personal/history_personal', {transferData: getTransfer.rows, exchangeData: getExchange.rows, email: email, user: request.user, data: request.user.role});
   } else {
     response.redirect('/login');
   }
