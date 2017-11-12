@@ -1,10 +1,6 @@
 {{> mainNav}}
 <style type="text/css">
-#mainDiv{
-	background-image : url("img/team.jpg");
-	background-size: 100%;
-	opacity: 1;
-}
+
 html {
 	font-family: sans-serif;
 }
@@ -27,7 +23,8 @@ padding-bottom: 15%;
 	border-radius: 0;
 }
 .parallax img {
-width:100%;
+max-width: 100%;
+height:auto;
 }
 </style>
 <script type="text/javascript">
@@ -62,9 +59,11 @@ $( document ).ready(function() {
 //    Materialize.scrollFire(options);
 });
 </script>
-<div class="container-fluid">
-	<div style="width:100%;" class="parallax-container">
-		<div style="width:100%;" class="parallax"><img src="img/team.jpg">
+<div class="container-fluid responsive-img">
+	<div class="parallax-container responsive-img">
+		<div class="parallax" style="background-color: #add8e6">
+		<!-- <img class="responsive-img" style="max-width: 100%; height:auto;" src="img/team.jpg"> -->
+
 			<div class="col s12 section scrollspy"> <!-- #f60909 -->
 			<div class="card transparent z-depth-0 height">
 				<div class="card-content">
