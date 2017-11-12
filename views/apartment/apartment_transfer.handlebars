@@ -13,16 +13,17 @@
             <div class="row">
 
               <form class="col s12" id="transfer" method="post" action="/transferApartmentSucc" name="form">
+                
                 <div class="row">
 
                   <div class="input-field col s6 l4 offset-l2">
                     <i class="material-icons prefix">P</i>
                     <input id="amount" type="number" class="marginLess" name="amount">
-                    <label for="amount" class="active">Amount</label>
+                    <label for="amount" class="active">Amount</label> 
                   </div>
 
                   <div class="input-field col s6 l4">
-                  <i class="material-icons prefix">account_circle</i>
+                    <i class="material-icons prefix">account_circle</i>
                     <input id="email" type="email" name="recipient" list="liger_email" >
                     <label for="email" class="active">e-mail</label>
 
@@ -30,35 +31,35 @@
                       {{#each emails}}
                         <option>{{this}}</option>
                       {{/each}}
-                    </datalist>
+                    </datalist> 
                   </div>
                       
                   <div class="input-field col s12 l8 offset-l2">
-                  <i class="material-icons prefix">comment</i>
+                     <i class="material-icons prefix">comment</i>
                     <textarea id="reason" class="materialize-textarea validate" name="reason" data-length="200" data-error="Check it again"></textarea>
-                    <label for="reason">Reason</label>
+                    <label for="reason">Reason</label> 
                   </div>
              
                   <div class="input-field col s6 m6 l4 offset-s2 offset-m3 offset-l4">
                       <a disabled class="waves-effect waves-light btn center submit-button green" href="#confirm" onclick="check()">Submit</a>
                   </div>
                 </div>
+
                 <div id="confirm" class="modal">
                       <div class="modal-content">
                         <h4>Confirmation</h4>
                         <span>Are you sure that you want to transfer <a href="#amount" class="" ass="modal-action modal-close" id="amountInput">x</a>  to e-mail: <a href="mailto:" id="emailInput">someone@ligercambodia.org</a>?</span>
                       </div>
                
-                        <div class="modal-footer">
-                            <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat">Cancel</a>
-                            <button class="waves-effect waves-black btn-flat" type="submit">Agree</button>
+                      <div class="modal-footer">
+                        <a href="#" class="modal-action modal-close waves-effect waves-black btn-flat">Cancel</a>
+                        <button class="waves-effect waves-black btn-flat" type="submit">Agree</button>
 
                         <div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
                             <div class="indeterminate"></div>
-              </div>
+                        </div>
+                      </div>
                 </div>
-              </div>
-                
               </form>
             </div>
           </div>
