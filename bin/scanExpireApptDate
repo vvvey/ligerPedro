@@ -11,10 +11,11 @@ function scanExpireApptDate() {
 						pending = 'false', \
 						Timeapproved = CURRENT_TIMESTAMP(2) \
 					WHERE \
-						(apptdate - '01:00:00'::time < CURRENT_TIMESTAMP(2)) \
+						(apptdate - '07:00:00'::time < CURRENT_TIMESTAMP(2)) \
 						AND approved IS NULL \
 						AND pending = 'true' \
 						AND type = 'pedro-dollar' \
+						AND amount > 20 \
 					RETURNING id;"
 	pool.query(REquery, (err, data) => {
 		if(err) {console.log(err)} else {
@@ -36,7 +37,7 @@ function scanExpireApptDate() {
 		if(err) {console.log(err)} else {
 			console.log("Scanned late exchanges! Done " +  data.rows.length + " late exchanges found!")
 		};
-	})
+	});
 }
 
 scanExpireApptDate();

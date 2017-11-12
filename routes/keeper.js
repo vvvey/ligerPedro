@@ -100,7 +100,7 @@ module.exports.set = function(router, pool) {
                   apartment, \
                   count(*), \
                   sum(amount) AS total, \
-                  first(person) AS picker, \
+                  first(person) AS money_collector, \
                   row_number() OVER (ORDER BY apptdate)::int -1 as row_number, \
                   array_agg(json_build_object(\
                     'id', id, \
