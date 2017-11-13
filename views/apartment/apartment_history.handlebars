@@ -20,7 +20,13 @@
                   <span>{{formatDate this.date 'standard'}}</span>
                 </div>
                 <div class="col s12 m4 l4">
-                  <span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
+                  {{#ifCondA this.recipient '==' ../apartmentEmail}}
+                    <span class="new badge green" data-badge-caption="">Members</span>
+                  
+                  {{else}}
+                    <span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
+                  
+                  {{/ifCondA}}
                 </div>
                 <div class="col s12 m4 l4">
                   <span class="new badge right red" data-badge-caption="">P {{this.amount}}</span>
@@ -33,52 +39,62 @@
                 <div class="col s12 m6">
                   <p>
                     Transferring Date: {{formatDate this.date 'standard'}} <br />
-                    Recipient: {{this.recipient}}<br />
+                    
+                    {{#if this.approve_info}}
+                      Recipient: {{this.recipient}}<br />
+                    {{else}}
+                      Sender: {{this.sender}} <br />
+                    {{/if}}
                     Amount Transfer: P {{this.amount}}<br />
                     Reason: {{this.reason}} <br> <!--{#countDisapprove this.approve_info}}-->
                   </p>
                 </div>
                 <div class="col s12 m6">
                   <p>
-                    Main-submitter: {{this.approve_info.body.person1.email}}<br />
-                    Number Approve: {{countApprove this.approve_info}} <br /> 
-                    Number Disapprove: {{countDisapprove this.approve_info}} <br />
-                    Responses:  <a class="waves-effect waves-light modal-trigger" href="#{{this.id}}">More detail...</a><br /> <!--NEED TO CHECK-->
+                    {{#if this.approve_info}}
+                      Main-submitter: {{this.approve_info.body.person1.email}} <br />
+                      Number Approve: {{countApprove this.approve_info}} <br />
+                      Number Disapprove: {{countDisapprove this.approve_info}} <br />
+                      Responses:  <a class="waves-effect waves-light modal-trigger" href="#{{this.id}}">More detail...</a><br /> <!--NEED TO CHECK-->
+                    {{else}}
+                                            
+                    {{/if}}
                   </p>
                 </div>
               </div>
             </div>
           </li>
+          {{#if this.approve_info}}
+            <div id="{{this.id}}" class="modal">
+              <div class="modal-content">
+                  <h4>Approve Information</h4>
+                  <table class="striped responsive-table">
+                    <thead>
+                      <tr>
+                          <th>Email</th>
+                          <th>Status</th>
+                          <th>Time</th>
+                      </tr>
+                    </thead>
 
-          <div id="{{this.id}}" class="modal">
-            <div class="modal-content">
-                <h4>Approve Information</h4>
-                <table class="striped responsive-table">
-                  <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Time</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {{#each this.approve_info}} 
-                      {{#each this}}                    
-                          <tr>
-                            <td>{{email}}</td>
-                            <td>{{status}}</td>
-                            <td>{{toFormalDate time}}</td>
-                          </tr>
+                    <tbody>
+                      {{#each this.approve_info}} 
+                        {{#each this}}                    
+                            <tr>
+                              <td>{{email}}</td>
+                              <td>{{status}}</td>
+                              <td>{{toFormalDate time}}</td>
+                            </tr>
+                        {{/each}}
                       {{/each}}
-                    {{/each}}
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+              </div>
+              <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+              </div>
             </div>
-            <div class="modal-footer">
-              <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-            </div>
-          </div>
+          {{else}} {{/if}}
         {{/each}}
       </ul>
 
