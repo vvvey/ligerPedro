@@ -119,7 +119,7 @@ module.exports.set = function(router, pool) {
       var apartmentEmail = apartmentData.rows[0].email;
 
       var dataTransferFinish = await pool.query("SELECT * FROM transfer_logs WHERE recipient=$1 OR sender = $1 AND finished = 't' ORDER BY date DESC;", [apartmentEmail]);
-      var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE sender = $1 AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]);
+      var dataTransferNot = await pool.query("SELECT * FROM transfer_logs WHERE (sender = $1 OR recipient = $1) AND finished = 'f' ORDER BY date DESC;", [apartmentEmail]);
       
       for(var i = 0; i < dataTransferFinish.rows.length; i++){
         if(dataTransferFinish.rows[i].recipient == apartmentEmail){
@@ -147,7 +147,9 @@ module.exports.set = function(router, pool) {
 
         totalBudget: apartmentData.rows[0].budget,
         pendingBudget: apartmentTransferBudget,
-        resultingBudget: budgetRemain
+        resultingBudget: budgetRemain,
+        apartmentEmail: apartmentEmail
+
       });
     } else{
       response.redirect('/notFound');
