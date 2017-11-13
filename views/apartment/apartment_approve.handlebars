@@ -13,37 +13,46 @@
 				{{#if transferData}}
 					{{#each transferData}}
 						<li>
+
 						  <div class="collapsible-header">
 						  	<div class="row" style="margin: 0;">
 						  		<div class="col s12 m4 l4">
-						  			<span>{{dateFormat this.date}}</span>
+						  			<span>{{formatDate this.date 'fromNow'}}</span>
 						  		</div>
 						  		<div class="col s12 m4 l4">
+						  			{{#ifCondA this.recipient '==' ../apartmentEmail}}
+						  				<span class="new badge yellow" data-badge-caption="">Members</span>
+						  			
+						  			{{else}}
 						  			<span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
+						  			
+						  			{{/if}}
 						  		</div>
 						  		<div class="col s12 m4 l4">
-						  			<span class="new badge right red" data-badge-caption="">{{countTotalEvents approve_info}}</span>
+						  			<span class="new badge right red" data-badge-caption="">P {{this.amount}}</span>
 						  		</div>
 						  	</div>
 						  </div>
+
 						  <div class="collapsible-body">
 						  	<div class="row">
 						  		<div class="col s12 m6">
 						  			<p>
-						  				Date Transfering: {{dateFormat this.date}} <br />
-										Sender: {{this.sender}} <br />
+						  				Transferring Date: {{formatDate this.date 'standard'}} <br />
 										Recipient: {{this.recipient}}<br />
-										Transfer Amount: P {{this.amount}}<br />
-										Main-submitter: {{this.approve_info.body.person1.email}}<br />
+										Amount Transfer: P {{this.amount}}<br />
+										Reason: {{this.reason}} <br> <!--{#countDisapprove this.approve_info}}-->
 						  			</p>
 						  		</div>
 						  		<div class="col s12 m6">
 						  			<p>
-						  				Number Approve: {{countApprove this.approve_info}} <br /> 
-										Number Disapprove: {{countDisapprove this.approve_info}} <br />
-										Responses:	<br /> <!--NEED TO CHECK-->
-										Reason: {{this.reason}} <br> <!--{#countDisapprove this.approve_info}}-->
+						  				Main-submitter: {{this.approve_info.body.person1.email}} <br />
+						  				Number Approve: {{countApprove this.approve_info}} <br />
+						  				Number Disapprove: {{countDisapprove this.approve_info}} <br />
+						  				Responses:	<a class="waves-effect waves-light modal-trigger" href="#{{this.id}}">More detail...</a><br /> <!--NEED TO CHECK-->
 						  			</p>
+						  			<!-- Modal Structure -->
+
 						  			{{#ifEvent this.approve_info}} 
 						  				<br>
 				                    	<h5 class="blue-text center">Transaction Finished!</h5>
@@ -64,7 +73,38 @@
 						  		</div>
 						  	</div>
 						  </div>
+
 						</li>
+
+						<div id="{{this.id}}" class="modal">
+					    	<div class="modal-content">
+					      		<h4>Approve Information</h4>
+					      		<table class="striped responsive-table">
+							        <thead>
+							          <tr>
+							              <th>Email</th>
+							              <th>Status</th>
+							              <th>Time</th>
+							          </tr>
+							        </thead>
+
+							        <tbody>
+							       		{{#each this.approve_info}}	
+							       			{{#each this}}										
+									          	<tr>
+									            	<td>{{email}}</td>
+									            	<td>{{status}}</td>
+									            	<td>{{toFormalDate time}}</td>
+									          	</tr>
+									        {{/each}}
+							        	{{/each}}
+							        </tbody>
+							      </table>
+					    	</div>
+						    <div class="modal-footer">
+						    	<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+						    </div>
+					  	</div>
 					{{/each}}
 				{{else}}
 				<div class="row">
@@ -75,3 +115,15 @@
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal({
+    	startingTop: '10%', // Starting top style attribute
+    })
+    $('.collapsible').collapsible();
+  });
+          
+</script>
