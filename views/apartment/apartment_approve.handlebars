@@ -20,7 +20,13 @@
 						  			<span>{{formatDate this.date 'fromNow'}}</span>
 						  		</div>
 						  		<div class="col s12 m4 l4">
+						  			{{#ifCondA this.recipient '==' ../apartmentEmail}}
+						  				<span class="new badge yellow" data-badge-caption="">Members</span>
+						  			
+						  			{{else}}
 						  			<span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
+						  			
+						  			{{/if}}
 						  		</div>
 						  		<div class="col s12 m4 l4">
 						  			<span class="new badge right red" data-badge-caption="">P {{this.amount}}</span>
@@ -40,10 +46,10 @@
 						  		</div>
 						  		<div class="col s12 m6">
 						  			<p>
-						  				Main-submitter: {{this.approve_info.body.person1.email}}<br />
-						  				Number Approve: {{countApprove this.approve_info}} <br /> 
-										Number Disapprove: {{countDisapprove this.approve_info}} <br />
-										Responses:	<a class="waves-effect waves-light modal-trigger" href="#{{this.id}}">More detail...</a><br /> <!--NEED TO CHECK-->
+						  				Main-submitter: {{this.approve_info.body.person1.email}} <br />
+						  				Number Approve: {{countApprove this.approve_info}} <br />
+						  				Number Disapprove: {{countDisapprove this.approve_info}} <br />
+						  				Responses:	<a class="waves-effect waves-light modal-trigger" href="#{{this.id}}">More detail...</a><br /> <!--NEED TO CHECK-->
 						  			</p>
 						  			<!-- Modal Structure -->
 
