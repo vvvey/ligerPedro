@@ -54,13 +54,13 @@ module.exports.set = function(router, pool) {
                   resultingBudget = Math.round((resultingBudget * 100))/100;
 
                   resultingBudget = resultingBudget.toString();
-                  if (resultingBudget[resultingBudget.indexOf(".")+2] == undefined){
+                  if (resultingBudget[resultingBudget.indexOf(".")+2] == undefined && resultingBudget[resultingBudget.indexOf(".")] != undefined){
                      resultingBudget = resultingBudget.concat("0");
                   } 
 
                   moneyExchange = Math.round((moneyExchange * 100))/100;
                   moneyExchange = moneyExchange.toString();
-                  if (moneyExchange[moneyExchange.indexOf(".")+2] == undefined){
+                  if (moneyExchange[moneyExchange.indexOf(".")+2] == undefined && moneyExchange[moneyExchange.indexOf(".")] != undefined){
                      moneyExchange = moneyExchange.concat("0");
                   } 
 
