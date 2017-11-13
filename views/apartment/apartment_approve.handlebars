@@ -20,13 +20,9 @@
 						  			<span>{{formatDate this.date 'fromNow'}}</span>
 						  		</div>
 						  		<div class="col s12 m4 l4">
-						  			{{#ifCondA this.recipient '==' ../apartmentEmail}}
-						  				<span class="new badge yellow" data-badge-caption="">Members</span>
 						  			
-						  			{{else}}
 						  			<span class="new badge blue" data-badge-caption="">{{this.recipient}}</span>
-						  			
-						  			{{/if}}
+
 						  		</div>
 						  		<div class="col s12 m4 l4">
 						  			<span class="new badge right red" data-badge-caption="">P {{this.amount}}</span>
