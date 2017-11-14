@@ -1,14 +1,8 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var User = require('../lib/user');
 
-
 module.exports.set = function(router, pool)  {
-
-	router.get('/residence', (req, res) => {
-		res.redirect('/residence/overview');
-
-	});
-	router.get('/residence/transfer_logs', ensureLoggedIn, User.isRole('re', 'admin', 'maintenance_manager'), (req, res) => {
+	router.get('/utilities/transfer_logs', ensureLoggedIn, User.isRole('admin', 'maintenance_manager'), (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
 	      start = 0 
@@ -25,12 +19,12 @@ module.exports.set = function(router, pool)  {
 	    	limit = req.query.limit;
 	    }
 
-	    // Query Estimate row number of transfer_logs tableS
+	    // Query ELSEstimate row number of transfer_logs tableS
 	    // For pagnigating purpose
 	    // This query should be faster than the next one
 	    // After next query is done, code will use row_number to calcuate the pagination system
 	    var paginateArray = []
-	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'residence@ligercambodia.org' AND finished = 'true';", (err, result) => {
+	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'utilities@ligercambodia.org' AND finished = 'true';", (err, result) => {
 	    	var row_number = result.rows[0].count;
 	    	console.log("Row number is " + row_number)
 	    	// Generate array of object based on number of rows, limit and start
@@ -64,7 +58,7 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN account AS sender on (transfer_logs.sender = sender.email) \
 					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
-					WHERE transfer_logs.recipient = 'residence@ligercambodia.org' AND finished = 'true' \
+					WHERE transfer_logs.recipient = 'utilities@ligercambodia.org' AND finished = 'true' \
 					ORDER BY date DESC, recipient_username DESC  OFFSET $1 LIMIT $2;",
 			values: [start, limit]
 		}
@@ -101,12 +95,12 @@ module.exports.set = function(router, pool)  {
 		});		
 	})
 
-	router.get('/residence/overview', ensureLoggedIn, User.isRole('re', 'admin', 'maintenance_manager'), (req, res) => {
-		var selectresidence =  {
-			text: "SELECT budget FROM account WHERE email = 'residence@ligercambodia.org';"
+	router.get('/utilities/overview', ensureLoggedIn, User.isRole('admin', 'maintenance_manager'), (req, res) => {
+		var selectutilities =  {
+			text: "SELECT budget FROM account WHERE email = 'utilities@ligercambodia.org';"
 		}
 		var bankBudget; 
-		pool.query(selectresidence, (err, result) => {
+		pool.query(selectutilities, (err, result) => {
 			if(err) {return res.send(err)}
 			else {
 				bankBudget = result.rows[0].budget;
@@ -116,7 +110,7 @@ module.exports.set = function(router, pool)  {
 		var recentTransfer  = {
 			text: "	SELECT transfer_logs.*, account.username as sender_username FROM transfer_logs \
 					JOIN account ON (transfer_logs.sender = account.email) \
-					WHERE recipient = 'residence@ligercambodia.org' AND finished = 'true' \
+					WHERE recipient = 'utilities@ligercambodia.org' AND finished = 'true' \
 					ORDER BY date DESC LIMIT 4;"
 		}
 
@@ -134,14 +128,14 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN (SELECT email, username, CASE WHEN role != 'apartment' THEN null ELSE username END AS apartment FROM account) AS account \
 					ON (transfer_logs.sender = account.email) \
-					WHERE transfer_logs.recipient = 'residence@ligercambodia.org' AND transfer_logs.finished = 'true' \
+					WHERE transfer_logs.recipient = 'utilities@ligercambodia.org' AND transfer_logs.finished = 'true' \
 					GROUP BY account.apartment ORDER BY account.apartment;"
 		}
 
 		pool.query(select, (err, result) => {
  			if (err) {res.send(err)}
  			else {
-				res.render('overview', {bankName: 'Residence', 
+				res.render('overview', {bankName: 'Utilities', 
 										bankBudget: bankBudget, 
 										apartmentData: result.rows, 
 										recentTransfer: recentTransferData,

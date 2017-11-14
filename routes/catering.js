@@ -1,8 +1,13 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var User = require('../lib/user')
 
+
 module.exports.set = function(router, pool)  {
-	router.get('/catering/transfer_logs', ensureLoggedIn, User.isRole('admin', 'catering_manager', 'maintenance_manager'), (req, res) => {
+	router.get('/catering', (req, res) => {
+		res.redirect('/catering/overview');
+	});
+	
+	router.get('/catering/transfer_logs', ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 'catering_manager'), (req, res) => {
 		var start;
 		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
 	      start = 0 
@@ -95,7 +100,7 @@ module.exports.set = function(router, pool)  {
 		});		
 	})
 
-	router.get('/catering/overview', ensureLoggedIn, User.isRole('admin', 'catering_manager', 'maintenance_manager'), (req, res) => {
+	router.get('/catering/overview', ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 'catering_manager'), (req, res) => {
 		var selectCatering =  {
 			text: "SELECT budget FROM account WHERE email = 'catering@ligercambodia.org';"
 		}

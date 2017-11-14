@@ -1,20 +1,12 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-
+var User = require('../lib/user')
 module.exports.set = function(router, pool) {
-
-	function isAdmin (req, res, next) {
-		if (req.user.role != "admin") {
-			return res.status(500).render("notFound")
-		} else {
-			next()
-		}
-	}
 
 	router.get('/admin', (req, res) => {
 		res.redirect('/admin/user')
 	})
 
-	router.get('/admin/transfer_data', ensureLoggedIn, isAdmin, (req, res) => {
+	router.get('/admin/transfer_data', ensureLoggedIn, User.isRole('admin'), (req, res) => {
 		// req.query.start and req.query.limit is GET request params
 		// e.g. /admin/transfer_data?start=10
 		// e.g. /admin/transfer_data?start=5&limit=10
@@ -103,7 +95,7 @@ module.exports.set = function(router, pool) {
 				}
 				console.log(result.rows[0].date)
 				// Render to client
-				res.render('admin_transfer_logs', {
+				res.render('admin/admin_transfer_logs', {
 					transfer_data: result.rows, 
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -114,7 +106,7 @@ module.exports.set = function(router, pool) {
 		})		
 	});
 
-	router.get('/admin/exchange_data', ensureLoggedIn, isAdmin, (req, res) => {
+	router.get('/admin/exchange_data', ensureLoggedIn, User.isRole('admin'), (req, res) => {
 		// req.query.start and req.query.limit is GET request params
 		// e.g. /admin/exchange_data?start=10
 		// e.g. /admin/exchange_data?start=5&limit=10
@@ -189,7 +181,7 @@ module.exports.set = function(router, pool) {
 					nextStart = start + limit;
 				}
 
-				res.render("admin_exchange_logs", {
+				res.render("admin/admin_exchange_logs", {
 					exchange_data: result.rows,
 					previousStart: previousStart, 
 					nextStart: nextStart, 
@@ -200,7 +192,7 @@ module.exports.set = function(router, pool) {
 		}) 	
 	});
 
-	router.get("/admin/user", ensureLoggedIn, isAdmin, (req, res) => {
+	router.get("/admin/user", ensureLoggedIn, User.isRole('admin'), (req, res) => {
 		// Group account by apartment, sorted by username, all information from user turn into json then array aggreate
 		var query = {
 			text: "	SELECT 	apartment, \
@@ -219,14 +211,14 @@ module.exports.set = function(router, pool) {
 		pool.query(query, (err, result) => {
 			if (err) {res.send(err)} 
 			else {
-				res.render("admin_user_profile", {user_info: result.rows, userData: req.user});
+				res.render("admin/admin_user_profile", {user_info: result.rows, userData: req.user});
 				
 			}
 		})		
 	})
 
 
-	router.post("/admin/delete/user", ensureLoggedIn, isAdmin, (req, res) => {
+	router.post("/admin/delete/user", ensureLoggedIn, User.isRole('admin'), (req, res) => {
 			const deletQuery = {
 				text: "DELETE FROM account WHERE email = $1 and username = $2;",
 				values: [req.body.user_email, req.body.username]
@@ -246,7 +238,7 @@ module.exports.set = function(router, pool) {
 		}
 	);
 
-	router.post("/admin/update/user", ensureLoggedIn, isAdmin, async(req, res) => {
+	router.post("/admin/update/user", ensureLoggedIn, User.isRole('admin'), async(req, res) => {
 		// req.body valuds pass through depend on client update specific inputs
 
 		var bodyColumnArray = Object.keys(req.body); // Turn key of body object to array e.g. {'email': '...'} --> ['email']
@@ -302,7 +294,7 @@ module.exports.set = function(router, pool) {
 		})
 	});
 
-	router.post("/admin/new/user", ensureLoggedIn, async(req, res) => {
+	router.post("/admin/new/user", ensureLoggedIn, User.isRole('admin'), async(req, res) => {
 		// VALIDATION is still needed
 
 		var bodyRequest = req.body;
@@ -341,7 +333,7 @@ module.exports.set = function(router, pool) {
 		})
 	});
 
-	router.post("/admin/send/apartment", ensureLoggedIn, isAdmin, async(req, res) => {
+	router.post("/admin/send/apartment", ensureLoggedIn, User.isRole('admin'), async(req, res) => {
 		//  VALIDATION need DEVELOPMENT
 		var requestBody = req.body;
 		

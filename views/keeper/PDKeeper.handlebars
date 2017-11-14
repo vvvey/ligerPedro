@@ -1,0 +1,119 @@
+{{> dashboardSideNav}}
+<main>
+<div class="row">
+    <div class="col s12 l12 ">
+      <div class="card circle z-depth-2">
+        <div class="card-content black-text center">
+          <div class="row">
+            <span class="card-title center"><h4>Exchange Request Pedro-Dollar</h4></span>
+          </div>
+          
+        </div>
+      </div>
+      <ul class="collapsible" data-collapsible="accordion">
+      {{#each data}}
+      
+    <li>
+      <div class="collapsible-header not-collapse">
+        <div class="row zero-margin zero-padding"> 
+          <form method="post" action="/keeper/p/d/">
+            <div class="col l2 m2 zero-padding">
+              <i class="material-icons">today</i>
+              <span class="blue-text"></span> {{formatDate apptdate 'MMM DD'}}
+            </div>
+            <div class="col l2 m2 zero-padding">
+              <span class="blue-text">Apartment:</span> {{upperCase apartment}}
+            </div>
+            <div class="col l2 m2 zero-padding">
+              <span class="blue-text">Amount:</span> P{{total}}
+            </div>
+            <div class="col l3 m3 zero-padding">
+              <span class="blue-text">Money Collector:</span> {{money_collector}}
+              <input type="hidden" name="money_collector" value="{{money_collector}}">
+            </div>
+      
+            <div class="col l3 m3 zero-padding">
+              {{#if (isNowInExchangeTimeRange apptdate)}}
+                <button type="submit" id="submit" class="btn" name="status" value="done" style="margin-bottom: 3px; margin-left: 10px">Completed</button>
+              {{/if}}
+              <a class="open secondary-content" order-number="{{row_number}}"><i class="material-icons zero-margin">more_vert</i></a>
+            </div>
+        </div>
+    </div>
+    <div class="collapsible-body ">
+      <div class="row">
+        {{#each info}}
+                             
+          <div class="col s12 m6">
+            <div class="card-panel teal">
+            <span class="white-text">{{person}} requested for <span class="amber-text">P{{amount}}</span> to <span class="amber-text">${{result}} </span>exchange.
+          <br>
+          <br>
+            {{re}} has approved.
+            </span>
+        </div>
+      </div>
+   
+          
+        {{/each}}
+        </form>
+         </div>
+      </div>
+    </li>
+    {{/each}}
+    </ul>
+    </div>
+
+
+</div>
+</main>
+
+<script>
+  $(document).ready(function(){
+    $('.collapsible').collapsible();
+
+$(".open").on("click", function(e) {
+   $('.collapsible').collapsible('open', $(this).attr('order-number'));
+  console.log($(this).closest(".collapsible-header"))
+})
+  $(".not-collapse").on("click", function(e) { e.stopPropagation(); });
+  });
+
+  $('form').validate({
+    errorPlacement: function(error, element) {
+      return true;
+    },
+    submitHandler: function(form) {
+      $('button[type=submit').prop('disabled', true);
+
+      $.ajax({
+        url: form.action,
+        type: form.method,
+        data: $(form).serialize(),
+        success: function(response) {
+           location.reload();
+            
+
+        }
+      });
+    }
+  });
+
+
+</script>    
+
+</script>
+
+<style type="text/css">
+.cardE {
+  position: relative;
+  overflow: hidden;
+  margin: 0.5rem 0.1rem 0.5rem 0.1rem;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.no-magin{
+  padding: 0px;
+}
+</style>
