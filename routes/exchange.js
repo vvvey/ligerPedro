@@ -340,7 +340,7 @@ module.exports.set = function(router, pool) {
         res.send("Error " + err);
       } else {
         if (result.rows[0].role == 're' || result.rows[0].role == 'admin') {
-          pool.query("SELECT * FROM exchange_list WHERE type = 'pedro-dollar'\
+          pool.query("SELECT * FROM exchange_list WHERE type = 'pedro-dollar' and amount > 20\
 	  					ORDER BY timecreated DESC;", function(err2, result2) {
             if (err2) {
               console.log(err2)
