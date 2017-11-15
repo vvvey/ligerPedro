@@ -17,7 +17,8 @@
             <div class="collapsible-header">
               <div class="row" style="margin: 0;">
                 <div class="col s12 m4 l4">
-                  <span>{{formatDate this.date 'standard'}}</span>
+                  <!-- <span>{{formatDate this.date 'MMMM DD YYYY H:mm a'}}</span> -->
+                  <span>{{formatDate this.date 'MMMM DD YYYY H:mm a'}}</span>
                 </div>
                 <div class="col s12 m4 l4">
                   {{#ifCondA this.recipient '==' ../apartmentEmail}}
@@ -38,7 +39,7 @@
               <div class="row">
                 <div class="col s12 m6">
                   <p>
-                    Transferring Date: {{formatDate this.date 'standard'}} <br />
+                    Transferring Date: {{formatDate this.date 'MMMM DD YYYY H:mm a'}} <br />
                     
                     {{#if this.approve_info}}
                       Recipient: {{this.recipient}}<br />
