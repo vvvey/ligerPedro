@@ -3,7 +3,7 @@
 .collection a.collection-item {
 	transition: .25s;
 	color: black;
-	background: transparent;
+	background-color: #546e7a;
 }
 
 body {
@@ -31,9 +31,9 @@ body {
 					<div class="card blue-grey darken-1">
 						<div class="card-content">
 							<span class="card-title white-text"><Strong>Recent Transfer </Strong></span>
-							<ul class="collection transparent">
+							<ul class="collection">
 								{{#each recentTransfer}}
-								<a href="/{{lowerCase ../bankName}}/transfer_logs" class="collection-item">{{sender_username}} sent P{{amount}} <span class="right">{{formatDate date 'short'}}</span></a>
+								<a href="/{{lowerCase ../bankName}}/transfer_logs" class="collection-item"><strong>{{sender_username}} sent P{{amount}} <span class="right">{{formatDate date 'short'}}</strong></span></a>
 								{{/each}}
 							</ul>
 						</div>
@@ -47,12 +47,12 @@ body {
 			<div class="row">
 				{{#each apartmentData}}
 				<div class="col l4 m6 s12">
-					<div class="card grey darken-4">
+					<div class="card blue-grey lighten-2">
 						<div class="card-content white-text">
-							<span class="card-title">{{#ifCondA apartment '!=' null}}Apartment {{upperCase apartment}}{{else}}Non-apartment accounts{{/ifCondA}}</span>
-							<h4 class="amber-text">Total Sent {{sum}}</h4>
+							<span class="card-title"><strong>{{#ifCondA apartment '!=' null}}Apartment {{upperCase apartment}}{{else}}Non-apartment accounts{{/ifCondA}}</span>
+							<h4 class="black-text">Total Sent {{sum}}</strong></h4>
 						</div>
-						<div class="card-action grey darken-4"><a href="" class="white-text">View More</a></div>
+						<div class="card-action white-text"><a href="" class="white-text">View More</a></div>
 					</div>
 				</div>
 				{{/each}}
