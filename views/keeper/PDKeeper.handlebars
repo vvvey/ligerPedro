@@ -25,7 +25,7 @@
               <span class="blue-text">Apartment:</span> {{upperCase apartment}}
             </div>
             <div class="col l2 m2 zero-padding">
-              <span class="blue-text">Amount:</span> P{{total}}
+              <span class="blue-text">Amount:</span> ${{total}}
             </div>
             <div class="col l3 m3 zero-padding">
               <span class="blue-text">Money Collector:</span> {{money_collector}}
@@ -46,10 +46,10 @@
                              
           <div class="col s12 m6">
             <div class="card-panel teal">
-            <span class="white-text">{{person}} requested for <span class="amber-text">P{{amount}}</span> to <span class="amber-text">${{result}} </span>exchange.
+            <span class="white-text">{{person}} requests to withdraw <span class="amber-text">${{amount}}</span> 
           <br>
           <br>
-            {{re}} has approved.
+            Approved by: {{re}}
             </span>
         </div>
       </div>
