@@ -72,23 +72,55 @@ module.exports.set = function(router, pool) {
       text: "SELECT * FROM account WHERE email = $1;",
       values: [exchangeLog.email]
     }
+    // console.log("came in here \n\n\n\n");
+    console.log('"'+exchangeLog.reason+'"');
+
+    // //get total amount for that day
+    // var totalExchange = await pool.query("SELECT amount FROM exchange_list WHERE email = $1 and apptDate = $2", [exchangeLog.email, apptDate]);
+    // //sum it all up
+    // var exchangeSum;
+
+    // for (var i = 0 ; i < totalExchange.rows.length; i++){
+    //   exchangeSum += parseFloat(totalExchange.rows[i].amount);
+    //   console.log("for i "+i+" amount "+parseFloat(totalExchange.rows[i].amount);
+    // }
+    // console.log("total: "+exchangeSum);
+    var notValid = exchangeLog.amount > 20 && exchangeLog.reason == "";
+    var over20 = exchangeLog.amount > 20;
+    if (notValid){
+      res.send("Reason Required!");
+      console.log("Reason Required!");
+      return;
+    }
+
+
     pool.query(getApartment, function(apartmentErr, apartmentResult){
       if(apartmentErr){console.log(apartmentErr);}
       else{
         var apartment = apartmentResult.rows[0].apartment;       
 
+      
         const insertData = {
           text: "INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate, apartment)\
           VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7, $8) returning id as id;",
           values: [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate, apartment]
         };
+
+        
         pool.query(insertData, async function(insertErr, insertResult) {
           if (insertErr) {
             console.log(insertErr);
           } else {
 
             if (exchangeLog.type == "pedro-dollar"){
-
+              if (!over20){
+                pool.query("UPDATE exchange_list SET re = $1, approved = $2, timeapproved = CURRENT_TIMESTAMP(2), pending = $3 WHERE id = $4;", ["SYSTEM", "true", "true", insertResult.rows[0].id], async function(err, result) {
+                  console.log("came in here id: "+ insertResult.rows[0].id);
+                  if(err){
+                    res.send(err);
+                  }
+                });
+              }
 
             /*
             send email to all re
