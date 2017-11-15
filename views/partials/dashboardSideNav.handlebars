@@ -102,7 +102,7 @@
             <div class="collapsible-body">
               <ul>
                 <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
 
               </ul>
             </div>
@@ -114,7 +114,7 @@
       <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
     {{else ifCondA role '==' 're'}}
       <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-      <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+      <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
       <li><a href="/exchange_list"><i class="material-icons">check_circle</i>Exchanging Approve</a></li>
     {{else ifCondA role '==' 'maintenance_manager'}}
       <li>
@@ -143,7 +143,7 @@
             <div class="collapsible-body">
               <ul>
                 <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
 
               </ul>
             </div>
@@ -152,7 +152,7 @@
         </ul>
       </li>
     {{else ifCondA role '==' 'keeper'}}
-      <li><a href="/keeper/p/d"><i class="material-icons">explore</i>Pedro to Dollar</a></li>
+      <li><a href="/keeper/p/d"><i class="material-icons">explore</i>Withdrawal Request</a></li>
       <li><a href="/keeper/d/p""><i class="material-icons">send</i>Deposit Request</a></li>
     {{/ifCondA}}
     <li><div class="divider"></div></li>
