@@ -18,21 +18,49 @@
 						<li>
 						  <div class="collapsible-header">
 						  	<div class="row" style="margin: 0;">
-						  		<div class="col s12 m3">
-						  			<span>{{dateFormat this.timecreated}}</span>
-						  		</div>
+						  		
+						  		<div class="col s12 m2" style="line-height: 2rem;">
+						  			<span>{{dateFormat this.timecreated}}</span><br>
+						  			{{#ifCond this.approved 'true'}}
+										<span class="new badge green left" data-badge-caption="">{{this.re}}</span>
+									{{else ifCond this.approved null}}
+										{{#if this.pending}}
+											<span class="new badge yellow left" data-badge-caption="">PENDING</span>
+										</form>
+  										{{else}}
+											<span class="new badge red left" data-badge-caption="">{{this.re}}</span>
+										{{/if}}
+									{{else}}
+										<span class="new badge red left" data-badge-caption="">{{this.re}}</span>
 
-						  		<div class="col s12 m3">
-						  			<span class="new badge blue" data-badge-caption="">{{this.person}}</span>
+									{{/ifCond}}
+<!-- 
+						  			{{#if this.pending}}
+							  			
+							  		{{else if this.approved}}
+								  		<div class="col s12 m4">
+								  			<i class="small material-icons green left">this.re</i>
+								  		</div>
+								  		
+								  	{{else}}
+								  		<div class="col s12 m4">
+								  			<i class="small material-icons red left">this.re</i>
+								  		</div>								  	
+								  	{{/if}}	 -->
 						  		</div>
+						  		
+						  		
+						  		<div class="col s12 offset-m5 m5">
 
-						  		<div class="col s12 m3">
+						  			<span class="new badge blue" data-badge-caption="">{{this.person}}</span><br>
+						  			<span class="date right">{{dateFormat this.apptdate}}</span>
+						  		</div>
+<!-- 
+						  		<div class="col s12 m2">
 						  			<span class="new badge right red" data-badge-caption="">P {{this.result}}</span>
-						  		</div>
+						  		</div> -->
 
-						  		<div class="col s12 m3">
-						  			<span class="new badge right red" data-badge-caption="">{{dateFormat this.apptdate}}</span>
-						  		</div>
+						  		
 						  	</div>
 						  </div>
 						  <div class="collapsible-body">
@@ -43,18 +71,22 @@
 										Person: {{this.person}} <br />
 										Type: {{this.type}}<br />
 										Exchange Amount: P {{this.amount}}<br />
-										Exhcnage Result: P {{this.result}}<br />
+										<!-- Exhcnage Result: P {{this.result}}<br /> -->
 						  			</p>
 						  		</div>
 						  		<div class="col s12 m6">
 						  			Reason: {{this.reason}} <br />
-						  			{{#ifCond this.approved "true"}}
+						  			{{#ifCond this.approved 'true'}}
 										Approved by {{this.re}}
 									{{else ifCond this.approved null}}
-										<form method="post" action="/exchange_list/approve/{{this.id}}">
+										{{#if this.pending}}
+											<form method="post" action="/exchange_list/approve/{{this.id}}">
 											<button type="submit" name="status" value="true" class="btn">Accept</button>
 											<button type="submit" name="status" value="false" class="btn">Cancel</button>
 										</form>
+  										{{else}}
+											Cancel by {{this.re}}
+										{{/if}}
 									{{else}}
 										Cancel by {{this.re}}
 									{{/ifCond}}

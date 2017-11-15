@@ -59,12 +59,12 @@
 			
 				<div class="card">
 					<div class="card-content" style="background-color: #3498DB">
-						<span class="card-title center">Exchange</span>
+						<span class="card-title center white-text"><Strong>Exchange</Strong></span>
 					</div>
 					<div class="card-tabs">
 						<ul class="tabs tabs-fixed-width">
-							<li class="tab"><a href="#test4" class="active black-text">Pedro to Dollar </a></li>
-							<li class="tab"><a class="black-text" href="#test5">Dollar to Pedro</a></li>
+							<li class="tab"><a href="#test4" class="active black-text">Withdraw </a></li>
+							<li class="tab"><a class="black-text" href="#test5">Deposit</a></li>
 						</ul>
 					</div>
 					<div class="card-content grey lighten-4">
@@ -278,9 +278,9 @@ $(function() {
 			},
 			reason: {
 				maxlength: 200,
-				required: true
+				required: false
 			},
-			exchangeType: "required"			
+			exchangeType: ""			
 		},
 		messages: {
 			amount: {
