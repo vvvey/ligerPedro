@@ -136,7 +136,7 @@ router.get('/history_personal', ensureLoggedIn, async function(request, response
     for(var i = 0; i < getTransfer.rows.length; i++){
       getTransfer.rows[i].amount = Math.round((getTransfer.rows[i].amount * 100))/100;
       getTransfer.rows[i].amount = getTransfer.rows[i].amount.toString();
-      if (getTransfer.rows[i].amount[getTransfer.rows[i].amount.indexOf(".")+2] == undefined){
+      if (getTransfer.rows[i].amount[getTransfer.rows[i].amount.indexOf(".")+2] == undefined && getTransfer.rows[i].amount[getTransfer.rows[i].amount.indexOf(".")] != undefined){
          getTransfer.rows[i].amount = getTransfer.rows[i].amount.concat("0");
       } 
       

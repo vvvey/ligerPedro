@@ -148,12 +148,12 @@ module.exports.set = function(router, pool) {
             var email = require('../lib/email.js');
             
             //send email to re
-            // email.sendEmail(emailRecipient,"Exchange Request",contentToRe);
-            email.sendEmail("ketya.n@ligercambodia.org","Exchange Request",contentToRe+"<br>Target: "+emailRecipient);
+            email.sendEmail(emailRecipient,"Exchange Request",contentToRe);
+            // email.sendEmail("ketya.n@ligercambodia.org","Exchange Request",contentToRe+"<br>Target: "+emailRecipient);
 
             //send to requester
-            //email.sendEmail(exchangeLog.email, "Exchange Request Sent", contentToRequester);
-            email.sendEmail("ketya.n@ligercambodia.org", "Exchange Request Sent", contentToRequester+"<br>Target: "+exchangeLog.email);
+            email.sendEmail(exchangeLog.email, "Exchange Request Sent", contentToRequester);
+            // email.sendEmail("ketya.n@ligercambodia.org", "Exchange Request Sent", contentToRequester+"<br>Target: "+exchangeLog.email);
           }else{
             //get requester's email
             //exchangeLog.email;
@@ -314,14 +314,14 @@ module.exports.set = function(router, pool) {
         //if re denied
         if (!status){
           //send email to user
-          // email.sendEmail(emailRecipient,"Exchange Request Denied" ,contentToDenied);
-          email.sendEmail("ketya.n@ligercambodia.org","Exchange Request Denied",contentToDenied+"<br>Target: "+emailRecipient);
+          email.sendEmail(emailRecipient,"Exchange Request Denied" ,contentToDenied);
+          // email.sendEmail("ketya.n@ligercambodia.org","Exchange Request Denied",contentToDenied+"<br>Target: "+emailRecipient);
         }else{//if re accepted
 
           //send email to user
 
-          // email.sendEmail(emailRecipient,"Exchange Request Accepted",contentToAccepted);
-          email.sendEmail("ketya.n@ligercambodia.org","Exchange Request Accepted",contentToAccepted+"<br>Target: "+emailRecipient);
+          email.sendEmail(emailRecipient,"Exchange Request Accepted",contentToAccepted);
+          // email.sendEmail("ketya.n@ligercambodia.org","Exchange Request Accepted",contentToAccepted+"<br>Target: "+emailRecipient);
         }
 
         res.redirect('/exchange_list')
