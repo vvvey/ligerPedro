@@ -26,13 +26,19 @@ module.exports.set = function(router, pool) {
       pool.query(getAccount, function(accErr, accresult) {
         if(accErr){console.log(accErr);}
         else{
-          pool.query(getAccountAll, function(allAccErr, allAccResult) {
+          pool.query(getAccountAll, async function(allAccErr, allAccResult) {
             if(allAccErr){console.log(allAccErr);}
             else{
               var emailsList = [];
-              for(var i = 0; i < allAccResult.rows.length; i++){
-                emailsList.push(allAccResult.rows[i].email);
+              
+
+              var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or email = 'catering@ligercambodia.org' or role = 'central_bank' ORDER BY role, username");
+
+              for(var i = 0; i < emailToRemove.rows.length; i++){
+                emailsList.push(emailToRemove.rows[i].email);
               } 
+              console.log(emailsList);
+
               console.log("About to query!");
               pool.query(getExchange, function(exchangeErr, exchangeResult) {
                 if(exchangeErr){console.log(exchangeErr);}
