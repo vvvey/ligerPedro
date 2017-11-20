@@ -34,15 +34,19 @@
 							</ul>
 						</div>
 						{{else ifCond data 'keeper'}}
-							<li class="green right"><a href="/keeper/p/d"><i class="material-icons">store</i></a></li>
+							<li class="red left"><center><a href="/keeper/p/d" style="font-family: Calibri; width: 400px; font-size: 25px;">Return to Maintenance Page</a></center>
+								</li>
 						{{else ifCond data 're'}}
-							<li class="green right"><a href="/residence/overview"><i class="material-icons">store</i></a></li>
+							<li class="red left"><center><a href="/residence/overview" style="font-family: Calibri; width: 400px; font-size: 25px;">Return to Maintenance Page</a></center>
+								</li>
 						{{else ifCond data 'catering_manager'}}
-							<li class="green right"><a href="/catering/overview"><i class="material-icons">shopping_cart</i></a></li>
+							<li class="red left"><center><a href="/catering/overview" style="font-family: Calibri; width: 400px; font-size: 25px;">Return to Catering Page</a></center>
+							</li>
 						{{else ifCond data 'maintenance_manager'}}
-							<li class="green right"><a href="/maintenance/overview"><i class="material-icons">build</i></a></li>
+							<li class="red left"><center><a href="/maintenance/overview" style="font-family: Calibri; width: 400px; font-size: 25px;">Back to Maintenance Page</a></center>
+								</li>
 						{{else ifCond data 'admin'}}
-							<li class="green right"><a href="/admin/user">Admin</a></li>
+							<li class="red left"><center><a href="/admin/user" style="font-family: Calibri; width: 400px; font-size: 25px;">Back to Admin Page</a></center></li>
 						{{/ifCond}}
 					
 						

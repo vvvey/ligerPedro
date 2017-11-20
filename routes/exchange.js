@@ -75,18 +75,19 @@ module.exports.set = function(router, pool) {
     // console.log("came in here \n\n\n\n");
     console.log('"'+exchangeLog.reason+'"');
 
-    // //get total amount for that day
-    // var totalExchange = await pool.query("SELECT amount FROM exchange_list WHERE email = $1 and apptDate = $2", [exchangeLog.email, apptDate]);
-    // //sum it all up
-    // var exchangeSum;
+    //get total amount for that day
+    var totalExchange = await pool.query("SELECT * FROM exchange_list WHERE email = $1 and apptDate = $2", [exchangeLog.email, apptDate]);
+    //sum it all up
+    var exchangeSum = 0;
 
-    // for (var i = 0 ; i < totalExchange.rows.length; i++){
-    //   exchangeSum += parseFloat(totalExchange.rows[i].amount);
-    //   console.log("for i "+i+" amount "+parseFloat(totalExchange.rows[i].amount);
-    // }
-    // console.log("total: "+exchangeSum);
-    var notValid = exchangeLog.amount > 20 && exchangeLog.reason == "";
-    var over20 = exchangeLog.amount > 20;
+    for (var i = 0 ; i < totalExchange.rows.length; i++){
+      exchangeSum += parseFloat(totalExchange.rows[i].amount);
+      console.log("for i "+i+" amount "+parseFloat(totalExchange.rows[i].amount));
+    }
+    exchangeSum += parseFloat(exchangeLog.amount);
+    console.log("total: "+exchangeSum);
+    var notValid = exchangeSum > 20 && exchangeLog.reason == "";
+    var over20 = exchangeSum > 20;
     if (notValid){
       res.send("Reason Required!");
       console.log("Reason Required!");
@@ -94,23 +95,49 @@ module.exports.set = function(router, pool) {
     }
 
 
-    pool.query(getApartment, function(apartmentErr, apartmentResult){
+    pool.query(getApartment, async function(apartmentErr, apartmentResult){
       if(apartmentErr){console.log(apartmentErr);}
       else{
         var apartment = apartmentResult.rows[0].apartment;       
 
       
+        
+
+        //get existing apptdate
+        var existingApptDate = await pool.query("SELECT * FROM exchange_list WHERE email = $1 and apptDate = $2", [exchangeLog.email, apptDate]);
+
+        console.log("existingApptDate = "+existingApptDate);
+        if (existingApptDate.rows[0] == null){
+          var apptDateExist = false;
+        }else{
+          var apptDateExist = true;
+        }
+
+        if (apptDateExist){
+          pool.query("DELETE FROM exchange_list WHERE id = $1;", [totalExchange.rows[0].id], async function(errDel, resultDel) {
+            console.log("Deleting ID: "+ totalExchange.rows[0].id);
+            if(err){
+              res.send(errDel);
+            }
+          });
+          console.log("Appointment Date Exist");          
+        }else{
+          console.log("Appointment Date Doesn't Exist");
+        }
+
+        // console.log("apptDateExist = "+apptDateExist+"\ninsertData = "+ insertData);
         const insertData = {
-          text: "INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate, apartment)\
-          VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7, $8) returning id as id;",
-          values: [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeLog.amount, exchangeLog.result, exchangeLog.reason, apptDate, apartment]
+            text: "INSERT INTO exchange_list (timeCreated, person, email, type, amount, result, reason, apptdate, apartment)\
+            VALUES (CURRENT_TIMESTAMP(2), $1, $2, $3, $4::float8::numeric::money, $5::float8::numeric::money, $6, $7, $8) returning id as id;",
+            values: [exchangeLog.person, exchangeLog.email, exchangeLog.type, exchangeSum, exchangeSum, exchangeLog.reason, apptDate, apartment]
         };
 
         
         pool.query(insertData, async function(insertErr, insertResult) {
-          if (insertErr) {
+          if (insertErr) { 
             console.log(insertErr);
           } else {
+            console.log("inserted data with id = "+ insertResult.rows[0].id);
 
             if (exchangeLog.type == "pedro-dollar"){
               if (!over20){
@@ -121,6 +148,8 @@ module.exports.set = function(router, pool) {
                   }
                 });
               }
+
+              
 
             /*
             send email to all re
@@ -136,7 +165,7 @@ module.exports.set = function(router, pool) {
             */
 
             //get email recipient / all re emails
-            var emailRecipientData = await pool.query("SELECT email FROM account WHERE role = $1",["re"]);
+            var emailRecipientData = await pool.query("SELECT email FROM account WHERE role = $1",['re']);
 
             //get requester's email
             //exchangeLog.email;
@@ -186,7 +215,7 @@ module.exports.set = function(router, pool) {
             //send to requester
             email.sendEmail(exchangeLog.email, "Exchange Request Sent", contentToRequester);
             // email.sendEmail("ketya.n@ligercambodia.org", "Exchange Request Sent", contentToRequester+"<br>Target: "+exchangeLog.email);
-          }else{
+          }else{//if type isn't pedro to dollar
             //get requester's email
             //exchangeLog.email;
 

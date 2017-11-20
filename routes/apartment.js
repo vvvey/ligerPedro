@@ -25,9 +25,12 @@ module.exports.set = function(router, pool) {
       var apartmentTransferBudget = 0;
       var emailsList = [];
 
-      for(var i = 0; i < emails.rows.length; i++){
-        emailsList.push(emails.rows[i].email);
+      var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or email = 'catering@ligercambodia.org' or role = 'central_bank' ORDER BY role, username");
+
+      for(var i = 0; i < emailToRemove.rows.length; i++){
+        emailsList.push(emailToRemove.rows[i].email);
       } 
+      console.log(emailsList);
       if(apartmentTransfer.rows){        
         for(var i = 0; i < apartmentTransfer.rows.length; i++){
           apartmentTransferBudget += parseFloat(apartmentTransfer.rows[i].amount);
