@@ -41,13 +41,13 @@ module.exports.set = function(router, pool) {
       budgetRemain = Math.round((budgetRemain * 100))/100;
 
       budgetRemain = budgetRemain.toString();
-      if (budgetRemain[budgetRemain.indexOf(".")+2] == undefined){
+      if (budgetRemain[budgetRemain.indexOf(".")+2] == undefined && budgetRemain[budgetRemain.indexOf(".")] != undefined){
          budgetRemain = budgetRemain.concat("0");
       } 
 
       apartmentTransferBudget = Math.round((apartmentTransferBudget * 100))/100;
       apartmentTransferBudget = apartmentTransferBudget.toString();
-      if (apartmentTransferBudget[apartmentTransferBudget.indexOf(".")+2] == undefined){
+      if (apartmentTransferBudget[apartmentTransferBudget.indexOf(".")+2] == undefined && apartmentTransferBudget[apartmentTransferBudget.indexOf(".")] != undefined){
          apartmentTransferBudget = apartmentTransferBudget.concat("0");
       } 
       response.render('apartment/apartment_transfer', {
