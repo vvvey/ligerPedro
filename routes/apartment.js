@@ -4,7 +4,8 @@ var createdFun = require('../lib/objFuns');
 var Validator = require('../lib/validator');
 var createdFun = require('../lib/objFuns');
 var moment = require('moment');
-var momentTZ = require('moment-timezone')
+var momentTZ = require('moment-timezone');
+var fix = require('../lib/fixROE');
 
 module.exports.set = function(router, pool) {
 
@@ -36,20 +37,13 @@ module.exports.set = function(router, pool) {
           apartmentTransferBudget += parseFloat(apartmentTransfer.rows[i].amount);
         }
       }
+
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
       
-      budgetRemain = Math.round((budgetRemain * 100))/100;
+      budgetRemain = fix.fixROE(budgetRemain);
 
-      budgetRemain = budgetRemain.toString();
-      if (budgetRemain[budgetRemain.indexOf(".")+2] == undefined){
-         budgetRemain = budgetRemain.concat("0");
-      } 
+      apartmentTransferBudget = fix.fixROE(apartmentTransferBudget);
 
-      apartmentTransferBudget = Math.round((apartmentTransferBudget * 100))/100;
-      apartmentTransferBudget = apartmentTransferBudget.toString();
-      if (apartmentTransferBudget[apartmentTransferBudget.indexOf(".")+2] == undefined){
-         apartmentTransferBudget = apartmentTransferBudget.concat("0");
-      } 
       response.render('apartment/apartment_transfer', {
         emails: emailsList, 
         user: request.user, 
@@ -92,6 +86,11 @@ module.exports.set = function(router, pool) {
       }
 
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+
+      budgetRemain = fix.fixROE(budgetRemain);
+
+      apartmentTransferBudget = fix.fixROE(apartmentTransferBudget);
+
       response.render('apartment/apartment_approve', {
         email: email, 
         user: request.user, 
@@ -108,7 +107,7 @@ module.exports.set = function(router, pool) {
       response.redirect('notFound');
     }
   });
-        
+   
   router.get('/apartment_history', ensureLoggedIn, async function(request, response){
     var email = request.user.email;
     var personality = await pool.query("SELECT * FROM account WHERE email = $1;", [email]);
@@ -143,6 +142,11 @@ module.exports.set = function(router, pool) {
         }
       }
       var budgetRemain =  parseFloat(apartmentData.rows[0].budget) - apartmentTransferBudget;
+
+      budgetRemain = fix.fixROE(budgetRemain);
+
+      apartmentTransferBudget = fix.fixROE(apartmentTransferBudget);
+
       response.render('apartment/apartment_history', {
         user: request.user, 
         data: personality.rows[0].role, 
@@ -195,6 +199,11 @@ module.exports.set = function(router, pool) {
         dataCollection.push([]);
         dataCollection[i].push(shr.rows[i].person, parseFloat(shr.rows[i].result), shr.rows[i].id, exportDate(shr.rows[i].apptdate));
       }
+
+      budgetRemain = fix.fixROE(budgetRemain);
+
+      apartmentTransferBudget = fix.fixROE(apartmentTransferBudget);
+
       response.render('apartment/apartment_memberExchange', {
         exData: dataCollection,
         user: request.user, 
