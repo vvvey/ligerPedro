@@ -19,7 +19,6 @@
 						<th>Date</th>
 						<th>User</th>
 						<th>Amount</th>
-						<th>Initial Budget</th>
 						<th>Remaining Budget</th>
 						<th>Reason</th>
 					</tr>
@@ -35,6 +34,7 @@
 							<td><span class="new badge blue left" data-badge-caption="">Sent from</span> {{this.sender}} </td>
 						{{/ifCondA}}
 						<td>P {{this.amount}}</td>
+
 						{{#ifCondA sender '==' ../email}}
 							<td>P {{this.sender_resulting_budget}}</td>
 						{{else}}
