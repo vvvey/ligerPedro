@@ -26,7 +26,7 @@ module.exports.set = function(router, pool) {
       var apartmentTransferBudget = 0;
       var emailsList = [];
 
-      var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or email = 'catering@ligercambodia.org' or role = 'central_bank' ORDER BY role, username");
+      var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or role = 'central_bank' ORDER BY role, username");
 
       for(var i = 0; i < emailToRemove.rows.length; i++){
         emailsList.push(emailToRemove.rows[i].email);
@@ -146,7 +146,9 @@ module.exports.set = function(router, pool) {
       budgetRemain = fix.fixROE(budgetRemain);
 
       apartmentTransferBudget = fix.fixROE(apartmentTransferBudget);
-
+      for (var i = 0; i < dataTransferFinish.rows.length; i++){
+        // dataTransferFinish.rows[i].date = moment(dataTransferFinish.rows[i].date).tz("Asia/Bangkok");
+      }
       response.render('apartment/apartment_history', {
         user: request.user, 
         data: personality.rows[0].role, 
