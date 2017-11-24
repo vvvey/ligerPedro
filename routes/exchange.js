@@ -1,6 +1,7 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var moment = require('moment-timezone');
-var Validator = require('../lib/validator')
+var Validator = require('../lib/validator');
+var fix = require('../lib/fixROE');
 
 module.exports.set = function(router, pool) {
 
@@ -32,7 +33,8 @@ module.exports.set = function(router, pool) {
           } else {
             var budget = userResult.rows[0].budget;
             var pendingBudget = pendingResult.rows[0].sum;
-            var validBudget = parseFloat(budget) - parseFloat(pendingBudget)
+            var validBudget = parseFloat(budget) - parseFloat(pendingBudget);
+            validBudget = fix.fixROE(validBudget);
             res.render('personal/exchanging', {user: req.user, data: userResult.rows[0].role ,budget: budget, pendingBudget: pendingBudget, validBudget: validBudget})
           }
         })

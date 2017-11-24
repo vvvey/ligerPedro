@@ -1,6 +1,7 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
-var Validator = require('../lib/validator')
+var Validator = require('../lib/validator');
+var fix = require('../lib/fixROE');
 
 module.exports.set = function(router, pool) {
   router.get('/transfer', ensureLoggedIn, function(request, response) {
@@ -54,6 +55,7 @@ module.exports.set = function(router, pool) {
 
                   //proof read 2 decimal places
                   var resultingBudget = accresult.rows[0].budget - moneyExchange;
+                  resultingBudget = fix.fixROE(resultingBudget);
                   // resultingBudget = resultingBudget.toString(); //If it's not already a String
                   // resultingBudget = resultingBudget.slice(0, (resultingBudget.indexOf("."))+3); //With 3 exposing the hundredths place
                   // Number(resultingBudget); //If you need it back as a Number
@@ -111,7 +113,7 @@ module.exports.set = function(router, pool) {
     delete req.session.recipientBudget;
 
     const transferBudget = parseFloat(req.body.amount);
-    const senderNewBudget = senderCurrentBudget - transferBudget;
+    const senderNewBudget = fix.fixROE(senderCurrentBudget - transferBudget);
 	  const recipientNewBudget = transferBudget + recipientCurrentBudget;
     console.log("senderCurrentBudget: " + senderCurrentBudget);
     console.log("transferBudget: " + transferBudget)
