@@ -305,7 +305,7 @@ module.exports.set = function(router, pool) {
         await pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [resultingRecipient, approveSystem.recipient]);
         
         await pool.query("UPDATE transfer_logs SET finished = 't',\
-        approve_info = $1 WHERE id = $2;", [masterObj,fromUser.id]);
+        approve_info = $1, sender_resulting_budget = $2, recipient_resulting_budget = $3 WHERE id = $4;", [masterObj, resultingApartment, resultingRecipient, fromUser.id]);
 
         console.log("Transfered 3 responses!");  
       }
@@ -315,10 +315,16 @@ module.exports.set = function(router, pool) {
 
       disapproved += 1;
 
+     
+        var resultingApartment = approveSystem.monApartment;
+
+        var resultingRecipient = approveSystem.monRecipient;
+
+
       if(disapproved == 2 && encout == 0 && approveSystem.finished == false) {
 
-        await pool.query("UPDATE transfer_logs SET finished = 't',\
-        approve_info = $1 WHERE id = $2;", [masterObj,fromUser.id]);
+        await pool.query("UPDATE transfer_logs SET finished = 't', canceled = 't',\
+        approve_info = $1, sender_resulting_budget = $2, recipient_resulting_budget = $3 WHERE id = $4;", [masterObj, resultingApartment, resultingRecipient, fromUser.id]);
 
         console.log("Transfered fail, after 2 responses!"); 
       }

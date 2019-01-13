@@ -24,7 +24,7 @@ module.exports.set = function(router, pool)  {
 	    // This query should be faster than the next one
 	    // After next query is done, code will use row_number to calcuate the pagination system
 	    var paginateArray = []
-	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'utilities@ligercambodia.org' AND finished = 'true';", (err, result) => {
+	    pool.query("SELECT count(id) from transfer_logs WHERE recipient = 'utilities@ligercambodia.org' AND finished = 'true' AND canceled = 'false';", (err, result) => {
 	    	var row_number = result.rows[0].count;
 	    	console.log("Row number is " + row_number)
 	    	// Generate array of object based on number of rows, limit and start
@@ -58,7 +58,7 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN account AS sender on (transfer_logs.sender = sender.email) \
 					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
-					WHERE transfer_logs.recipient = 'utilities@ligercambodia.org' AND finished = 'true' \
+					WHERE transfer_logs.recipient = 'utilities@ligercambodia.org' AND finished = 'true' AND canceled = 'false' \
 					ORDER BY date DESC, recipient_username DESC  OFFSET $1 LIMIT $2;",
 			values: [start, limit]
 		}
@@ -110,7 +110,7 @@ module.exports.set = function(router, pool)  {
 		var recentTransfer  = {
 			text: "	SELECT transfer_logs.*, account.username as sender_username FROM transfer_logs \
 					JOIN account ON (transfer_logs.sender = account.email) \
-					WHERE recipient = 'utilities@ligercambodia.org' AND finished = 'true' \
+					WHERE recipient = 'utilities@ligercambodia.org' AND finished = 'true' AND canceled = 'false' \
 					ORDER BY date DESC LIMIT 4;"
 		}
 
@@ -128,7 +128,7 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN (SELECT email, username, CASE WHEN role != 'apartment' THEN null ELSE username END AS apartment FROM account) AS account \
 					ON (transfer_logs.sender = account.email) \
-					WHERE transfer_logs.recipient = 'utilities@ligercambodia.org' AND transfer_logs.finished = 'true' \
+					WHERE transfer_logs.recipient = 'utilities@ligercambodia.org' AND transfer_logs.finished = 'true' AND transfer_logs.canceled = 'false' \
 					GROUP BY account.apartment ORDER BY account.apartment;"
 		}
 
