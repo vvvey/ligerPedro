@@ -63,7 +63,7 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN account AS sender on (transfer_logs.sender = sender.email) \
 					JOIN account AS recipient on (transfer_logs.recipient = recipient.email) \
-					WHERE transfer_logs.recipient = 'catering@ligercambodia.org' AND finished = 'true AND canceled = 'false' \
+					WHERE transfer_logs.recipient = 'catering@ligercambodia.org' AND finished = 'true' AND canceled = 'false' \
 					ORDER BY date DESC, recipient_username DESC  OFFSET $1 LIMIT $2;",
 			values: [start, limit]
 		}
