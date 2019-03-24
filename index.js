@@ -5,14 +5,18 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 var passport     = require('passport');
+var moment = require('moment')
 //var fn = require('fn');
 
 var hbs = require('./lib/handlebar-helpers')
 
 app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
+app.set('view engine', hbs.extname);
 app.set('port', (process.env.PORT || 5000));
 
+var Handlebars = require("handlebars");
+var MomentHandler = require("handlebars.moment");
+MomentHandler.registerHelpers(Handlebars);
 
 var fake_account = require('./fake')
 var routes       = require('./routes/index');

@@ -27,10 +27,10 @@
 				<tbody>
 					{{#each transferData}}
 					<tr>
-						<td>{{dateFormat this.date}}</td>
+						<td><span class="dateFormat" timestamp={{this.timestamp}}></span>{{moment timestamp unix=true format="DD/MM/YYYY hh:mm"}}</td>
 						{{#ifCondA recipient '!=' ../email}}
 							<td> <span class="new badge red left" data-badge-caption="">Sent to</span> {{recipient}} </td>
-						{{else ifCondA this.sender '!=' ../email}}		
+						{{else ifCondA this.sender '!=' ../email}}
 							<td><span class="new badge blue left" data-badge-caption="">Sent from</span> {{this.sender}} </td>
 						{{/ifCondA}}
 						<td>P {{this.amount}}</td>
@@ -51,7 +51,7 @@
 		{{/if}}
 		</div>
 
-		<div class="col s12 l10 offset-l1" id="exchange">				
+		<div class="col s12 l10 offset-l1" id="exchange">
 	    	{{#if exchangeData}}
 		    	<ul class="collection">
 		    		<li class="collection-item">
@@ -90,11 +90,11 @@
 
 									      Type: {{#ifCondA this.type '==' 'pedro-dollar'}}Pedro to Dollar{{else}}Dollar to Pedro{{/ifCondA}} <br />
 
-									      Initial Exchange: P {{this.amount}} <br /> 
+									      Initial Exchange: P {{this.amount}} <br />
 
-									      Amount: P {{this.result}} <br /> 
+									      Amount: P {{this.result}} <br />
 
-									      Reason: {{this.reason}} <br /> 
+									      Reason: {{this.reason}} <br />
 								      	</span>
 								      </div>
 								    </li>
@@ -104,9 +104,9 @@
 									      <div class="collapsible-header"><i class="material-icons">group</i>RE</div>
 									      <div class="collapsible-body">
 									      	<span>
-									      		RE Approve: {{#ifCondA this.approved '==' 'true'}} Yes {{else ifCondA this.approve '==' "false"}} No {{else}} Pendding {{/ifCondA}}<br /> 
+									      		RE Approve: {{#ifCondA this.approved '==' 'true'}} Yes {{else ifCondA this.approve '==' "false"}} No {{else}} Pendding {{/ifCondA}}<br />
 
-									      		RE Approve Date: {{formatDate this.timeapproved 'standard'}} <br /> 
+									      		RE Approve Date: {{formatDate this.timeapproved 'standard'}} <br />
 									      	</span>
 									      </div>
 									    </li>
@@ -116,9 +116,9 @@
 								      <div class="collapsible-header"><i class="material-icons">account_balance</i>Keeper</div>
 								      <div class="collapsible-body">
 								      	<span>
-								      		Keeper Approve: {{#ifCondA this.exchanged '==' 'true'}} Success Exchagned {{else ifCondA this.exchanged '==' "false"}} Fail Exchange {{else}} Not yet arrive! {{/ifCondA}} <br /> 
+								      		Keeper Approve: {{#ifCondA this.exchanged '==' 'true'}} Success Exchagned {{else ifCondA this.exchanged '==' "false"}} Fail Exchange {{else}} Not yet arrive! {{/ifCondA}} <br />
 
-								     		Keeper Approve Date: {{formatDate this.timeexchanged 'standard'}} <br /> 
+								     		Keeper Approve Date: {{formatDate this.timeexchanged 'standard'}} <br />
 								      	</span>
 
 								      </div>
@@ -139,12 +139,12 @@
 	</div>
 </div>
 <script type="text/javascript">
-	
+
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
   });
-          
+
 </script>
 
 <style type="text/css">
