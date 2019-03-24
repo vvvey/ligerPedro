@@ -27,7 +27,7 @@
 				<tbody>
 					{{#each transferData}}
 					<tr>
-						<td><span class="dateFormat" timestamp={{this.timestamp}}></span>{{moment timestamp unix=true format="DD/MM/YYYY hh:mm"}}</td>
+						<td><span class="dateFormat" timestamp={{this.timestamp}}></span>{{moment timestamp unix=true}}</td>
 						{{#ifCondA recipient '!=' ../email}}
 							<td> <span class="new badge red left" data-badge-caption="">Sent to</span> {{recipient}} </td>
 						{{else ifCondA this.sender '!=' ../email}}

@@ -2,6 +2,7 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var pg = require('pg');
 var Validator = require('../lib/validator');
 var fix = require('../lib/fixROE');
+var moment = require('moment');
 
 module.exports.set = function(router, pool) {
   router.get('/transfer', ensureLoggedIn, function(request, response) {
@@ -31,13 +32,13 @@ module.exports.set = function(router, pool) {
             if(allAccErr){console.log(allAccErr);}
             else{
               var emailsList = [];
-              
+
 
               var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or role = 'central_bank' ORDER BY role, username");
 
               for(var i = 0; i < emailToRemove.rows.length; i++){
                 emailsList.push(emailToRemove.rows[i].email);
-              } 
+              }
               console.log(emailsList);
 
               console.log("About to query!");
@@ -64,13 +65,13 @@ module.exports.set = function(router, pool) {
                   resultingBudget = resultingBudget.toString();
                   if (resultingBudget[resultingBudget.indexOf(".")+2] == undefined && resultingBudget[resultingBudget.indexOf(".")] != undefined){
                      resultingBudget = resultingBudget.concat("0");
-                  } 
+                  }
 
                   moneyExchange = Math.round((moneyExchange * 100))/100;
                   moneyExchange = moneyExchange.toString();
                   if (moneyExchange[moneyExchange.indexOf(".")+2] == undefined && moneyExchange[moneyExchange.indexOf(".")] != undefined){
                      moneyExchange = moneyExchange.concat("0");
-                  } 
+                  }
 
                   response.render('personal/transfer_personal', {pendingBudget: moneyExchange,budget: resultingBudget, user: request.user, data: accresult.rows[0].role, emails: emailsList});
                 }
@@ -100,7 +101,7 @@ module.exports.set = function(router, pool) {
       }
     })
   });
-  
+
   //if the validateTransfer success, the middleware just call queries to database
   router.post('/transfer_success', Validator.individualTransfer , async function (req, res) {
     const senderEmail = req.user.email;
@@ -145,14 +146,14 @@ module.exports.set = function(router, pool) {
     //get sender data
     var senderData = await pool.query("SELECT * FROM account WHERE email = $1",[senderEmail]);
 
-    //get sender name 
+    //get sender name
     var senderName = senderData.rows[0].username;
 
     //get apartment emails array
     var apartmentEmail = ["a1@ligercambodia.org", "a2@ligercambodia.org", "b3@ligercambodia.org", "b4@ligercambodia.org", "c5@ligercambodia.org", "c6@ligercambodia.org", "d7@ligercambodia.org", "d8@ligercambodia.org"];
     //var apartmentEmail = await pool.query("SELECT * FROM account WHERE role = $1", ["apartment"]);
 
-    //get content 
+    //get content
     var contentToTransferer = "Hello, "+senderName+"<br><br>You have succesfully transffered "+amount+" P to "+recipientName+".<br><br>Reason: "+reason;
     var contentToRecipient = "Hello, "+recipientName+"<br><br>You have recieved "+amount+" P from "+senderName+"<br><br>Reason: "+reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com/apartment_personal\"><button class=\"button button1\" style=\"\
     background-color: #4CAF50;\
@@ -206,8 +207,8 @@ module.exports.set = function(router, pool) {
     pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [senderNewBudget, senderEmail]);
     pool.query("UPDATE account SET budget = $1 WHERE email = $2;", [recipientNewBudget, recipientEmail])
 
-    pool.query("INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason, finished) \
-      VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP(2), $6, 'true')", [transferBudget, senderEmail, recipientEmail, senderNewBudget, recipientNewBudget, reason], function (err, result) {
+    pool.query("INSERT INTO transfer_logs (amount, sender, recipient, sender_resulting_budget, recipient_resulting_budget, date, reason, finished, timestamp) \
+      VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP(2), $6, 'true', $7)", [transferBudget, senderEmail, recipientEmail, senderNewBudget, recipientNewBudget, reason, moment().unix()], function (err, result) {
     	if (err) {
     		res.send(err)
     	} else {
