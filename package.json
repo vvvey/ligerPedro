@@ -24,6 +24,7 @@
     "gmail-send": "^1.2.11",
     "handlebars": "^4.1.1",
     "handlebars.moment": "^1.0.4",
+    "moment": "^2.24.0",
     "moment-timezone": "^0.5.13",
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
