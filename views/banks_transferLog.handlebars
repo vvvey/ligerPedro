@@ -8,9 +8,9 @@
 	<main>
 	<div class="container">
 
-		
+
 		<ul class="collapsible" data-collapsible="accordion">
-	
+
 				{{#each transfer_data}}
 					<li>
 						<div class="collapsible-header header exchange" style="min-height: 60px;">
@@ -26,20 +26,20 @@
 							<div class="hide-on-med-and-up">
 								<!-- Title of Transfer Log -->
 							<span class="truncate title">{{sender_username}}</span>
-					
+
 							<!-- Transfer Reason -->
 							<span class="truncate br-reason grey-text text-darken-3">Sent P50</span>
 							</div>
 							<div class="hide-on-small-only">
 								<!-- Title of Transfer Log -->
-							<span class="truncate title">{{sender_username}} send P{{amount}}</span>
-					
+							<span class="truncate title">{{sender_username}} send P{{amount}} to {{recipient_username}}</span>
+
 							<!-- Transfer Reason -->
 							<span class="truncate br-reason grey-text text-darken-3">{{reason}}</span>
 							</div>
 
-							
-							
+
+
 
 													</div>
 
@@ -49,6 +49,10 @@
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>From:</span></div>
 										<div class="col l10	m10 s5 zero-margin zero-padding">{{sender}}</div>
+									</div>
+									<div class="row zero-margin">
+										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>To:</span></div>
+										<div class="col l10	m10 s5 zero-margin zero-padding">{{recipient}}</div>
 									</div>
 									<div class="row zero-margin">
 										<div class="col l2 m2 s5 zero-margin zero-padding"><span class='left'>Transfer Date:</span></div>
@@ -69,18 +73,18 @@
 
 								</div>
 
-								
 
-								
+
+
 							</div>
-						
+
 
 
 						</div>
 					</li>
 
 				{{/each}}
-					
+
 				</ul>
 				<ul class="pagination">
 
@@ -89,7 +93,7 @@
 	{{else ifCondA previousStart '==' 'none'}}
 		<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a>
 	{{/ifCondA}}
-    
+
     {{#each paginations}}
     	{{#if active}}
 		<li class="amber"><a href="#!" style="cursor: default; color: white;">{{display}}</a></li>
@@ -97,8 +101,8 @@
 		{{else}}
 		<li class="waves-effect"><a href="/catering/transfer_logs?start={{start}}">{{display}}</a></li>
 		{{/if}}
-		
-    	
+
+
     {{/each}}
 	{{#ifCondA nextStart '!=' 'none'}}
     	<li class="waves-effect"><a href="/catering/transfer_logs?start={{nextStart}}"><i class="material-icons">chevron_right</i></a>

@@ -22,9 +22,9 @@ body {
 							<span class="card-title white-text"><i class="material-icons white-text right">grade</i><strong>{{bankName}} Current Budget </strong></span>
 							<h4 class="white-text">P{{bankBudget}}</h4>
 						</div>
-						
+
 					</div>
-					
+
 				</div>
 				{{#ifCondA recentTransfer '!=' null}}
 				<div class="col l6 m6 s12">
@@ -33,16 +33,16 @@ body {
 							<span class="card-title white-text"><Strong>Recent Transfer </Strong></span>
 							<ul class="collection">
 								{{#each recentTransfer}}
-								<a href="/{{lowerCase ../bankName}}/transfer_logs" class="collection-item"><strong>{{sender_username}} sent P{{amount}} <span class="right">{{formatDate date 'short'}}</strong></span></a>
+								<a href="/section/{{lowerCase ../bankName}}/transfer_logs" class="collection-item"><strong>{{sender_username}} sent P{{amount}} <span class="right">{{formatDate date 'short'}}</strong></span></a>
 								{{/each}}
 							</ul>
 						</div>
-						
+
 					</div></div>
-					
-					
+
+
 				</div>
-				{{/ifCondA}}			
+				{{/ifCondA}}
 			</div>
 			<div class="row">
 				{{#each apartmentData}}

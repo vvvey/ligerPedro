@@ -25,7 +25,7 @@
       margin-left: 0rem;
       margin-right: 0rem;
   }
-  
+
 </style>
 
 <header>
@@ -40,7 +40,7 @@
       {{else}}
           <a href="#!user"><span class="circle grey-text text-darken-4 center" style="border-radius: 50%"><i class="material-icons medium">account_circle</i></span></a>
       {{/ifCondA}}
-     
+
       <a href="#!name"><span class="white-text name">{{fullName}}</span></a>
       <a href="#!email"><span class="white-text email">
     {{#ifCondA role '==' 'admin'}}
@@ -59,7 +59,7 @@
     </li>
     {{#ifCondA role '==' 'admin'}}
       <li><a href="/admin/user"><i class="material-icons">people</i>User Profile</a></li>
-  
+
       <li><a href="/admin/transfer_data"><i class="material-icons">send</i>All Transfer Logs</a></li>
        <ul class="collapsible collapsible-accordion">
           <li>
@@ -82,8 +82,9 @@
             <a class="collapsible-header"><i class="material-icons">shopping_cart</i>Catering</a>
             <div class="collapsible-body">
               <ul>
-                <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/catering/refund"><i class="material-icons">replay</i>Refund</a></li>
               </ul>
             </div>
           </li>
@@ -91,18 +92,26 @@
             <a class="collapsible-header"><i class="material-icons">build</i>Maintenance</a>
             <div class="collapsible-body">
               <ul>
-                <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/maintenance/refund"><i class="material-icons">replay</i>Refund</a></li>
               </ul>
             </div>
           </li>
-          <li> <a class="collapsible-header"><i class="material-icons">lightbulb_outline</i>Utilities</a> <div class="collapsible-body"> <ul> <li><a href="/utilities/overview"><i class="material-icons">explore</i>Overview</a></li> <li><a href="/utilities/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li> </ul> </div> </li>
+          <li> <a class="collapsible-header"><i class="material-icons">lightbulb_outline</i>Utilities</a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/section/utilities/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/utilities/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/utilities/refund"><i class="material-icons">replay</i>Refund</a></li>
+              </ul> </div> </li>
           <li>
             <a class="collapsible-header"><i class="material-icons">store</i>Residence</a>
             <div class="collapsible-body">
               <ul>
-                <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
+                <li><a href="/section/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
+                <li><a href="/section/residence/refund"><i class="material-icons">replay</i>Refund</a></li>
 
               </ul>
             </div>
@@ -110,11 +119,13 @@
         </ul>
       </li>
     {{else ifCondA role '==' 'catering_manager'}}
-      <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
-      <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+      <li><a href="/section/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
+      <li><a href="/section/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+      <li><a href="/section/catering/refund"><i class="material-icons">replay</i>Refund</a></li>
     {{else ifCondA role '==' 're'}}
-      <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-      <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
+      <li><a href="/section/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
+      <li><a href="/section/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
+      <li><a href="/section/residence/refund"><i class="material-icons">replay</i>Refund</a></li>
       <li><a href="/exchange_list"><i class="material-icons">check_circle</i>Exchanging Approve</a></li>
     {{else ifCondA role '==' 'maintenance_manager'}}
       <li>
@@ -123,8 +134,9 @@
             <a class="collapsible-header"><i class="material-icons">shopping_cart</i>Catering</a>
             <div class="collapsible-body">
               <ul>
-                <li><a href="/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/catering/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/catering/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/catering/refund"><i class="material-icons">replay</i>Refund</a></li>
               </ul>
             </div>
           </li>
@@ -132,23 +144,30 @@
             <a class="collapsible-header"><i class="material-icons">build</i>Maintenance</a>
             <div class="collapsible-body">
               <ul>
-                <li><a href="/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/maintenance/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/maintenance/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+                <li><a href="/section/maintenance/refund"><i class="material-icons">replay</i>Refund</a></li>
               </ul>
             </div>
           </li>
-          <li> <a class="collapsible-header"><i class="material-icons">lightbulb_outline</i>Utilities</a> <div class="collapsible-body"> <ul> <li><a href="/utilities/overview"><i class="material-icons">explore</i>Overview</a></li> <li><a href="/utilities/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li> </ul> </div> </li>
+          <li> <a class="collapsible-header"><i class="material-icons">lightbulb_outline</i>Utilities</a>
+            <div class="collapsible-body"> <ul> <li><a href="/section/utilities/overview"><i class="material-icons">explore</i>Overview</a></li>
+               <li><a href="/section/utilities/transfer_logs"><i class="material-icons">send</i>Transfer Logs</a></li>
+               <li><a href="/section/utilities/refund"><i class="material-icons">replay</i>Refund</a></li>
+
+              </ul> </div> </li>
           <li>
             <a class="collapsible-header"><i class="material-icons">store</i>Residence</a>
             <div class="collapsible-body">
               <ul>
-                <li><a href="/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
-                <li><a href="/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
+                <li><a href="/section/residence/overview"><i class="material-icons">explore</i>Overview</a></li>
+                <li><a href="/section/residence/transfer_logs"><i class="material-icons">send</i>Payment Recieved</a></li>
+                <li><a href="/section/residence/refund"><i class="material-icons">replay</i>Refund</a></li>
 
               </ul>
             </div>
           </li>
-          
+
         </ul>
       </li>
     {{else ifCondA role '==' 'keeper'}}
@@ -157,7 +176,7 @@
     {{/ifCondA}}
     <li><div class="divider"></div></li>
     <li><a href="/"> <i class="material-icons">home</i>Return Home</a></li>
-   
+
   </ul>
 {{/with}}
 
@@ -169,11 +188,11 @@
       <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
       </div>
     </div>
-    
-    
+
+
   </nav>
 </header>
-    
+
 
   <script type="text/javascript">
     // Initialize collapse button
