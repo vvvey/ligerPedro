@@ -7,10 +7,10 @@
 <main class="grey lighten-3">
 	<div class="container" >
 	<br>
-		<div class="row zero-margin">	
+		<div class="row zero-margin">
 				<a href="#new" class="waves-effect waves-light btn right green" type="new"><i class="material-icons left">add</i>ADD NEW USER</a>
 		</div>
-		
+
 		{{#each user_info}}
 		<ul class="collection with-header">
 			<li class="collection-header amber" >
@@ -81,7 +81,7 @@
 				</div>
 			</li>
 			{{/each}}
-		</ul>	
+		</ul>
 		{{/each}}
 	</div>
 </main>
@@ -97,8 +97,10 @@
 				<h5 class="center">Individually Transfer</h5>
 				<!-- Disabled input for from  -->
 				<div class="input-field col l6 m6 s12">
-					<input disabled id="from-email" class="disabled" type="email" value="dom.s@ligercambodia.org">
+					{{#with userData}}
+					<input disabled id="from-email" class="disabled" type="email" value={{this.email}}>
 					<label for="from-email">From</label>
+					{{/with}}
 				</div>
 				<!-- To recipient email address -->
 				<div class="input-field col l6 m6 s12">
@@ -137,8 +139,10 @@
 				<h5 class="center">Apartment Transfer</h5>
 				<!-- Disable Input for from -->
 				<div class="input-field col l6 m6">
-					<input disabled id="from-email"  class="disabled" type="email" value="dom.s@ligercambodia.org">
+					{{#with userData}}
+					<input disabled id="from-email" class="disabled" type="email" value={{this.email}}>
 					<label for="from-email">From</label>
+					{{/with}}
 				</div>
 				<!-- Apartment checkbox -->
 				<div class="col l6 m6 s12 zero-margin">
@@ -154,7 +158,7 @@
 						{{/ifCondA}}
 						{{/each}}
 					</div>
-				
+
 				</div>
 				<!-- Amount for each transaction -->
 				<div class="input-field col l6 m6 s12">
@@ -231,8 +235,8 @@
 				</div>
 				<!-- Budget -->
 				<div class="input-field col l3 m6 s12">
-					<input  class="validate input-need-clear"  id="edit-user-budget" type="number" min="0" step="0.01" required="required" name="budget">
-					<label for="edit-user-budget" data-error="Please enter a valid number!">Budget</label>
+					<input  class="disabled"  id="edit-user-budget" disabled type="number" min="0" step="0.01" required="required" name="budget">
+					<label for="edit-user-budget"  data-error="Please enter a valid number!">Budget</label>
 				</div>
 				<!-- Role -->
 				<div class="input-field col l6 m6 s12">
@@ -255,7 +259,7 @@
 				<div class="input-field col l6 m6 s12">
 					<select id="edit-user-apartment" class="input-need-clear" name="apartment">
 						<option value="" selected>None</option>
-						
+
 						{{#each user_info}}
 						{{#ifCondA apartment "!=" null}}
 						<option value="{{apartment}}">{{upperCase apartment}}</option>
@@ -324,7 +328,7 @@
 				<div class="input-field col l6 m6 s12">
 					<select id="new-user-apartment" class="input-need-clear" name="apartment">
 						<option value="" selected>None</option>
-						
+
 						{{#each user_info}}
 						{{#ifCondA apartment "!=" null}}
 						<option value="{{apartment}}">{{upperCase apartment}}</option>
@@ -361,7 +365,7 @@
 
 <script>
 $(".button-collapse").sideNav();
- 
+
 $(document).ready(function() {
 
 	// Initialize Select
@@ -397,18 +401,18 @@ $(document).ready(function() {
 						$("#edit-user-img-url").val(trigger.attr("img_url"));
 						// Update Select and text field
 						$('select').material_select();
-						Materialize.updateTextFields();						
+						Materialize.updateTextFields();
 					} else if (type == "new") {
 						// Nothing
 						// Blank form
 					}
-			} 
+			}
 		},
 		complete: function() {
 			$(':input:not(.disabled)').attr('disabled', false) // Clear inputs, textarea, select, checkbox
 			$(':input').removeClass("valid error invalid"); // Remove class, Materialize added class when the input is invalid
 			$('button[type=submit').prop('disabled', true) // Submit button disabled at first
-			$('.input-need-clear').val("") 
+			$('.input-need-clear').val("")
 			$('select').material_select(); //Update selected
 			$('.materialize-textarea').trigger('autoresize'); //Text area auto resize
 			$('.text-need-clear').text(" ") // HTML element text is also need to clear (DELETE modal)
@@ -429,7 +433,7 @@ $(document).ready(function() {
 
 	// Jquery validate plugin over delete-user form
 	$('div#delete-user form').validate({
-		errorPlacement: function(error, element) { 
+		errorPlacement: function(error, element) {
 			// Display none when there is error for input
 			return true;
 		},

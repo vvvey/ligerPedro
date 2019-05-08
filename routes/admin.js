@@ -1,5 +1,6 @@
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-var User = require('../lib/user')
+var User = require('../lib/user');
+var moment = require('moment');
 module.exports.set = function(router, pool) {
 
 	router.get('/admin', (req, res) => {
@@ -11,15 +12,15 @@ module.exports.set = function(router, pool) {
 		// e.g. /admin/transfer_data?start=10
 		// e.g. /admin/transfer_data?start=5&limit=10
 
-		
+
 		// Check if start parms is valid as a number for OFFSET in database
 		// Default: start = 0
 		var start;
-		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
-	      start = 0 
-	    } else { 
+		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){
+	      start = 0
+	    } else {
 	      start = parseInt(req.query.start)
-	    } 
+	    }
 
 		// Check if limit parms is valid as a number for OFFSET in database
 		// Default: limit = 20 meaning that a page would show 20 transfer logs
@@ -47,18 +48,18 @@ module.exports.set = function(router, pool) {
 				}
 			}
 
-			// e.g. paginateArray = 
+			// e.g. paginateArray =
 			// [ 	{ start: 0, display: 1, active: false },
 			//  	{ start: 20, display: 2, active: true },
 			// 		{ start: 40, display: 3, active: false } ]
 
 	    })
-		
+
 		// Query to get transfer logs joining with sender and recipient data (username and img_url)
 		// Paginate by OFFSET and LIMIT
 		// Additional information needed (username(s) and img_url(s)) and transfer_logs table doesn't have that
 		// Using sender and recipient email to join with account table
-		// Basic picture: transfer_logs join with sender then join with recipient 
+		// Basic picture: transfer_logs join with sender then join with recipient
 		var query = {
 			text: "	SELECT \
 						transfer_logs.*, \
@@ -73,11 +74,11 @@ module.exports.set = function(router, pool) {
 			values: [start, limit]
 		}
 
-		pool.query(query, (err, result) => { 
+		pool.query(query, (err, result) => {
 			if (err) {
 				res.send(err);
 			} else {
-				var previousStart; 
+				var previousStart;
 				var nextStart;
 
 				// Is there newer transfer log
@@ -93,17 +94,17 @@ module.exports.set = function(router, pool) {
 				} else {
 					nextStart = start + limit;
 				}
-				console.log(result.rows[0].date)
+
 				// Render to client
 				res.render('admin/admin_transfer_logs', {
-					transfer_data: result.rows, 
-					previousStart: previousStart, 
-					nextStart: nextStart, 
+					transfer_data: result.rows,
+					previousStart: previousStart,
+					nextStart: nextStart,
 					paginations: paginateArray,
 					userData: req.user
 				});
 			}
-		})		
+		})
 	});
 
 	router.get('/admin/exchange_data', ensureLoggedIn, User.isRole('admin'), (req, res) => {
@@ -111,15 +112,15 @@ module.exports.set = function(router, pool) {
 		// e.g. /admin/exchange_data?start=10
 		// e.g. /admin/exchange_data?start=5&limit=10
 
-		
+
 		// Check if start parms is valid as a number for OFFSET in database
 		// Default: start = 0
 		var start;
-		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){ 
-	      start = 0 
-	    } else { 
+		if (isNaN(req.query.start) || req.query.start == undefined || req.query.start < 0){
+	      start = 0
+	    } else {
 	      start = parseInt(req.query.start)
-	    } 
+	    }
 
 		// Check if limit parms is valid as a number for OFFSET in database
 		// Default: limit = 20 meaning that a page would show 20 transfer logs
@@ -143,7 +144,7 @@ module.exports.set = function(router, pool) {
 				}
 			}
 
-			// e.g. paginateArray = 
+			// e.g. paginateArray =
 			// [ 	{ start: 0, display: 1, active: false },
 			//  	{ start: 20, display: 2, active: true },
 			// 		{ start: 40, display: 3, active: false } ]
@@ -164,7 +165,7 @@ module.exports.set = function(router, pool) {
 
 			else {
 				console.log(paginateArray)
-				var previousStart; 
+				var previousStart;
 				var nextStart;
 
 				// Is there newer transfer log
@@ -183,13 +184,13 @@ module.exports.set = function(router, pool) {
 
 				res.render("admin/admin_exchange_logs", {
 					exchange_data: result.rows,
-					previousStart: previousStart, 
-					nextStart: nextStart, 
+					previousStart: previousStart,
+					nextStart: nextStart,
 					paginations: paginateArray,
 					userData: req.user
 				})
 			}
-		}) 	
+		})
 	});
 
 	router.get("/admin/user", ensureLoggedIn, User.isRole('admin'), (req, res) => {
@@ -209,12 +210,13 @@ module.exports.set = function(router, pool) {
 		}
 
 		pool.query(query, (err, result) => {
-			if (err) {res.send(err)} 
+			if (err) {res.send(err)}
 			else {
+				console.log(req.user)
 				res.render("admin/admin_user_profile", {user_info: result.rows, userData: req.user});
-				
+
 			}
-		})		
+		})
 	})
 
 
@@ -225,15 +227,15 @@ module.exports.set = function(router, pool) {
 			}
 
 			pool.query(deletQuery, (err, result) => {
-				if (err) {res.send(err)} 
+				if (err) {res.send(err)}
 				else {
 					if (result.rowCount == 0) { //rowCount = 0 means that the query didn't find the account
 						res.status(200).send("Account is not exists!")
 					} else {
 						res.send("Done")
-					}		
+					}
 				}
-				
+
 			})
 		}
 	);
@@ -259,10 +261,10 @@ module.exports.set = function(router, pool) {
 
 		var databaseColumnArray = columns.rows[0];
 		var valueColumnArray = new Array();
-		
+
 		// Find if the key from request body is match with the database
-		// if so push to valuesColumnArray 
-		for (var column of bodyColumnArray) {			
+		// if so push to valuesColumnArray
+		for (var column of bodyColumnArray) {
 			var index = databaseColumnArray.column_names.indexOf(column)
 			if (databaseColumnArray.column_names.indexOf(column) == -1) {
 				return res.send(column + " column is not found!")
@@ -282,7 +284,7 @@ module.exports.set = function(router, pool) {
 		}
 		parms = parms.join(',')
 		var updateQuery = 'update account set (' + bodyColumnArray.join(',') +') = ('+ parms +') where email = $1;'
-		
+
 		// ... set (budget, img_url, ...) = (12, 'http://', ...) where email = 'someone@ligercambodia.org'
 		// ... set (budget, img_url, ...) = ($2, $3, ...) where email = $1
 		pool.query(updateQuery, [req.body.user_original_email].concat(valueColumnArray) ,(err, result)=> {
@@ -309,7 +311,7 @@ module.exports.set = function(router, pool) {
 
 		if(isAccountExist.rows[0].exists) {
 			return res.status(200).send("Username or email is already exists!")
-		} 
+		}
 
 		if(bodyRequest.apartment == '') {
 			bodyRequest.apartment = null
@@ -336,7 +338,7 @@ module.exports.set = function(router, pool) {
 	router.post("/admin/send/apartment", ensureLoggedIn, User.isRole('admin'), async(req, res) => {
 		//  VALIDATION need DEVELOPMENT
 		var requestBody = req.body;
-		
+
 		const apartment_list = {
 			text: "SELECT array(SELECT apartment FROM account GROUP BY apartment HAVING apartment IS NOT NULL) AS apartment_list;",
 		}
@@ -349,7 +351,7 @@ module.exports.set = function(router, pool) {
 		for (var i = 0; i < requestBody.apartment_list.length; i++) {
 			if (apartmentFromDatabase.indexOf(requestBody.apartment_list[i]) == -1 ) {
 				return res.send(requestBody.apartment_list[i] + " apartment is not exists")
-			} 
+			}
 		}
 		// If n
 		if (isNaN(req.body.amount)) {
@@ -357,33 +359,34 @@ module.exports.set = function(router, pool) {
 		}
 
 		// inserting and also update admin's budget for every insert by TRIGGER but not update to recipients
-		// date is the same so we sorted the username and inserted by order A-Z 
+		// date is the same so we sorted the username and inserted by order A-Z
 		var transferLogsInsertingQuery = {
-			text: "	INSERT INTO transfer_logs (date, sender, recipient, amount, reason, recipient_resulting_budget) \
-					SELECT ((CURRENT_TIMESTAMP(2))), $1, email, $2, $3, (budget + $2::numeric) FROM account \
+			text: "	INSERT INTO transfer_logs (date, sender, recipient, amount, reason, recipient_resulting_budget, timestamp) \
+					SELECT ((CURRENT_TIMESTAMP(2))), $1, email, $2, $3, (budget + $2::numeric),$5 FROM account \
 					WHERE apartment = ANY($4::text[]) ORDER BY username ASC;",
-			values: [req.user.email, parseFloat(req.body.amount), req.body.reason, req.body.apartment_list	]
+			values: [req.user.email, parseFloat(req.body.amount), req.body.reason, req.body.apartment_list, moment().unix()	]
 		}
 
 		// Trigger exists in database
  		//
-		// 	CREATE TRIGGER admin_resulting_budget_update AFTER INSERT ON transfer_logs 
+		// 	CREATE TRIGGER admin_resulting_budget_update AFTER INSERT ON transfer_logs
 		// 		FOR EACH ROW EXECUTE PROCEDURE update_admin();
 
 		/// -------------------------------------------------------------------------
 
-		//
-		// CREATE or REPlACE FUNCTION update_admin() RETURNS trigger AS $BODY$ 
-		// 		DECLARE sender_budget int := (SELECT budget FROM account WHERE email = 'dom.s@ligercambodia.org'); 
-		//		BEGIN 
-		//			IF NEW.sender_resulting_budget IS NULL AND NEW.sender = 'dom.s@ligercambodia.org' THEN 
-		//				UPDATE account SET budget = budget - NEW.amount WHERE email = 'dom.s@ligercambodia.org'; 
-		//				UPDATE transfer_logs SET sender_resulting_budget = sender_budget - NEW.amount WHERE id = NEW.id; 
-		//			END IF; 
-		//			RETURN NEW; 
-		//		END; 
-		//	$BODY$ 
-		//	language plpgsql
+
+		// CREATE or REPlACE FUNCTION update_admin() RETURNS trigger AS $BODY$
+		// 		DECLARE sender_budget int := (SELECT budget FROM account WHERE email = NEW.sender);
+		// 	  DECLARE sender_role text := (SELECT role FROM account WHERE email = NEW.sender);
+		// 		BEGIN
+		// 			IF NEW.sender_resulting_budget IS NULL AND sender_role = 'admin' THEN
+		// 				UPDATE account SET budget = budget - NEW.amount WHERE email = NEW.sender;
+		// 				UPDATE transfer_logs SET sender_resulting_budget = sender_budget - NEW.amount WHERE id = NEW.id;
+		// 			END IF;
+		// 			RETURN NEW;
+		// 		END;
+		// 	$BODY$
+		// 	language plpgsql
 
 		pool.query(transferLogsInsertingQuery, (err, result) => {
 			if (err) {
@@ -403,7 +406,7 @@ module.exports.set = function(router, pool) {
 		pool.query(updateRecipientBudget, (err, result) => {
 			if (err) {
 				console.log(err)
-			} 
+			}
 		})
 	})
-}	
+}
