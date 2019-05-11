@@ -443,8 +443,8 @@ module.exports.set = function(router, pool) {
     /*INSERT INTO transfer_logs (sender, recipient, amount, reason, date, approvedata, approve_info, apartment)\
             VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), JSON.stringify({{'email': 'visal.s@ligercambodia.org', \
                     'status': 'approve', 'time': CURRENT_TIMESTAMP(2)}}), 1::int, $7);*/
-      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason, submitter, apartment, timestamp, date)\
-              VALUES($1::text, $2, $3::float, $4, $5, $6, $7, CURRENT_TIMESTAMP(2));",
+      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason, submitter, apartment, timestamp, date, sender_resulting_budget, recipient_resulting_budget)\
+              VALUES($1::text, $2, $3::float, $4, $5, $6, $7, CURRENT_TIMESTAMP(2), (SELECT budget FROM account WHERE email = $1::text), ((SELECT budget FROM account WHERE email = $2::text)));",
       values: [UserData.apartmentEmail, UserData.emailSend, UserData.amountSend, UserData.reasonSend, UserData.email , UserData.apartment, moment().unix()]
       //[apartmentEmail, fromUser.emailSend, fromUser.amountSend,
                   //fromUser.reasonSend, ident], //[[$5::text, CURRENT_TIMESTAMP(2), $6::text]]
