@@ -89,23 +89,24 @@
 				<ul class="pagination">
 
 	{{#ifCondA previousStart '!=' 'none'}}
-    	<li class="waves-effect"><a href="/catering/transfer_logs?start={{previousStart}}"><i class="material-icons">chevron_left</i></a>
+
+    	<li class="waves-effect"><a href="/section/{{section}}/transfer_logs?start={{previousStart}}"><i class="material-icons">chevron_left</i></a>
 	{{else ifCondA previousStart '==' 'none'}}
 		<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a>
 	{{/ifCondA}}
 
+
+
     {{#each paginations}}
     	{{#if active}}
 		<li class="amber"><a href="#!" style="cursor: default; color: white;">{{display}}</a></li>
-
 		{{else}}
-		<li class="waves-effect"><a href="/catering/transfer_logs?start={{start}}">{{display}}</a></li>
+
+		<li class="waves-effect"><a href="/section/{{section}}/transfer_logs?start={{start}}">{{display}}</a></li>
 		{{/if}}
-
-
     {{/each}}
 	{{#ifCondA nextStart '!=' 'none'}}
-    	<li class="waves-effect"><a href="/catering/transfer_logs?start={{nextStart}}"><i class="material-icons">chevron_right</i></a>
+    	<li class="waves-effect"><a href="/section/{{section}}/transfer_logs?start={{nextStart}}"><i class="material-icons">chevron_right</i></a>
 	{{else ifCondA nextStart '==' 'none'}}
 		<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a>
 	{{/ifCondA}}

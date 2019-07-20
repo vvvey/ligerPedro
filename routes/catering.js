@@ -43,14 +43,15 @@ module.exports.set = function(router, pool)  {
 				paginateArray[i] = {
 					start: i * limit, // parms of link to start (offset)
 					display: i + 1, // number to display
-					active: Math.ceil(start/limit) == i ? true : false // active for CSS
+					active: Math.ceil(start/limit) == i ? true : false, // active for CSS
+					section: section
 				}
 			}
 
 			// e.g. paginateArray =
-			// [ 	{ start: 0, display: 1, active: false },
-			//  	{ start: 20, display: 2, active: true },
-			// 		{ start: 40, display: 3, active: false } ]
+			// [ 	{ start: 0, display: 1, active: false, section: catering },
+			//  	{ start: 20, display: 2, active: true, section: catering },
+			// 		{ start: 40, display: 3, active: false, section: catering } ]
 
 	    })
 
@@ -94,13 +95,16 @@ module.exports.set = function(router, pool)  {
 				} else {
 					nextStart = start + limit;
 				}
+
+				console.log("Sectio is really " + section);
 				// Render to client
 				res.render('banks_transferLog', {
 					transfer_data: result.rows,
 					previousStart: previousStart,
 					nextStart: nextStart,
 					paginations: paginateArray,
-					userData: req.user
+					userData: req.user,
+					section: section
 				});
 			}
 		});
@@ -111,7 +115,7 @@ module.exports.set = function(router, pool)  {
 		var sectionEmail = req.params.section + "@ligercambodia.org";
 
 		var selectCatering =  {
-			text: "SELECT budget FROM account WHERE email = $1;",
+			text: "SELECT budget FROM account WHsERE email = $1;",
 			values: [sectionEmail]
 		}
 		var bankBudget;
@@ -184,7 +188,7 @@ module.exports.set = function(router, pool)  {
 	});
 
 	router.post('/transfer_confirmation', function(req, res) {
-		pool.query("SELECT budget FROM account where email = $1", [req.user.email], function(err, result) {
+		pool.quersy("SELECT budget FROM account where email = $1", [req.user.email], function(err, result) {
 
 			if (err) {
 				console.error(err);
