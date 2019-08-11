@@ -8,23 +8,35 @@
 	<div class="container" >
 	<br>
 		<div class="row zero-margin">
+			<div class="col l6">
+				<a class="waves-effect waves-light btn left blue"><i class="material-icons left">account_balance</i>Total balance: P{{totalBudget}}</a>
+			</div>
+			<div class="col l6">
 				<a href="#new" class="waves-effect waves-light btn right green" type="new"><i class="material-icons left">add</i>ADD NEW USER</a>
+			</div>
 		</div>
 
 		{{#each user_info}}
 		<ul class="collection with-header">
 			<li class="collection-header amber" >
 				<div class="row zero-margin">
-					<div class="col l8 s6 zero-padding">
+					<div class="col l4 s4 zero-padding">
 						{{#ifCondA apartment '!=' null}}
-							<h5>Apartment {{upperCase apartment}}</h5>
+							<h5>Apartment {{upperCase apartment}} </h5>
+
 						{{else}}
 							<h5>Others</h5>
 						{{/ifCondA}}
 					</div>
+					<div class="col l4 s4 zero-padding">
+						{{#ifCondA apartment '!=' null}}
+							<h6><a class="btn grey darken-4 left username">Total: P{{apartment_total_budget}}</a></h6>
+
+						{{/ifCondA}}
+					</div>
 					<!-- Send by apartment member modal trigger -->
-					<div class="col l4 s6 zero-padding">
-						<a href="#apartment" class="btn grey darken-4 right" apartment="{{apartment}}" type="apartment">Send All</a>
+					<div class="col l4 s4 zero-padding">
+						<h6><a href="#apartment" class="btn grey darken-4 right" apartment="{{apartment}}" type="apartment">Send All</a></h6>
 					</div>
 				</div>
 			</li>
@@ -67,7 +79,7 @@
 						{{/ifCondA}}
 							<span class="username white-text">{{username}}</span> <br><span class="amber-text">
 						{{#ifCondA role '==' 'senior_student'}}
-							Senior
+							First Generation
 						{{else}}
 							{{role}}
 						{{/ifCondA}}

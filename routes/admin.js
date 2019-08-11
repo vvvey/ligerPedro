@@ -193,10 +193,16 @@ module.exports.set = function(router, pool) {
 		})
 	});
 
-	router.get("/admin/user", ensureLoggedIn, User.isRole('admin'), (req, res) => {
+	router.get("/admin/user", ensureLoggedIn, User.isRole('admin'), async(req, res) => {
 		// Group account by apartment, sorted by username, all information from user turn into json then array aggreate
+
+
+		var totalBudget = await pool.query("SELECT sum(budget) as total_system_balance FROM account;");
+		totalBudget = totalBudget.rows[0].total_system_balance;
+
 		var query = {
 			text: "	SELECT 	apartment, \
+											sum(budget) AS apartment_total_budget, \
 							array_agg(json_build_object(\
 								'username', username, \
 								'email', email, \
@@ -213,7 +219,8 @@ module.exports.set = function(router, pool) {
 			if (err) {res.send(err)}
 			else {
 				console.log(req.user)
-				res.render("admin/admin_user_profile", {user_info: result.rows, userData: req.user});
+				console.log(result.rows[0])
+				res.render("admin/admin_user_profile", {user_info: result.rows, userData: req.user, totalBudget: totalBudget});
 
 			}
 		})
