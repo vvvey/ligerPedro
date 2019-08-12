@@ -354,12 +354,30 @@ module.exports.set = function(router, pool) {
 
 		var apartmentFromDatabase = apartment.rows[0].apartment_list; // apartment_list: ['a1', 'a2', 'b3', ...]
 
+
+
 		// Check apartment from req.body.apartment_list array if it contains in database
 		for (var i = 0; i < requestBody.apartment_list.length; i++) {
 			if (apartmentFromDatabase.indexOf(requestBody.apartment_list[i]) == -1 ) {
 				return res.send(requestBody.apartment_list[i] + " apartment is not exists")
 			}
 		}
+
+		var userToSendEmail = [];
+
+		var fetchEmailQuery = {
+			text: "SELECT email, apartment, username FROM account;"
+		}
+
+		var emailList = await pool.query(fetchEmailQuery);
+		for (var i = 0; i < emailList.rows.length; i++) {
+			if (requestBody.apartment_list.indexOf(emailList.rows[i].apartment) != -1) {
+				userToSendEmail.push(emailList.rows[i]);
+			}
+		}
+
+
+
 		// If n
 		if (isNaN(req.body.amount)) {
 			return res.status(500).send("Amount is in valid number;")
@@ -400,7 +418,28 @@ module.exports.set = function(router, pool) {
 				console.log(err)
 				res.send(err);
 			} else {
-				res.send("Sent")
+				res.send("Sent");
+
+				var email = require('../lib/email.js');
+		    // send email to trasferer #shudsdf
+
+		    // send email to trasferer #shudsdf
+				for (var i = 0; i < userToSendEmail.length; i++ ) {
+					console.log("Email to send to: " + userToSendEmail[i].email)
+					var contentToRecipient = "Hello, "+userToSendEmail[i].username+"<br><br>You have recieved "+parseFloat(req.body.amount)+"P from "+req.user.displayName+"<br><br>Reason: "+req.body.reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com\"><button class=\"button button1\" style=\"\
+					background-color: #4CAF50;\
+					/* Green */\
+					border: none;\
+					color: white;\
+					padding: 2% 2%;\
+					text-align: center;\
+					text-decoration: none;\
+					display: inline-block;\
+					font-size: 100%;\
+					cursor: pointer;\">Check it out</button>";
+					email.sendEmail(userToSendEmail[i].email,"Pedro Recieved",contentToRecipient);
+				}
+
 			}
 		})
 
