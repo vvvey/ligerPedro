@@ -115,7 +115,7 @@ module.exports.set = function(router, pool)  {
 		var sectionEmail = req.params.section + "@ligercambodia.org";
 
 		var selectCatering =  {
-			text: "SELECT budget FROM account WHsERE email = $1;",
+			text: "SELECT budget FROM account WHERE email = $1;",
 			values: [sectionEmail]
 		}
 		var bankBudget;
@@ -257,7 +257,7 @@ module.exports.set = function(router, pool)  {
 
 		//get content
 		var contentToTransferer = "Hello, "+senderName+"<br><br>You have succesfully transffered "+amount+" P to "+recipientName+".<br><br>Reason: "+reason;
-		var contentToRecipient = "Hello, "+recipientName+"<br><br>You have recieved "+amount+" P from "+senderName+"<br><br>Reason: "+reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com/apartment_personal\"><button class=\"button button1\" style=\"\
+		var contentToRecipient = "Hello, "+recipientName+"<br><br>You have recieved "+amount+" P from "+senderName+"<br><br>Reason: "+reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com\"><button class=\"button button1\" style=\"\
 		background-color: #4CAF50;\
 		/* Green */\
 		border: none;\
