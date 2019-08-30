@@ -315,109 +315,6 @@ module.exports.set = function(router, pool) {
     response.redirect('/apartment_approve'); //this happens when there is the same people submites
   });
 */
-  router.post('/transferApartmentSucc', ensureLoggedIn, Validator.apartmentTransfer, async function(request, response){
-    var fromUser = {
-      amountSend: request.body.amount,
-      emailSend: request.body.recipient,
-      reasonSend: request.body.reason,
-      userName: request.user.displayName,
-      email: request.user.email
-    };
-
-    /*INSERT INTO transfer_logs VALUES('10-18-2017', 'c6@ligercambodia.org', 'catering@ligercambodia.org', 50, 150, 90, 'order food for friday', 'c2cefe04-911c-44ea-8a28-79c4f0a0f6a9', 2, 0,'c5', 'false', '{{"hongly.p@ligercambodia.org", "10-19-2017", "approve"},{"somphors.y@ligercambodia.org", "10-20-2017", "approve"}}');*/
-    var recipientCurrentBudget;
-
-    // Get apartment from user info
-    var userApartment = await pool.query("SELECT apartment FROM account WHERE email = $1;", [fromUser.email]);
-    var ident = userApartment.rows[0].apartment;
-    // e.g. ident = c6
-
-    console.log("Email: " + fromUser.email);
-
-    // Get apartment info
-    var apartmentData = await pool.query("SELECT * FROM account WHERE username = $1;", [ident.toUpperCase()]);
-    var objFormate = JSON.stringify({body:{person1: {email: fromUser.email, status: 'approve', time: moment.utc()}}});
-
-    console.log("recipientCurrentBudget", recipientCurrentBudget)
-    console.log("apartmentDataEmail", apartmentData.rows[0].email)
-    var apartmentEmail = apartmentData.rows[0].email;
-
-    //Send email to apartment members
-    //get user's email
-    var userEmail = request.user.email;
-
-    //get amount requesting to send
-    var amountRequest = request.body.amount;
-
-    //get intended recipient
-    var transferRecipient = request.body.recipient;
-
-    //get reason
-    var reason = request.body.reason;
-
-    //get user's data
-    var userData = await pool.query("SELECT * FROM account WHERE email = $1",[userEmail]);
-
-    var apartmentName = userData.rows[0].apartment;
-    //get user's apartment
-    console.log("Apartment name:"+apartmentName.toUpperCase());
-
-    //get apartment members' data
-    var apartmentMembersData = await pool.query("SELECT * FROM account WHERE apartment = $1",[apartmentName.toLowerCase()]);
-
-    //save all apartment members' emails / recipients' emails
-    console.log("Aparmtent Members data : "+apartmentMembersData.rows[0]);
-    var apartmentEmailList = [];
-
-    //get recipient data
-    var recipientData = await pool.query("SELECT * FROM account WHERE email = $1",[transferRecipient]);
-
-    //get recipientNametr
-    var recipientName = recipientData.rows[0].username;
-
-    //get all apartment members email
-    for (var i = 0; i < apartmentMembersData.rows.length; i++){
-      apartmentEmailList.push(apartmentMembersData.rows[i].email);
-      console.log("i = " +apartmentMembersData.rows[i].email);
-    }
-
-    //get content
-    //var contentToTransferer = "";
-    var contentToApartmentMembers = "Hello, "+apartmentName.toUpperCase()+"<br><br>"+userData.rows[0].username+" requests to send "+amountRequest+" P to "+recipientName+".<br><br>Reason: "+reason+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com/apartment_approve\"><button class=\"button button1\" style=\"\
-    background-color: #4CAF50;\
-    /* Green */\
-    border: none;\
-    color: white;\
-    padding: 2% 2%;\
-    text-align: center;\
-    text-decoration: none;\
-    display: inline-block;\
-    font-size: 100%;\
-    cursor: pointer;\">Check it out</button>"; //#sjkfksa
-
-    var email = require('../lib/email.js');
-    email.sendEmail(apartmentEmailList,"Apartment Transfer Request",contentToApartmentMembers);
-    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Request",contentToApartmentMembers+"<br>target: "+apartmentEmailList);
-
-    //PROBLEM
-    const insertQuery = {//email_logs || '{ "+ fromUser.userEmail +" }'
-    /*INSERT INTO transfer_logs (sender, recipient, amount, reason, date, approvedata, approve_info, apartment)\
-            VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), JSON.stringify({{'email': 'visal.s@ligercambodia.org', \
-                    'status': 'approve', 'time': CURRENT_TIMESTAMP(2)}}), 1::int, $7);*/
-      text: "INSERT INTO transfer_logs(sender, recipient, amount, reason, date, approve_info, apartment)\
-              VALUES($1::text, $2, $3::float, $4, CURRENT_TIMESTAMP(2), $5, $6);",
-      values: [apartmentEmail, fromUser.emailSend, fromUser.amountSend, fromUser.reasonSend, objFormate, ident]
-      //[apartmentEmail, fromUser.emailSend, fromUser.amountSend,
-                  //fromUser.reasonSend, ident], //[[$5::text, CURRENT_TIMESTAMP(2), $6::text]]
-    }
-
-    pool.query(insertQuery, (err, result) => {
-      if(err){
-        console.log(err);
-      }
-      response.send('Success');
-    });
-  });
 
   router.post('/transferApartmentSuccess', ensureLoggedIn,  User.isRole('senior_student'), Validator.apartmentTransfer, async function(request, response){
     var UserData = {
@@ -449,6 +346,48 @@ module.exports.set = function(router, pool) {
       //[apartmentEmail, fromUser.emailSend, fromUser.amountSend,
                   //fromUser.reasonSend, ident], //[[$5::text, CURRENT_TIMESTAMP(2), $6::text]]
     }
+
+
+    var apartmentName = UserData.apartment;
+    //get user's apartment
+    console.log("Apartment name:"+apartmentName.toUpperCase());
+
+    //get apartment members' data
+    var apartmentMembersData = await pool.query("SELECT * FROM account WHERE apartment = $1",[apartmentName.toLowerCase()]);
+
+    //save all apartment members' emails / recipients' emails
+    console.log("Aparmtent Members data : "+apartmentMembersData.rows[0]);
+    var apartmentEmailList = [];
+
+    //get recipient data
+    var recipientData = await pool.query("SELECT * FROM account WHERE email = $1",[UserData.emailSend]);
+
+    //get recipientNametr
+    var recipientName = recipientData.rows[0].username;
+
+    //get all apartment members email
+    for (var i = 0; i < apartmentMembersData.rows.length; i++){
+      apartmentEmailList.push(apartmentMembersData.rows[i].email);
+      console.log("i = " +apartmentMembersData.rows[i].email);
+    }
+
+    //get content
+    //var contentToTransferer = "";
+    var contentToApartmentMembers = "Hello, "+apartmentName.toUpperCase()+"<br><br>"+ request.user.displayName + " send "+UserData.amountSend+" P to "+UserData.emailSend+".<br><br>Reason: "+UserData.reasonSend+"<br><br><form method=\"get\" action=\"http://ligerpedro.herokuapp.com/apartment_history\"><button class=\"button button1\" style=\"\
+    background-color: #4CAF50;\
+    /* Green */\
+    border: none;\
+    color: white;\
+    padding: 2% 2%;\
+    text-align: center;\
+    text-decoration: none;\
+    display: inline-block;\
+    font-size: 100%;\
+    cursor: pointer;\">Check it out</button>"; //#sjkfksa
+
+    var email = require('../lib/email.js');
+    email.sendEmail(apartmentEmailList,"Apartment Transfer Request",contentToApartmentMembers);
+    // email.sendEmail("ketya.n@ligercambodia.org","Apartment Transfer Request",contentToApartmentMembers+"<br>target: "+apartmentEmailList);
 
     pool.query(insertQuery, (err, result) => {
       if(err){
