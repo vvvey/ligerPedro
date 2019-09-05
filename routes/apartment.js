@@ -30,7 +30,7 @@ module.exports.set = function(router, pool) {
       var apartmentTransferBudget = 0;
       var emailsList = [];
 
-      var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or role = 'central_bank' ORDER BY role, username");
+      var emailToRemove = await pool.query("SELECT email FROM account WHERE role = 'senior_student' or role = 'apartment' or role = 'central_bank' or role = 'admin' ORDER BY role, username");
 
       for(var i = 0; i < emailToRemove.rows.length; i++){
         emailsList.push(emailToRemove.rows[i].email);
