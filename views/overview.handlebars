@@ -45,6 +45,23 @@ body {
 				{{/ifCondA}}
 			</div>
 			<div class="row">
+				<form action="/section/{{sectionName}}/overview" method="get">
+				<div class="input-field col l4 ">
+					<i class="material-icons prefix">date_range</i>
+					<input type="date" value={{after}} name="after" id="after" class="datepicker">
+					<label for="after">After</label>
+				</div>
+				<div class="input-field col l4 ">
+					<i class="material-icons prefix">date_range</i>
+					<input type="date" value={{before}} name="before" id="before" class="datepicker" required="required">
+					<label for="before">Before</label>
+				</div>
+				<div class="col l4  m4 s8 ">
+					<input type="submit" class="btn blue submit-button">
+				</div>
+			</form>
+			</div>
+			<div class="row">
 				{{#each apartmentData}}
 				<div class="col l4 m6 s12">
 					<div class="card blue-grey lighten-2">
@@ -59,3 +76,13 @@ body {
 			</div>
 		</div>
 	</main>
+
+	<script type="text/javascript">
+
+		$('.datepicker').pickadate({
+			selectMonths: true, // Creates a dropdown to control month
+			selectYears: 10, // Creates a dropdown of 15 years to control year
+			firstDay: 1,
+			format: 'dd-mm-yyyy'
+		});
+	</script>

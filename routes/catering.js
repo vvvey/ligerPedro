@@ -7,7 +7,7 @@ var moment = require('moment');
 
 module.exports.set = function(router, pool)  {
 	router.get('/section/:section', Section.isSection(['catering', 'maintenance', 'utilities', 'residence']), (req, res) => {
-		res.redirect('/section/'+ req.params.section + '/overview');
+		res.redirect('/section/'+ req.params.section + '/overview/');
 	});
 
 	router.get('/section/:section/transfer_logs', Section.isSection(['catering', 'maintenance', 'utilities', 'residence']), ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 'catering_manager','re'), (req, res) => {
@@ -112,12 +112,29 @@ module.exports.set = function(router, pool)  {
 
 	router.get('/section/:section/overview', Section.isSection(['catering', 'maintenance', 'utilities', 'residence']), ensureLoggedIn, User.isRole('admin', 'maintenance_manager', 'catering_manager','re'), (req, res) => {
 		var section = req.params.section;
+
+		//Default query
+		var query = {
+			after: moment('01-01-2019', 'DD-MM-YYYY').unix(), //01-01-2019
+			before: moment().unix() //today
+		}
+
+		if (req.query.after) {
+			query.after = moment(req.query.after, "DD-MM-YYYY").unix();
+		}
+
+		if (req.query.before) {
+			query.before = moment(req.query.before, "DD-MM-YYYY").unix();
+		}
+
+		console.log(query.after)
 		var sectionEmail = req.params.section + "@ligercambodia.org";
 
 		var selectCatering =  {
 			text: "SELECT budget FROM account WHERE email = $1;",
 			values: [sectionEmail]
 		}
+
 		var bankBudget;
 		pool.query(selectCatering, (err, result) => {
 			if(err) {return res.send(err)}
@@ -148,19 +165,23 @@ module.exports.set = function(router, pool)  {
 					FROM transfer_logs \
 					JOIN (SELECT email, username, CASE WHEN role != 'apartment' THEN null ELSE username END AS apartment FROM account) AS account \
 					ON (transfer_logs.sender = account.email) \
-					WHERE transfer_logs.recipient = $1  \
+					WHERE transfer_logs.recipient = $1 AND (timestamp > $2 AND timestamp < $3)  \
 					GROUP BY account.apartment ORDER BY account.apartment;",
-					values: [sectionEmail]
+					values: [sectionEmail, query.after, query.before]
 		}
 
 		pool.query(select, (err, result) => {
  			if (err) {res.send(err)}
  			else {
+				console.log("My Before is this: ", moment.unix(query.before).format("DD-MM-YYYY"))
 				res.render('overview', {bankName: section.toUpperCase(),
+										sectionName: section,
 										bankBudget: bankBudget,
 										apartmentData: result.rows,
 										recentTransfer: recentTransferData,
-										userData: req.user})
+										userData: req.user,
+										before: moment.unix(query.before).format("DD-MM-YYYY"),
+										after: moment.unix(query.after).format("DD-MM-YYYY")})
 			}
 		})
 
