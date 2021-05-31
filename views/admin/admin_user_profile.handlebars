@@ -11,7 +11,10 @@
 			<div class="col l6">
 				<a class="waves-effect waves-light btn left blue"><i class="material-icons left">account_balance</i>Total balance: P{{totalBudget}}</a>
 			</div>
-			<div class="col l6">
+			<div class="col l3">
+				<a href="#reset" class="waves-effect waves-light btn right red" type="new"><i class="material-icons left">add</i>RESET</a>
+			</div>
+			<div class="col l3">
 				<a href="#new" class="waves-effect waves-light btn right green" type="new"><i class="material-icons left">add</i>ADD NEW USER</a>
 			</div>
 		</div>
@@ -79,7 +82,7 @@
 						{{/ifCondA}}
 							<span class="username white-text">{{username}}</span> <br><span class="amber-text">
 						{{#ifCondA role '==' 'senior_student'}}
-							First Generation
+							Student
 						{{else}}
 							{{role}}
 						{{/ifCondA}}
@@ -225,6 +228,39 @@
 			</div>
 		</form>
 	</div>
+
+	<!-- ********************************************** -->
+	<!-- 			RESET    					-->
+	<!-- ********************************************** -->
+	<div id="reset" class="modal modal-fixed-footer">
+		<form action="/admin/reset" method="post">
+			<!-- Modal Content -->
+			<div class="modal-content">
+				<h5 class="center red-text">RESET THE SYSTEM</h5>
+				<label>You about to delete all the transactions logs. All user budget will be reset to ZERO. Please confirm this by typing PEDRO</label>
+				<h5 class="center text-need-clear" id="delete-pedro-text"></h5>
+				<!-- Confirmation username input -->
+				<div class="input-field">
+					<input type="text" id="reset-input" class="validate input-need-clear" pattern="PEDRO" required="required" name="username">
+					<label for="reset-input" data-error="Make sure you write PEDRO correctly">Confirmation</label>
+				</div>
+				<!-- Hidden input -->
+				<div class="input-field">
+					<input type="hidden" id="delete-user-email" class="input-need-clear" required="required" name="user_email" value="">
+				</div>
+			</div>
+			<!-- Modal Footer -->
+			<div class="modal-footer">
+				<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+				<button disabled class="btn-flat modal-action waves-effect red" type="submit">DELETE</button>
+				<!-- Custom loading bar -->
+				<div class="progress" style="position: absolute; bottom: 0; left: 0; margin:0; display: none;">
+					<div class="indeterminate"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+
 	<!-- ********************************************** -->
 	<!-- 			EDIT USER MODAL 					-->
 	<!-- ********************************************** -->
@@ -297,6 +333,8 @@
 			</div>
 		</form>
 	</div>
+
+	
 	<!-- ********************************************** -->
 	<!-- 			NEW USER MODAL 					-->
 	<!-- ********************************************** -->
@@ -417,6 +455,8 @@ $(document).ready(function() {
 					} else if (type == "new") {
 						// Nothing
 						// Blank form
+					} else if (type == "reset") {
+
 					}
 			}
 		},
@@ -477,6 +517,52 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+	// ************************** RESET *******************************
+	// Event handler, validate the form and does the action to submit button
+	$('div#reset input').on("keyup blur paste input propertychange", function() {
+		if ($('div#reset form').valid()) { // checks form for validity
+			$('button[type=submit').prop('disabled', false); // enables button
+		} else {
+			$('button[type=submit').prop('disabled', 'disabled'); // disables button
+		}
+	});
+
+	// Jquery validate plugin over delete-user form
+	$('div#reset form').validate({
+		errorPlacement: function(error, element) {
+			// Display none when there is error for input
+			return true;
+		},
+		submitHandler: function(form) {
+			// Dispaly the loading bar
+			$(form).find('.progress').css("display", "block");
+			//Submit AJAX
+			$.ajax({
+				url: form.action,
+				type: form.method,
+				data: $(form).serialize(),
+				success: function(response) {
+					// Store the email
+					var user_email = $(form).find('input[name="user_email"]').val();
+					if (response == 'Done') {
+						$('.modal').modal('close'); // close modal
+						$('div#delete-user div.progress').css("display", "none"); // hide
+						// Animate over li which have email attribute equal to user_email
+						$('li.collection-item[email="' + user_email + '"]').hide('slow', function() {
+							$(this).remove()
+							Materialize.toast('Deleted', 4000)
+						})
+					} else {
+						$('div#delete-user div.progress').css("display", "none");
+						Materialize.toast(response, 4000)
+					}
+
+				}
+			});
+		}
+	});
+
 	// *********************************************************************
 
 	$('div#user input').on("keyup blur paste input propertychange", function() {

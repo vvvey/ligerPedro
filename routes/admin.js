@@ -247,6 +247,45 @@ module.exports.set = function(router, pool) {
 		}
 	);
 
+	router.post("/admin/reset", ensureLoggedIn, User.isRole('admin'), (req, res) => {
+		const resetQuery = {
+			text: "UPDATE account SET budget = 0;"
+		}
+
+		const deleteTransferLog = {
+			text: "DELETE FROM transfer_logs;"
+		}
+		var email = req.user.email;
+		console.log("Email is: " + email)
+		const setMoney = {
+			text: "UPDATE account SET budget = 10000000 WHERE email = $1;",
+			values: [email]
+		}
+
+		pool.query(setMoney)
+
+		pool.query(resetQuery, (err, result) => {
+			if (err) {res.send(err)}
+			else {
+				pool.query(deleteTransferLog, (err1, result1) => {
+					pool.query(setMoney, (e, r) => {
+						if (result.rowCount == 0) { //rowCount = 0 means that the query didn't find the account
+							res.status(200).send("Account is not exists!")
+						} else {
+							
+							res.send("Done")
+						}	
+					})
+					
+					
+				})
+				
+			}
+
+		})
+	}
+);
+
 	router.post("/admin/update/user", ensureLoggedIn, User.isRole('admin'), async(req, res) => {
 		// req.body valuds pass through depend on client update specific inputs
 
